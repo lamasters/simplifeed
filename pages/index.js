@@ -181,6 +181,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setFilteredArticles(<img style={{position: "absolute", left: "40%", top: "50%"}} src="/loader.gif" width="28px" height="28px" />);
     fetchData(
       session,
       setFeedList,
