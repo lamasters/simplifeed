@@ -8,6 +8,8 @@ import {
   Role,
 } from "appwrite";
 
+import { downloadFeed } from "./rss.js";
+
 export class UserSession {
   constructor() {
     this.client = new Client()
@@ -49,11 +51,11 @@ export class UserSession {
 
   async register(email, password, router) {
     try {
-        await this.account.create(ID.unique(), email, password);
-        await this.login(email, password, router);
+      await this.account.create(ID.unique(), email, password);
+      await this.login(email, password, router);
     } catch (err) {
-        console.error(err);
-        alert("Registration failed");
+      console.error(err);
+      alert("Registration failed");
     }
   }
 
@@ -90,6 +92,13 @@ export class UserSession {
     if (this.uid == null) {
       await this.getSession();
     }
+
+    let feed = await downloadFeed(url);
+    if (feed == null) {
+        alert("Could not add feed source");
+        return;
+    }
+
     try {
       await this.database.createDocument(
         "6466af38420c3ca601c1",
@@ -109,7 +118,6 @@ export class UserSession {
   }
 
   async deleteFeed(id) {
-    console.log(id);
     try {
       await this.database.deleteDocument(
         "6466af38420c3ca601c1",

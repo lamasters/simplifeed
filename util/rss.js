@@ -113,7 +113,7 @@ function sortAllFeedItems(feedItems) {
   });
 }
 
-async function downloadFeed(url, tries = 0) {
+export async function downloadFeed(url, tries = 0) {
   const CORS_PROXY = "http://54.146.247.202:21545/";
   let res = await fetch(CORS_PROXY + url);
   let text = await res.text();
