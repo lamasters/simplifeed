@@ -51,7 +51,6 @@ async function addFeed(session, url, setFeedList, setArticles, setFilteredArticl
 }
 
 async function selectSource(source, articles, feeds, setOpacity, setArticleContent, setFilteredArticles) {
-    console.log("SELECTING SOURCE", source);
     if (articles === null) {
         let feedData = await downloadFeeds(feeds);
         articles = feedData.items;
@@ -67,7 +66,7 @@ async function selectSource(source, articles, feeds, setOpacity, setArticleConte
         if (item.image === null) {
             icon = (<div className={styles.icon}>{item.source[0]}</div>);
         } else {
-            icon = (<img src={item.image} width="40px" height="40px"/>)
+            icon = (<img src={item.image} width="40px" height="40px" style={{borderRadius: "100%"}} />)
         }
         filteredArticles.push(
             <li onClick={() => {selectArticle(item, setOpacity, setArticleContent)}} className={styles.item} key={count}>

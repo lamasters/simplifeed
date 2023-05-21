@@ -138,7 +138,7 @@
     position: relative;
     width: 40px;
     height: 40px;
-    font-size: 30px;
+    font-size: 24px;
     line-height: 35px;
     text-align: center;
     background-color: #181f24;
@@ -153,7 +153,7 @@
     position: relative;
     justify-content: left;
     margin-left: 10px;
-    text-align: left;
+    text-align: center;
     line-height: 100%;
     width: calc(100% - 150px);
     font-size: 18px;

@@ -49,6 +49,25 @@ button:hover {
   background-color: #506060;
 }
 
+input {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  background-color: #3c6477;
+  border-radius: 10px;
+  border-width: 0;
+  text-align: center;
+  color: #f9fbf7;
+  padding: 15px;
+  width: 90%;
+  max-width: 500px;
+  min-width: 200px;
+  margin: 10px;
+}
+
+input:focus {
+  outline: none;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
