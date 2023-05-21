@@ -114,6 +114,11 @@
 
 .source:hover {
     cursor: pointer;
+    background-color: #1F262B;
+}
+
+.source:active {
+    box-shadow: 0 0 10px #000 inset;
 }
 
 .item {
@@ -133,6 +138,11 @@
 
 .item:hover {
     cursor: pointer;
+    background-color: #1F262B;
+}
+
+.item:active {
+    box-shadow: 0 0 10px #000 inset;
 }
 
 .icon {
