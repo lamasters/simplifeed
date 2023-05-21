@@ -94,7 +94,7 @@ function sortAllFeedItems(feedItems) {
 }
 
 async function downloadFeed(url, tries = 0) {
-    const CORS_PROXY = "http://54.146.247.202:21545/";
+    const CORS_PROXY = "http://54.146.247.202:443/";
     let res = await fetch(CORS_PROXY + url)
     let text = await res.text();
     let json = xmlToJson(text);
@@ -137,7 +137,7 @@ function removeTags(text) {
 }
 
 export async function fetchAndParseHtml(url) {
-    const CORS_PROXY = "http://54.146.247.202:21545/";
+    const CORS_PROXY = "http://54.146.247.202:443/";
     let response;
     try {
         response = await fetch(CORS_PROXY + url);
