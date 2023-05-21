@@ -13,16 +13,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 50vh;
-    top: 25vh;
+    height: 60vh;
+    top: 15vh;
 }
 
 #cluster {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 50%;
-    top: 50%;
     width: 100vw;
 }

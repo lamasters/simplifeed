@@ -143,7 +143,7 @@ export async function downloadFeeds(urls) {
     if (feedObj == null) {
       continue;
     }
-    feedObj.id = url.url;
+    feedObj.id = url.$id;
     feedSources.push(feedObj);
     feedItems = feedItems.concat(feedObj.items);
   }

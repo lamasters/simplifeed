@@ -47,6 +47,16 @@ export class UserSession {
     }
   }
 
+  async register(email, password, router) {
+    try {
+        await this.account.create(ID.unique(), email, password);
+        await this.login(email, password, router);
+    } catch (err) {
+        console.error(err);
+        alert("Registration failed");
+    }
+  }
+
   async getSession() {
     try {
       let res = await this.account.get();
@@ -97,5 +107,17 @@ export class UserSession {
       console.error(err);
     }
   }
-  _;
+
+  async deleteFeed(id) {
+    console.log(id);
+    try {
+      await this.database.deleteDocument(
+        "6466af38420c3ca601c1",
+        "6466af49bd8be929475e",
+        id
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }

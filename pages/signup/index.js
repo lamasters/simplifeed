@@ -1,7 +1,6 @@
 import styles from "../../styles/Login.module.css";
 
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { UserSession } from "../../util/session";
@@ -11,6 +10,7 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirm] = useState("");
   const router = useRouter();
 
   const updateEmail = (e) => {
@@ -19,6 +19,10 @@ export default function Login() {
 
   const updatePassword = (e) => {
     setPassword(e.target.value);
+  };
+
+  const updateConfirm = (e) => {
+    setConfirm(e.target.value);
   };
 
   return (
@@ -39,15 +43,27 @@ export default function Login() {
           <input onChange={updateEmail} type="text" />
           <label>Password:</label>
           <input onChange={updatePassword} type="password" />
+          <label>Confirm Password:</label>
+          <input onChange={updateConfirm} type="password" />
+          <label
+            style={{ color: password === confirmPassword ? "green" : "red" }}
+          >
+            {password === confirmPassword
+              ? "Passwords match"
+              : "Passwords don't match"}
+          </label>
           <button
             onClick={() => {
-              session.login(email, password, router);
+              if (password === confirmPassword) {
+                session.register(email, password, router);
+              } else {
+                alert("Passwords don't match");
+              }
             }}
             type="submit"
           >
-            Sign In
+            Sign Up
           </button>
-          <Link href="/signup" style={{color: "#5b97bb", textDecoration: "underline"}}>Don't have an account? Sign up here!</Link>
         </div>
       </main>
     </div>

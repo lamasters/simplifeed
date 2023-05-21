@@ -25,6 +25,7 @@ async function fetchData(
   setFilteredArticles,
   setOpacity,
   setArticleContent,
+  setTutorial,
   router
 ) {
   setFeedList([]);
@@ -36,6 +37,10 @@ async function fetchData(
   let feeds = await session.getFeeds();
   if (feeds == null) {
     return;
+  }
+
+  if (feeds.length > 0) {
+    setTutorial(null);
   }
 
   let feedData = await downloadFeeds(feeds);
@@ -57,6 +62,25 @@ async function fetchData(
         className={styles.source}
         key={feed.id}
       >
+        <img
+          id={styles.trash}
+          src="/trash.png"
+          width="28px"
+          height="28px"
+          onClick={async () => {
+            await session.deleteFeed(feed.id);
+            fetchData(
+              session,
+              setFeedList,
+              setArticles,
+              setFilteredArticles,
+              setOpacity,
+              setArticleContent,
+              setTutorial,
+              router
+            );
+          }}
+        />
         {feed.title}
       </li>
     );
@@ -97,9 +121,9 @@ async function addFeed(
   setFeedList,
   setArticles,
   setFilteredArticles,
-  setURL,
   setOpacity,
   setContent,
+  setTutorial,
   router
 ) {
   await session.createFeed(url);
@@ -110,9 +134,9 @@ async function addFeed(
     setFilteredArticles,
     setOpacity,
     setContent,
+    setTutorial,
     router
   );
-  setURL("");
 }
 
 async function selectSource(
@@ -174,6 +198,9 @@ export default function Home() {
   const [url, setURL] = useState("");
   const [reading, setReading] = useState(0.0);
   const [articleContent, setArticleContent] = useState(null);
+  const [tutorial, setTutorial] = useState(
+    <div id={styles.tutorial}>Add feeds to start seeing articles!</div>
+  );
   const router = useRouter();
 
   const updateURL = (e) => {
@@ -181,7 +208,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setFilteredArticles(<img style={{position: "absolute", left: "40%", top: "50%"}} src="/loader.gif" width="28px" height="28px" />);
+    setFilteredArticles(
+      <img
+        style={{ position: "absolute", left: "40%", top: "50%" }}
+        src="/loader.gif"
+        width="28px"
+        height="28px"
+      />
+    );
     fetchData(
       session,
       setFeedList,
@@ -189,6 +223,7 @@ export default function Home() {
       setFilteredArticles,
       setReading,
       setArticleContent,
+      setTutorial,
       router
     );
   }, []);
@@ -208,12 +243,6 @@ export default function Home() {
                 height="64px"
               />
               <h1 className={styles.nav}>SimpliFeed</h1>
-              <button
-                className={styles.nav}
-                onClick={() => session.logout(router)}
-              >
-                Logout
-              </button>
             </div>
             <h2>Feeds</h2>
             <ul id={styles.feedlist}>{feedList}</ul>
@@ -227,9 +256,9 @@ export default function Home() {
                     setFeedList,
                     setArticles,
                     setFilteredArticles,
-                    setURL,
                     setReading,
                     setArticleContent,
+                    setTutorial,
                     router
                   );
                 }}
@@ -238,8 +267,12 @@ export default function Home() {
                 Add Feed
               </button>
             </div>
+            <button id={styles.logout} onClick={() => session.logout(router)}>
+              Logout
+            </button>
           </div>
           <div id={styles.articles}>
+            {tutorial}
             <ul>{filteredArticles}</ul>
           </div>
         </div>
