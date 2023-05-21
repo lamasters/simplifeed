@@ -68,7 +68,6 @@ function parseFeed(feed) {
         if (typeof feed.image !== 'undefined' && typeof feed.image.url !== 'undefined') {
             url = feed.image.url.url;
         }
-        console.log(item);
         feedItems.push(feedItem(item.title.title, item.description.description, item.link.link, item.pubDate.pubDate, feed.title.title, url));
     }
     return feedItems;
@@ -95,7 +94,7 @@ function sortAllFeedItems(feedItems) {
 }
 
 async function downloadFeed(url, tries = 0) {
-    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+    const CORS_PROXY = "http://54.146.247.202:21545/";
     let res = await fetch(CORS_PROXY + url)
     let text = await res.text();
     let json = xmlToJson(text);
@@ -108,7 +107,6 @@ async function downloadFeed(url, tries = 0) {
         return null;
     }
     let feedItems = parseFeed(json.rss.channel);
-    console.debug(json);
 
     return feedSource(json.rss.channel.title.title, json.rss.channel.description.description, feedItems);
 };
@@ -139,7 +137,7 @@ function removeTags(text) {
 }
 
 export async function fetchAndParseHtml(url) {
-    const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+    const CORS_PROXY = "http://54.146.247.202:21545/";
     let response;
     try {
         response = await fetch(CORS_PROXY + url);
@@ -152,10 +150,8 @@ export async function fetchAndParseHtml(url) {
     const doc = parser.parseFromString(htmlString, 'text/html');
     let content = [(<a href={url} target="_blank" style={{color: "blue", textDecoration: "underline"}}>View original content</a>), <br/>];
     for (let paragraph of doc.getElementsByTagName('p')) {
-        console.log(paragraph.textContent);
         content.push(<p>{paragraph.textContent}</p>);
         content.push(<br/>);
     }
-    console.log(content);
     return (<div>{content}</div>);
 }

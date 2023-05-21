@@ -76,7 +76,6 @@ export class UserSession {
             await this.getSession();
         }
         try {
-            console.debug(this.uid);
             await this.database.createDocument(
                 '6466af38420c3ca601c1',
                 '6466af49bd8be929475e',
