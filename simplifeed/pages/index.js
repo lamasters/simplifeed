@@ -66,7 +66,7 @@ async function selectSource(source, articles, feeds, setOpacity, setArticleConte
         if (item.image === null) {
             icon = (<div className={styles.icon}>{item.source[0]}</div>);
         } else {
-            icon = (<img src={item.image} width="40px" height="40px" style={{borderRadius: "100%"}} />)
+            icon = (<img src={item.image} width="40px" height="40px" style={{borderRadius: "100%", marginLeft: "10px"}} />)
         }
         filteredArticles.push(
             <li onClick={() => {selectArticle(item, setOpacity, setArticleContent)}} className={styles.item} key={count}>
