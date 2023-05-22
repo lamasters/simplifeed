@@ -141,10 +141,10 @@
     width: 30px;
     top: calc(50% - 15px);
     border-radius: 100%;
-    background-color: #5b97bb;
-    color: #181f24;
+    background-color: #3c6477;
+    color: #89ccdc;
     font-size: 24px;
-    line-height: 30px;
+    line-height: 28px;
     text-align: center;
 }
 
@@ -217,15 +217,15 @@
 
 .icon {
     position: relative;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    line-height: 20px;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    line-height: 21px;
     text-align: center;
     background-color: #181f24;
     color: #89ccdc;
     border-radius: 50%;
-    border-width: 3px;
+    border-width: 2px;
     border-style: solid;
     border-color: #5b97bb;
     margin-left: 10px;
