@@ -123,9 +123,9 @@ async function selectSource(
       icon = (
         <img
           src={item.image}
-          width="40px"
-          height="40px"
-          style={{ borderRadius: "100%", marginLeft: "10px" }}
+          width="24px"
+          height="24px"
+          style={{ borderRadius: "100%", marginLeft: "10px", marginRight: "10px"}}
         />
       );
     }
@@ -137,11 +137,10 @@ async function selectSource(
         className={styles.item}
         key={count}
       >
-        {icon}
+        <div className={styles.itemHeader}>{icon}<div className={styles.itemTitle}><b>{item.source}</b></div><div className={styles.date}>{formatDate(item.pubDate)}</div></div>
         <div className={styles.info}>
-          <b>{item.source}</b> - {item.title}
+          {item.title}
         </div>
-        <div className={styles.date}>{formatDate(item.pubDate)}</div>
       </li>
     );
   }

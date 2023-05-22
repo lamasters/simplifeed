@@ -25,6 +25,7 @@
     top: 0px;
     height: 100%;
     width: 25vw;
+    min-width: 400px;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -37,7 +38,6 @@
     position: relative;
     top: 0px;
     height: 100%;
-    width: 75vw;
     padding-right: 25px;
     display: flex;
     flex-direction: column;
@@ -67,15 +67,28 @@
 
 #article {
     position: fixed;
-    width: 80vw;
-    height: 80vh;
-    top: 10vh;
-    left: 10vw;
+    width: 95vw;
+    height: 95vh;
+    top: 2.5vh;
+    left: 2.5vw;
     border-radius: 20px;
     background-color: #181f24;
     box-shadow: 0 0 10px #111;
     overflow-x: hidden;
     overflow-y: scroll;
+}
+
+#close {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    font-size: 20px;
+    color: #89ccdc;
+}
+
+#close:hover {
+    cursor: pointer;
+    color: #5b97bb;
 }
 
 #articlecontent {
@@ -122,6 +135,24 @@
     border-radius: 50%;
 }
 
+#collapse {
+    position: relative;
+    height: 30px;
+    width: 30px;
+    top: calc(50% - 15px);
+    border-radius: 100%;
+    background-color: #5b97bb;
+    color: #181f24;
+    font-size: 24px;
+    line-height: 30px;
+    text-align: center;
+}
+
+#collapse:hover {
+    cursor: pointer;
+    background-color: #89ccdc;
+}
+
 .source {
     position: relative;
     width: 100%;
@@ -148,10 +179,9 @@
 
 .item {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: left;
     align-items: center;
-    width: 100%;
     height: 100px;
     margin: 10px;
     padding: 10px;
@@ -170,12 +200,27 @@
     box-shadow: 0 0 10px #000 inset;
 }
 
+.itemHeader {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.itemTitle {
+    margin-right: 10px;
+}
+
 .icon {
     position: relative;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    line-height: 35px;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 20px;
     text-align: center;
     background-color: #181f24;
     color: #89ccdc;
@@ -184,6 +229,7 @@
     border-style: solid;
     border-color: #5b97bb;
     margin-left: 10px;
+    margin-right: 10px;
 }
 
 .info {
@@ -199,11 +245,7 @@
 .date {
     position: relative;
     font-size: 12px;
-    margin: auto;
     color: #89ccdc;
-    width: 75px;
-    line-height: 100%;
-    text-align: center;
 }
 
 .nav {

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { UserSession } from "../util/session";
 import { addFeed, fetchData } from "../util/feed";
 
-
 export default function Home() {
   let session = new UserSession();
   const [feedList, setFeedList] = useState([]);
@@ -18,6 +17,7 @@ export default function Home() {
   const [tutorial, setTutorial] = useState(
     <div id={styles.tutorial}>Add feeds to start seeing articles!</div>
   );
+  const [collapse, setCollapse] = useState(false);
   const router = useRouter();
 
   let state = {
@@ -53,7 +53,14 @@ export default function Home() {
       </Head>
       <main>
         <div id={styles.content}>
-          <div id={styles.sidebar}>
+          <div
+            id={styles.sidebar}
+            style={{
+              width: collapse ? "0px" : "25vw",
+              minWidth: collapse ? "0px" : "400px",
+              opacity: collapse ? 0.0 : 1.0,
+            }}
+          >
             <div id={styles.navbar}>
               <img
                 className={styles.nav}
@@ -80,20 +87,35 @@ export default function Home() {
               Logout
             </button>
           </div>
-          <div id={styles.articles}>
+          <div
+            onClick={() => {
+              setCollapse(!collapse);
+            }}
+            id={styles.collapse}
+          >
+            <b>{collapse ? ">" : "<"}</b>
+          </div>
+          <div
+            id={styles.articles}
+            style={{
+              minWidth: collapse ? "90vw" : "calc(75vw - 50px)",
+              left: collapse ? "5%" : undefined,
+            }}
+          >
             {tutorial}
-            <ul>{filteredArticles}</ul>
+            <ul style={{ width: "90%" }}>{filteredArticles}</ul>
           </div>
         </div>
         <div
-          onClick={() => setOpacity(false)}
+          onClick={() => setOpacity(0.0)}
           id={styles.backdrop}
           style={{ opacity: opacity, width: String(100 * opacity) + "%" }}
         ></div>
         <div
           id={styles.article}
-          style={{ opacity: opacity, width: String(80 * opacity) + "%" }}
+          style={{ opacity: opacity, width: String(95 * opacity) + "vw" }}
         >
+          <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div>
           <div id={styles.articlecontent}>{articleContent}</div>
         </div>
       </main>
