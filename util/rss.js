@@ -188,5 +188,8 @@ export async function fetchAndParseHtml(url, title) {
     content.push(<p>{paragraph.textContent}</p>);
     content.push(<br />);
   }
+  for (let i = 0; i < 15; i++) {
+    content.push(<br />);
+  }
   return <div>{content}</div>;
 }
