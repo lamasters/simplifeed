@@ -38,12 +38,12 @@
     position: relative;
     top: 0px;
     height: 100%;
-    padding-right: 25px;
     display: flex;
     flex-direction: column;
     justify-content: left;
     align-items: center;
     overflow-x: hidden;
+    margin-right: 25px;
 }
 
 #add {
@@ -182,13 +182,13 @@
     flex-direction: column;
     justify-content: left;
     align-items: center;
-    height: 100px;
     margin: 10px;
     padding: 10px;
     border-radius: 10px;
     background-color: #181f24;
     box-shadow: 0 0 10px #000;
     overflow: hidden;
+    min-height: 100px;
 }
 
 .item:hover {
@@ -238,7 +238,7 @@
     margin-left: 10px;
     text-align: center;
     line-height: 100%;
-    width: calc(100% - 150px);
+    width: 90%;
     font-size: 18px;
 }
 

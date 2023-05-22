@@ -137,7 +137,7 @@ async function selectSource(
         className={styles.item}
         key={count}
       >
-        <div className={styles.itemHeader}>{icon}<div className={styles.itemTitle}><b>{item.source}</b></div><div className={styles.date}>{formatDate(item.pubDate)}</div></div>
+        <div className={styles.itemHeader}>{icon}<div className={styles.itemTitle}><b>{item.source.slice(0, 10)}</b></div><div className={styles.date}>{formatDate(item.pubDate)}</div></div>
         <div className={styles.info}>
           {item.title}
         </div>

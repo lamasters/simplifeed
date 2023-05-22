@@ -52,12 +52,12 @@ export default function Home() {
         <title>SimpliFeed</title>
       </Head>
       <main>
-        <div id={styles.content}>
+        <div id={styles.content} style={{minWidth: collapse ? null : "1000px"}}>
           <div
             id={styles.sidebar}
             style={{
-              width: collapse ? "0px" : "25vw",
-              minWidth: collapse ? "0px" : "400px",
+              width: collapse ? "0px" : "calc(25vw - 50px)",
+              minWidth: collapse ? "0px" : "300px",
               opacity: collapse ? 0.0 : 1.0,
             }}
           >
@@ -98,22 +98,22 @@ export default function Home() {
           <div
             id={styles.articles}
             style={{
-              minWidth: collapse ? "90vw" : "calc(75vw - 50px)",
+              width: collapse ? "90vw" : "calc(75vw - 50px)",
               left: collapse ? "5%" : undefined,
             }}
           >
             {tutorial}
-            <ul style={{ width: "90%" }}>{filteredArticles}</ul>
+            <ul style={{width: "100%"}}>{filteredArticles}</ul>
           </div>
         </div>
         <div
           onClick={() => setOpacity(0.0)}
           id={styles.backdrop}
-          style={{ opacity: opacity, width: String(100 * opacity) + "%" }}
+          style={{ opacity: opacity, width: String(100 * opacity) + "%"}}
         ></div>
         <div
           id={styles.article}
-          style={{ opacity: opacity, width: String(95 * opacity) + "vw" }}
+          style={{ opacity: opacity, width: String(95 * opacity) + "vw"}}
         >
           <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div>
           <div id={styles.articlecontent}>{articleContent}</div>
