@@ -31,7 +31,7 @@ export async function fetchData(state) {
 
   let feedData = await downloadFeeds(feeds);
   let sources = feedData.sources;
-  let items = feedData.items.slice(0, 50);
+  let items = feedData.items.slice(0, 100);
   let feedList = sources.map((feed) => {
     return (
       <li
@@ -144,5 +144,5 @@ async function selectSource(
       </li>
     );
   }
-  setFilteredArticles(filteredArticles.slice(0, 50));
+  setFilteredArticles(filteredArticles.slice(0, 100));
 }

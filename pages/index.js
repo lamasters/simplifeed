@@ -15,7 +15,7 @@ export default function Home() {
   const [opacity, setOpacity] = useState(0.0);
   const [articleContent, setArticleContent] = useState(null);
   const [tutorial, setTutorial] = useState(
-    <div id={styles.tutorial}>Add feeds to start seeing articles!</div>
+    <div id={styles.tutorial}>Add feeds to start seeing articles!<br/>Try adding <em>https://www.linuxinsider.com/rss-feed</em></div>
   );
   const [collapse, setCollapse] = useState(false);
   const router = useRouter();
