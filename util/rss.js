@@ -79,10 +79,17 @@ function parseFeed(feed) {
     ) {
       url = feed.image.url.url;
     }
+    let description = "";
+    if (
+      typeof item.description !== "undefined" &&
+      typeof item.description.description !== "undefined"
+    ) {
+      description = item.description.description;
+    }
     feedItems.push(
       feedItem(
         item.title.title,
-        item.description.description,
+        description,
         item.link.link,
         item.pubDate.pubDate,
         feed.title.title,
