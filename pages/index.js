@@ -106,18 +106,18 @@ export default function Home() {
             <ul style={{width: "100%"}}>{filteredArticles}</ul>
           </div>
         </div>
-        <div
+        { opacity ? <div
           onClick={() => setOpacity(0.0)}
           id={styles.backdrop}
           style={{ opacity: opacity, width: String(100 * opacity) + "%"}}
-        ></div>
-        <div
+        ></div> : null }
+        { opacity ? (<div
           id={styles.article}
           style={{ opacity: opacity, width: String(95 * opacity) + "vw"}}
-        >
-          <div id={styles.articlecontent}>{articleContent}</div>
-        </div>
-      { opacity ? <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div> : null }
+          >
+            <div id={styles.articlecontent}>{articleContent}</div>
+          </div>) : null }
+        { opacity ? <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div> : null }
       </main>
     </div>
   );
