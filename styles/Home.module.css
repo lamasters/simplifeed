@@ -79,9 +79,9 @@
 }
 
 #close {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+    position: fixed;
+    bottom: calc(2.5vh + 10px);
+    right: calc(2.5vh + 10px);
     font-size: 16px;
     color: #89ccdc;
 }
