@@ -80,15 +80,23 @@
 
 #close {
     position: fixed;
-    bottom: calc(2.5vh + 10px);
-    left: calc(2.5vh + 10px);
+    bottom: 3vh;
+    left: 3vh;
     font-size: 16px;
     color: #89ccdc;
+    background-color: #181f24;
+    box-shadow: 0 0 10px #111;
+    border-radius: 50%;
 }
 
 #close:hover {
     cursor: pointer;
     color: #5b97bb;
+    background-color: #1f262b;
+}
+
+#close:active {
+    box-shadow: 0 0 10px #000 inset;
 }
 
 #articlecontent {
