@@ -115,9 +115,9 @@ export default function Home() {
           id={styles.article}
           style={{ opacity: opacity, width: String(95 * opacity) + "vw"}}
         >
-          <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div>
           <div id={styles.articlecontent}>{articleContent}</div>
         </div>
+      { opacity ? <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div> : null }
       </main>
     </div>
   );
