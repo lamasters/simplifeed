@@ -79,10 +79,10 @@
 }
 
 #close {
-    position: relative;
-    top: 20px;
-    left: 20px;
-    font-size: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 16px;
     color: #89ccdc;
 }
 
