@@ -87,6 +87,10 @@
     background-color: #181f24;
     box-shadow: 0 0 10px #111;
     border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
 }
 
 #close:hover {
