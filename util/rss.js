@@ -9,7 +9,6 @@ function feedSource(title, description, items) {
 
 function feedItem(
   title,
-  description,
   link,
   pubDate,
   source,
@@ -18,7 +17,6 @@ function feedItem(
 ) {
   return {
     title: title,
-    description: description,
     link: link,
     pubDate: pubDate,
     source: source,
@@ -29,70 +27,23 @@ function feedItem(
   };
 }
 
-function xmlToJson(xml) {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xml, "text/xml");
-  const json = {};
-
-  const parseNode = (node, parent) => {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const obj = {};
-      const attributes = node.attributes;
-
-      for (let i = 0; i < attributes.length; i++) {
-        const attribute = attributes[i];
-        obj[attribute.nodeName] = attribute.nodeValue;
-      }
-
-      const children = node.childNodes;
-
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        parseNode(child, obj);
-      }
-
-      if (parent[node.nodeName]) {
-        if (!Array.isArray(parent[node.nodeName])) {
-          parent[node.nodeName] = [parent[node.nodeName]];
-        }
-        parent[node.nodeName].push(obj);
-      } else {
-        parent[node.nodeName] = obj;
-      }
-    } else if (node.nodeType === Node.TEXT_NODE) {
-      parent[node.parentNode.nodeName] = node.nodeValue.trim();
-    }
-  };
-
-  parseNode(xmlDoc.firstChild, json);
-
-  return json;
-}
 
 function parseFeed(feed) {
   let feedItems = [];
-  for (let item of feed.item) {
+  console.log(feed);
+  for (let item of feed.articles) {
     let url = null;
     if (
-      typeof feed.image !== "undefined" &&
-      typeof feed.image.url !== "undefined"
+      typeof feed.image !== "undefined"
     ) {
-      url = feed.image.url.url;
-    }
-    let description = "";
-    if (
-      typeof item.description !== "undefined" &&
-      typeof item.description.description !== "undefined"
-    ) {
-      description = item.description.description;
+      url = feed.image;
     }
     feedItems.push(
       feedItem(
-        item.title.title,
-        description,
-        item.link.link,
-        item.pubDate.pubDate,
-        feed.title.title,
+        item.title,
+        item.link,
+        item.pubDate,
+        feed.title,
         url
       )
     );
@@ -121,11 +72,12 @@ function sortAllFeedItems(feedItems) {
 }
 
 export async function downloadFeed(url, tries = 0) {
-  const CORS_PROXY = "http://54.146.247.202:21545/";
+  const CORS_PROXY = "http://localhost:8000/?url=";
+  url = url.replace("https://", "");
   let res = await fetch(CORS_PROXY + url);
-  let text = await res.text();
-  let json = xmlToJson(text);
-  if (typeof json.rss === "undefined") {
+  let json = await res.json();
+
+  if (typeof json.articles === "undefined") {
     if (tries < 3) {
       setTimeout(() => {
         downloadFeed(url, tries + 1);
@@ -133,11 +85,11 @@ export async function downloadFeed(url, tries = 0) {
     }
     return null;
   }
-  let feedItems = parseFeed(json.rss.channel);
+  let feedItems = parseFeed(json);
 
   return feedSource(
-    json.rss.channel.title.title,
-    json.rss.channel.description.description,
+    json.title,
+    json.description,
     feedItems
   );
 }
