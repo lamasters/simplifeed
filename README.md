@@ -2,4 +2,4 @@
 
 ## An RSS reader without distractions
 
-## Live at http://simplifeed.live
+## Live at https://simplifeed.org
