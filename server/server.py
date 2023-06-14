@@ -3,27 +3,34 @@ import json
 import requests
 import uvicorn
 import xml.etree.ElementTree as et
+from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import Optional
 
 class Article(BaseModel):
     title: str
     link :str
     pubDate: str
-    imageUrl: str | None
+    imageUrl: Optional[str]
 
 class Articles(BaseModel):
     articles: list[Article]
     title: str
-    image: str | None
+    image: Optional[str]
+
+class ArticleText(BaseModel):
+    tags: list[str]
 
 app = FastAPI()
 
 origins = [
-    "*",
+#    "75.101.230.175",
+#    "simplifeed.org",
+     "*"
 ]
 
 app.add_middleware(
@@ -56,6 +63,20 @@ def parse_image(img):
         if child.tag == "url":
             return child.text
     return None
+
+def get_text_from_p_tags(html_str: str):
+    soup = BeautifulSoup(html_str, "html.parser")
+    p_tags = soup.find_all("p")
+    return [p.get_text() for p in p_tags]
+
+def parse_article(url):
+    res = requests.get(url)
+    data = html.unescape(res.text)
+    data = data.replace("&", "&amp;")
+    print(data)
+    article = ArticleText(tags=get_text_from_p_tags(data))
+
+    return article 
 
 def parse_data(url):
     res = requests.get(url)
@@ -97,7 +118,13 @@ def parse_data(url):
     article_res = Articles(articles=articles, title=title, image=image)
     return article_res 
 
-@app.get("/")
+@app.get("/proxy/")
+def proxy(url: str):
+    article = parse_article("https://" + url)
+    json_article = jsonable_encoder(article)
+    return JSONResponse(content=json_article) 
+
+@app.get("/api/")
 def home(url: str):
     articles = parse_data("https://" + url)
     print(articles)
@@ -106,4 +133,4 @@ def home(url: str):
     return JSONResponse(content=json_articles)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000, log_level="debug")
+    uvicorn.run(app, host="0.0.0.0", port=8082, log_level="debug")
