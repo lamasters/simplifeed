@@ -116,7 +116,7 @@ export async function downloadFeeds(urls) {
 }
 
 export async function fetchAndParseHtml(url, title) {
-  const CORS_PROXY = "https://www.simplifeed.org/proxy/?url=";//http://54.146.247.202:21545/";
+  const CORS_PROXY = "https://www.simplifeed.org/proxy/?url=";
   url = url.replace("https://", "");
   let response;
   try {
@@ -124,16 +124,15 @@ export async function fetchAndParseHtml(url, title) {
   } catch (err) {
     console.error(err);
     return (
-      <a href={url} target="_blank">
+      <a href={`//${url}`} target="_blank">
         Click here to view content
       </a>
     );
   }
   const tags = await response.json();
-  console.log(tags);
   let content = [
     <a
-      href={url}
+      href={`//${url}`}
       target="_blank"
       style={{ color: "blue", textDecoration: "underline" }}
     >
