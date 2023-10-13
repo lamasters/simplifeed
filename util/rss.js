@@ -56,7 +56,7 @@ function getDate(pubDate) {
   return date.getTime();
 }
 
-function sortAllFeedItems(feedItems) {
+export function sortFeedItems(feedItems) {
   feedItems.sort((a, b) => {
     let dateA = getDate(a.pubDate);
     let dateB = getDate(b.pubDate);

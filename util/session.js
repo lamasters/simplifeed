@@ -2,6 +2,7 @@ import {
   Account,
   Client,
   Databases,
+  Functions,
   ID,
   Permission,
   Query,
@@ -18,6 +19,7 @@ export class UserSession {
 
     this.account = new Account(this.client);
     this.database = new Databases(this.client);
+    this.functions = new Functions(this.client);
 
     this.uid = null;
     this.sessionInfo = null;
@@ -95,8 +97,8 @@ export class UserSession {
 
     let feed = await downloadFeed(url);
     if (feed == null) {
-        alert("Could not add feed source");
-        return;
+      alert("Could not add feed source");
+      return;
     }
 
     try {
@@ -126,6 +128,77 @@ export class UserSession {
       );
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  async getArticleSources() {
+    let urls = this.getFeeds();
+    if (urls == null) {
+      return;
+    }
+
+    try {
+      let res = await this.functions.createExecution(
+        "FUNCTION_ID",
+        JSON.stringify({ type: "source", urls: urls }),
+        false,
+        "/",
+        "GET"
+      );
+      let articleSources = JSON.parse(res.response).data;
+      let feeds = [];
+      let source_data;
+      for (let source of articleSources) {
+        if (source.status != 200) continue;
+        source_data = source.data;
+        feeds.push({
+          title: source_data.title,
+          items: source_data.articles
+        });
+      }
+      return feeds;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
+  async getArticle(url, title) {
+    try {
+      let res = await this.functions.createExecution(
+        "FUNCTION_ID",
+        JSON.stringify({ type: "content", urls: [url] }),
+        false,
+        "/",
+        "GET"
+      );
+      let articles_res = JSON.parse(res.response).data[0];
+      if (articles_res.status != 200) return <div>Error fetching article.</div>;
+      let article = articles_res.data;
+      let content = [
+        <a
+          href={`//${url}`}
+          target="_blank"
+          style={{ color: "blue", textDecoration: "underline" }}
+        >
+          View original content
+        </a>,
+        <br />,
+        <h1 style={{ textAlign: "center", margin: "10px" }}>{title}</h1>,
+        <br />,
+      ];
+      for (let tag of article.tags) {
+        content.push(<p>{tag}</p>);
+        content.push(<br />);
+      }
+      for (let i = 0; i < 15; i++) {
+        content.push(<br />);
+      }
+
+      return <div>{content}</div>;
+    } catch (err) {
+      console.error(err);
+      return null;
     }
   }
 }

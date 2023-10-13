@@ -1,4 +1,4 @@
-import { downloadFeeds, fetchAndParseHtml } from "../util/rss";
+import { sortFeedItems } from "../util/rss";
 import styles from "../styles/Home.module.css";
 
 function formatDate(date) {
@@ -6,11 +6,11 @@ function formatDate(date) {
   return d.toLocaleString();
 }
 
-async function selectArticle(article, setOpacity, setArticleContent) {
-  setArticleContent("Loading...");
-  setOpacity(1.0);
-  let articleContent = await fetchAndParseHtml(article.link, article.title);
-  setArticleContent(articleContent);
+async function selectArticle(article, state) {
+  state.setArticleContent("Loading...");
+  state.setOpacity(1.0);
+  let articleContent = await state.session.getArticle(article.link, article.title);
+  state.setArticleContent(articleContent);
 }
 
 export async function fetchData(state) {
@@ -20,18 +20,11 @@ export async function fetchData(state) {
     state.router.push("/login");
   }
 
-  let feeds = await state.session.getFeeds();
-  if (feeds == null) {
-    return;
-  }
-
-  if (feeds.length > 0) {
-    state.setTutorial(null);
-  }
-
-  let feedData = await downloadFeeds(feeds);
+  let feedData = await state.session.getArticleSources();
+  if (feedData === null) return;
+  if (feedData.length > 0) state.setTutorial(null);
   let sources = feedData.sources;
-  let items = feedData.items.slice(0, 100);
+  let items = sortFeedItems(feedData.items).slice(0, 100);
   let feedList = sources.map((feed) => {
     return (
       <li
@@ -39,10 +32,7 @@ export async function fetchData(state) {
           selectSource(
             feed.title,
             null,
-            feeds,
-            state.setOpacity,
-            state.setArticleContent,
-            state.setFilteredArticles
+            state,
           )
         }
         className={styles.source}
@@ -68,10 +58,7 @@ export async function fetchData(state) {
         selectSource(
           null,
           null,
-          feeds,
-          state.setOpacity,
-          state.setArticleContent,
-          state.setFilteredArticles
+          state,
         )
       }
       className={styles.source}
@@ -85,10 +72,7 @@ export async function fetchData(state) {
   await selectSource(
     null,
     items,
-    feeds,
-    state.setOpacity,
-    state.setArticleContent,
-    state.setFilteredArticles
+    state,
   );
 }
 
@@ -100,13 +84,10 @@ export async function addFeed(url, state) {
 async function selectSource(
   source,
   articles,
-  feeds,
-  setOpacity,
-  setArticleContent,
-  setFilteredArticles
+  state,
 ) {
   if (articles === null) {
-    let feedData = await downloadFeeds(feeds);
+    let feedData = await state.session.getArticleSources();
     articles = feedData.items;
   }
   let filteredArticles = [];
@@ -125,14 +106,14 @@ async function selectSource(
           src={item.image}
           width="24px"
           height="24px"
-          style={{ borderRadius: "100%", marginLeft: "10px", marginRight: "10px"}}
+          style={{ borderRadius: "100%", marginLeft: "10px", marginRight: "10px" }}
         />
       );
     }
     filteredArticles.push(
       <li
         onClick={() => {
-          selectArticle(item, setOpacity, setArticleContent);
+          selectArticle(item, state.setOpacity, state.setArticleContent);
         }}
         className={styles.item}
         key={count}
@@ -144,5 +125,5 @@ async function selectSource(
       </li>
     );
   }
-  setFilteredArticles(filteredArticles.slice(0, 100));
+  state.setFilteredArticles(filteredArticles.slice(0, 100));
 }
