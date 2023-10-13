@@ -31,5 +31,5 @@ yarn-error.log*
 
 .venv
 .vscode
-.mypy_cahce
+.mypy_cache
 .pytest_cache
