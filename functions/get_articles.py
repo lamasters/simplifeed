@@ -8,6 +8,7 @@ import json
 import xml.etree.ElementTree as et
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class ArticleMetadata(BaseModel):
@@ -16,7 +17,7 @@ class ArticleMetadata(BaseModel):
     title: str = Field(default="")
     link: str = Field(default="")
     pub_date: str = Field(default="")
-    image_url: str | None = Field(default=None)
+    image_url: Optional[str] = Field(default=None)
 
 
 class ArticleSource(BaseModel):
@@ -36,21 +37,21 @@ class ArticleMetadataRes(BaseModel):
     """Response model for an article entry in home feed"""
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
-    data: ArticleMetadata | None = Field(default=None)
+    data: Optional[ArticleMetadata] = Field(default=None)
 
 
 class ArticleSourceRes(BaseModel):
     """Response model for an article source containing article entries"""
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
-    data: ArticleSource | None = Field(default=None)
+    data: Optional[ArticleSource] = Field(default=None)
 
 
 class ArticleContentRes(BaseModel):
     """Response model for article content"""
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
-    data: ArticleContent | None = Field(default=None)
+    data: Optional[ArticleContent] = Field(default=None)
 
 
 class RequestType(enum.Enum):
