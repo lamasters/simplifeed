@@ -139,7 +139,7 @@ export class UserSession {
 
     try {
       let res = await this.functions.createExecution(
-        "FUNCTION_ID",
+        "6529c949e39f65da5e91",
         JSON.stringify({ type: "source", urls: urls }),
         false,
         "/",
@@ -166,7 +166,7 @@ export class UserSession {
   async getArticle(url, title) {
     try {
       let res = await this.functions.createExecution(
-        "FUNCTION_ID",
+        "6529c949e39f65da5e91",
         JSON.stringify({ type: "content", urls: [url] }),
         false,
         "/",
