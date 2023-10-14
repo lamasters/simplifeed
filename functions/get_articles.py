@@ -90,12 +90,11 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
     )
 
 
-async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
+async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
-    async with aiohttp.ClientSession() as session:
-        async with session.get(rss_url) as resp:
-            rss_res = await resp.text()
+    async with session.get(rss_url) as resp:
+        rss_res = await resp.text()
 
     if rss_res is None:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
@@ -130,12 +129,11 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     return ArticleSourceRes(data=ArticleSource(articles=articles, title=title))
 
 
-async def fetch_article_content(url: str) -> ArticleContentRes:
+async def fetch_article_content(url: str, session: aiohttp.ClientSession) -> ArticleContentRes:
     """Download article content and parse into ArticleContent"""
     html_res = None
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            html_res = await resp.text()
+    async with session.get(url) as resp:
+        html_res = await resp.text()
     if html_res is None:
         return ArticleContentRes(status=http.HTTPStatus.BAD_REQUEST)
     soup = BeautifulSoup(html_res, "html.parser")
@@ -155,12 +153,13 @@ async def main(context):
 
     res_data = None
     tasks = []
-    if req_data.type == RequestType.source:
-        context.log("Fetching article sources...")
-        tasks = [fetch_article_source(url) for url in req_data.urls]
-    elif req_data.type == RequestType.article:
-        context.log("Fetching arrticle content...")
-        tasks = [fetch_article_content(url) for url in req_data.urls]
+    with aiohttp.ClientSession() as session:
+        if req_data.type == RequestType.source:
+            context.log("Fetching article sources...")
+            #tasks = [fetch_article_source(url) for url in req_data.urls]
+        elif req_data.type == RequestType.article:
+            context.log("Fetching arrticle content...")
+            #tasks = [fetch_article_content(url) for url in req_data.urls]
 
     '''res_data = await asyncio.gather(*tasks)
     context.log(f"Finished fetching data: {res_data}")
