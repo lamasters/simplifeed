@@ -127,9 +127,7 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
             ):
                 articles.append(article_meta.data)
 
-    return ArticleSourceRes(
-        data=ArticleSource(articles=articles, title=title)
-    )
+    return ArticleSourceRes(data=ArticleSource(articles=articles, title=title))
 
 
 async def fetch_article_content(url: str) -> ArticleContentRes:
@@ -171,5 +169,6 @@ async def main(context):
         context.log("No data fetched")
         return json.dumps({"status": http.HTTPStatus.BAD_REQUEST, "data": None})
 
-    context.log("Returning data")
-    return json.dumps({"status": http.HTTPStatus.OK, "data": jsonable_encoder(res_data)})
+    json_data = [jsonable_encoder(res) for res in res_data]
+    context.log(f"Returning data {json_data}")
+    return json.dumps({"status": http.HTTPStatus.OK, "data": json_data})
