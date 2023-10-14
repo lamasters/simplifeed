@@ -92,7 +92,7 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
     )
 
 
-async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
+def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
     res = requests.get(rss_url)
@@ -131,7 +131,7 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     return ArticleSourceRes(data=ArticleSource(articles=articles, title=title))
 
 
-async def fetch_article_content(url: str) -> ArticleContentRes:
+def fetch_article_content(url: str) -> ArticleContentRes:
     """Download article content and parse into ArticleContent"""
     html_res = None
     res = requests.get(url)
@@ -158,12 +158,12 @@ async def main(context):
     try:
         if req_data.type == RequestType.source:
             context.log("Fetching article sources...")
-            tasks = [fetch_article_source(url) for url in req_data.urls]
+            res_data = [fetch_article_source(url) for url in req_data.urls]
         elif req_data.type == RequestType.article:
             context.log("Fetching arrticle content...")
-            tasks = [fetch_article_content(url) for url in req_data.urls]
+            res_data = [fetch_article_content(url) for url in req_data.urls]
 
-        res_data = await asyncio.gather(*tasks)
+        #res_data = await asyncio.gather(*tasks)
     except Exception as e:
         context.log(f"Exception occurred: {e}")
         return context.res.json({"exception": e})
