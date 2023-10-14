@@ -153,13 +153,13 @@ async def main(context):
 
     res_data = None
     tasks = []
-    with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession() as session:
         if req_data.type == RequestType.source:
             context.log("Fetching article sources...")
-            #tasks = [fetch_article_source(url) for url in req_data.urls]
+            #tasks = [fetch_article_source(url, session) for url in req_data.urls]
         elif req_data.type == RequestType.article:
             context.log("Fetching arrticle content...")
-            #tasks = [fetch_article_content(url) for url in req_data.urls]
+            #tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
     '''res_data = await asyncio.gather(*tasks)
     context.log(f"Finished fetching data: {res_data}")
