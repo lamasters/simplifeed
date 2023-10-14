@@ -2,7 +2,6 @@
 import aiohttp
 import asyncio
 import enum
-from fastapi.encoders import jsonable_encoder
 import html
 import http
 import json
@@ -169,6 +168,6 @@ async def main(context):
         context.log("No data fetched")
         return json.dumps({"status": http.HTTPStatus.BAD_REQUEST, "data": None})
 
-    json_data = [jsonable_encoder(res) for res in res_data]
+    json_data = [res.model_dump_json() for res in res_data]
     context.log(f"Returning data {json_data}")
     return json.dumps({"status": http.HTTPStatus.OK, "data": json_data})
