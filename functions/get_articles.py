@@ -1,16 +1,18 @@
 """Serverless Function to fetch articles from RSS feed"""
-import aiohttp
 import asyncio
 import enum
 from fastapi.encoders import jsonable_encoder
 import html
 import http
 import json
+import requests
 import xml.etree.ElementTree as et
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
 from pydantic import BaseModel, Field
 from typing import Optional
 
+THREADS = ThreadPoolExecutor(max_workers=10)
 
 class ArticleMetadata(BaseModel):
     """Model for an article entry in home feed"""
@@ -90,13 +92,11 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
     )
 
 
-async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession, context) -> ArticleSourceRes:
+async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
-    async with session.get(rss_url) as resp:
-        rss_res = await resp.read()
-        context.log(f"Got response {rss_res}")
-        return ArticleSourceRes(status=http.HTTPStatus.OK, data=ArticleSource(articles=[]))
+    res = await asyncio.get_event_loop().run_in_executor(THREADS, requests.get, rss_url)
+    rss_res = res.text
 
     if rss_res is None:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
@@ -131,11 +131,11 @@ async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession, con
     return ArticleSourceRes(data=ArticleSource(articles=articles, title=title))
 
 
-async def fetch_article_content(url: str, session: aiohttp.ClientSession) -> ArticleContentRes:
+async def fetch_article_content(url: str) -> ArticleContentRes:
     """Download article content and parse into ArticleContent"""
     html_res = None
-    async with session.get(url) as resp:
-        html_res = await resp.text()
+    res = await asyncio.get_event_loop().run_in_executor(THREADS, requests.get, url)
+    html_res = res.text
     if html_res is None:
         return ArticleContentRes(status=http.HTTPStatus.BAD_REQUEST)
     soup = BeautifulSoup(html_res, "html.parser")
@@ -156,15 +156,14 @@ async def main(context):
     res_data = None
     tasks = []
     try:
-        async with aiohttp.ClientSession() as session:
-            if req_data.type == RequestType.source:
-                context.log("Fetching article sources...")
-                tasks = [fetch_article_source(url, session, context) for url in req_data.urls]
-            elif req_data.type == RequestType.article:
-                context.log("Fetching arrticle content...")
-                tasks = [fetch_article_content(url, session) for url in req_data.urls]
+        if req_data.type == RequestType.source:
+            context.log("Fetching article sources...")
+            tasks = [fetch_article_source(url) for url in req_data.urls]
+        elif req_data.type == RequestType.article:
+            context.log("Fetching arrticle content...")
+            tasks = [fetch_article_content(url) for url in req_data.urls]
 
-            res_data = await asyncio.gather(*tasks)
+        res_data = await asyncio.gather(*tasks)
     except Exception as e:
         context.log(f"Exception occurred: {e}")
         return context.res.json({"exception": e})
