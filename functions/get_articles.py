@@ -90,11 +90,13 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
     )
 
 
-async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession) -> ArticleSourceRes:
+async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession, context) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
     async with session.get(rss_url) as resp:
         rss_res = await resp.text()
+        context.log(f"Got response {rss_res}")
+        return ArticleSourceRes(status=http.HTTPStatus.OK, data=ArticleSource(articles=[]))
 
     if rss_res is None:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
@@ -145,33 +147,33 @@ async def fetch_article_content(url: str, session: aiohttp.ClientSession) -> Art
 
 async def main(context):
     """Main function for the Cloud Function"""
-    try:
-        context.log("Starting parsing request")
-        req_body = json.loads(context.req.body)
-        context.log(f"Got request body {req_body}")
-        req_data = ServerRequest(**req_body)
-        context.log(f"Got request {req_data}")
+    context.log("Starting parsing request")
+    req_body = json.loads(context.req.body)
+    context.log(f"Got request body {req_body}")
+    req_data = ServerRequest(**req_body)
+    context.log(f"Got request {req_data}")
 
-        res_data = None
-        tasks = []
+    res_data = None
+    tasks = []
+    try:
         async with aiohttp.ClientSession() as session:
             if req_data.type == RequestType.source:
                 context.log("Fetching article sources...")
-                tasks = [fetch_article_source(url, session) for url in req_data.urls]
+                tasks = [fetch_article_source(url, session, context) for url in req_data.urls]
             elif req_data.type == RequestType.article:
                 context.log("Fetching arrticle content...")
                 tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
             res_data = await asyncio.gather(*tasks)
-        context.log(f"Finished fetching data: {res_data}")
-
-        if not res_data:
-            context.log("No data fetched")
-            return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
-
-        json_data = [jsonable_encoder(res) for res in res_data]
-        context.log(f"Returning data {json_data}")
-        return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
     except Exception as e:
         context.log(f"Exception occurred: {e}")
         return context.res.json({"exception": e})
+    context.log(f"Finished fetching data: {res_data}")
+
+    if not res_data:
+        context.log("No data fetched")
+        return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
+    
+    json_data = [jsonable_encoder(res) for res in res_data]
+    context.log(f"Returning data {json_data}")
+    return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
