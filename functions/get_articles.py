@@ -94,7 +94,7 @@ async def fetch_article_source(rss_url: str, session: aiohttp.ClientSession, con
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
     async with session.get(rss_url) as resp:
-        rss_res = await resp.text()
+        #rss_res = await resp.text()
         context.log(f"Got response {rss_res}")
         return ArticleSourceRes(status=http.HTTPStatus.OK, data=ArticleSource(articles=[]))
 
