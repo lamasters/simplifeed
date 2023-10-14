@@ -2,6 +2,7 @@
 import aiohttp
 import asyncio
 import enum
+from fastapi.encoders import jsonable_encoder
 import html
 import http
 import json
@@ -171,3 +172,34 @@ async def main(context):
     json_data = [res.model_dump_json() for res in res_data]
     context.log(f"Returning data {json_data}")
     return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
+
+def main_wrapper():
+    """Main function for the Cloud Function"""
+    req_body = {"type": "source", "urls": [
+        "https://rss.cbc.ca/lineup/topstories.xml",
+        "https://techcrunch.com/feed/",
+        "https://www.wired.com/feed/rss",
+        "https://9to5mac.com/feed/",
+        "https://feeds.macrumors.com/MacRumors-All",
+        "https://www.linuxinsider.com/rss-feed"
+    ]}
+    req_data = ServerRequest(**req_body)
+
+    res_data = None
+    tasks = []
+    if req_data.type == RequestType.source:
+        tasks = [fetch_article_source(url) for url in req_data.urls]
+    elif req_data.type == RequestType.article:
+        tasks = [fetch_article_content(url) for url in req_data.urls]
+
+    loop = asyncio.get_event_loop()
+    res_data = loop.run_until_complete(asyncio.gather(*tasks))
+
+    if not res_data:
+        print(json.dumps({"status": http.HTTPStatus.BAD_REQUEST, "data": None}))
+
+    json_data = [jsonable_encoder(res) for res in res_data]
+    print(json.dumps({"status": http.HTTPStatus.OK, "data": json_data}))
+
+if __name__ == "__main__":
+    main_wrapper()
