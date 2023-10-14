@@ -169,5 +169,4 @@ async def main(context):
         return json.dumps({"status": http.HTTPStatus.BAD_REQUEST, "data": None})
 
     json_data = [res.model_dump_json() for res in res_data]
-    context.log(f"Returning data {json_data}")
     return json.dumps({"status": http.HTTPStatus.OK, "data": json_data})
