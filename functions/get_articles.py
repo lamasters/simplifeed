@@ -161,7 +161,7 @@ async def main(context):
             context.log("Fetching arrticle content...")
             tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
-    res_data = await asyncio.gather(*tasks)
+        res_data = await asyncio.gather(*tasks)
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
