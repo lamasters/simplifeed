@@ -153,15 +153,19 @@ async def main(context):
 
     res_data = None
     tasks = []
-    async with aiohttp.ClientSession() as session:
-        if req_data.type == RequestType.source:
-            context.log("Fetching article sources...")
-            tasks = [fetch_article_source(url, session) for url in req_data.urls]
-        elif req_data.type == RequestType.article:
-            context.log("Fetching arrticle content...")
-            tasks = [fetch_article_content(url, session) for url in req_data.urls]
+    try:
+        async with aiohttp.ClientSession() as session:
+            if req_data.type == RequestType.source:
+                context.log("Fetching article sources...")
+                tasks = [fetch_article_source(url, session) for url in req_data.urls]
+            elif req_data.type == RequestType.article:
+                context.log("Fetching arrticle content...")
+                tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
-        res_data = await asyncio.gather(*tasks)
+            res_data = await asyncio.gather(*tasks)
+    except Exception as e:
+        context.log(f"Exception occurred: {e}")
+        return context.res.json({"exception": e})
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
