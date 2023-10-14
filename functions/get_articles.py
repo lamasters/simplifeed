@@ -163,7 +163,8 @@ def main(context):
         context.log("Fetching arrticle content...")
         tasks = [fetch_article_content(url) for url in req_data.urls]
 
-    res_data = asyncio.run(asyncio.gather(*tasks))
+    loop = asyncio.get_event_loop()
+    res_data = loop.run_until_complete(asyncio.gather(*tasks))
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
