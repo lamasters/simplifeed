@@ -171,4 +171,5 @@ async def main(context):
 
     json_data = [jsonable_encoder(res) for res in res_data]
     context.log(f"Returning data {json_data}")'''
-    return context.res.json({"status": http.HTTPStatus.OK, "data": "test"})
+    data=[jsonable_encoder(ArticleContentRes(data=ArticleContent(tags=["test"])))]
+    return context.res.json({"status": http.HTTPStatus.OK, "data": data})
