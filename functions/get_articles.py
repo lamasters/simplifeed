@@ -145,15 +145,15 @@ async def fetch_article_content(url: str, session: aiohttp.ClientSession) -> Art
 
 async def main(context):
     """Main function for the Cloud Function"""
-    context.log("Starting parsing request")
-    req_body = json.loads(context.req.body)
-    context.log(f"Got request body {req_body}")
-    req_data = ServerRequest(**req_body)
-    context.log(f"Got request {req_data}")
-
-    res_data = None
-    tasks = []
     try:
+        context.log("Starting parsing request")
+        req_body = json.loads(context.req.body)
+        context.log(f"Got request body {req_body}")
+        req_data = ServerRequest(**req_body)
+        context.log(f"Got request {req_data}")
+
+        res_data = None
+        tasks = []
         async with aiohttp.ClientSession() as session:
             if req_data.type == RequestType.source:
                 context.log("Fetching article sources...")
@@ -163,56 +163,15 @@ async def main(context):
                 tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
             res_data = await asyncio.gather(*tasks)
+        context.log(f"Finished fetching data: {res_data}")
+
+        if not res_data:
+            context.log("No data fetched")
+            return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
+
+        json_data = [jsonable_encoder(res) for res in res_data]
+        context.log(f"Returning data {json_data}")
+        return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
     except Exception as e:
         context.log(f"Exception occurred: {e}")
         return context.res.json({"exception": e})
-    context.log(f"Finished fetching data: {res_data}")
-
-    if not res_data:
-        context.log("No data fetched")
-        return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
-    
-    # res_data = [
-    #     ArticleSourceRes(
-    #         data=ArticleSource(
-    #             articles=[
-    #                 ArticleMetadata(
-    #                     title="test_1",
-    #                     link="test_1",
-    #                     pub_date="test_1",
-    #                     image_url="test_1",
-    #                 )
-    #             ],
-    #             title="test_1",
-    #         )
-    #     ),
-    #     ArticleSourceRes(
-    #         data=ArticleSource(
-    #             articles=[
-    #                 ArticleMetadata(
-    #                     title="test_2",
-    #                     link="test_2",
-    #                     pub_date="test_2",
-    #                     image_url="test_2",
-    #                 )
-    #             ],
-    #             title="test_2",
-    #         )
-    #     ),
-    #     ArticleSourceRes(
-    #         data=ArticleSource(
-    #             articles=[
-    #                 ArticleMetadata(
-    #                     title="test_3",
-    #                     link="test_3",
-    #                     pub_date="test_3",
-    #                     image_url="test_3",
-    #                 )
-    #             ],
-    #             title="test_3",
-    #         )
-    #     ),
-    # ]
-    json_data = [jsonable_encoder(res) for res in res_data]
-    context.log(f"Returning data {json_data}")
-    return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
