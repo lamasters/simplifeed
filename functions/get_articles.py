@@ -95,7 +95,7 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
 async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
-    res = await asyncio.get_event_loop().run_in_executor(THREADS, requests.get, rss_url)
+    res = requests.get(rss_url)
     rss_res = res.text
 
     if rss_res is None:
@@ -134,7 +134,7 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
 async def fetch_article_content(url: str) -> ArticleContentRes:
     """Download article content and parse into ArticleContent"""
     html_res = None
-    res = await asyncio.get_event_loop().run_in_executor(THREADS, requests.get, url)
+    res = requests.get(url)
     html_res = res.text
     if html_res is None:
         return ArticleContentRes(status=http.HTTPStatus.BAD_REQUEST)
