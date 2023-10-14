@@ -167,8 +167,48 @@ async def main(context):
     if not res_data:
         context.log("No data fetched")
         return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "test"})
-
+    '''
+    res_data = [
+        ArticleSourceRes(
+            data=ArticleSource(
+                articles=[
+                    ArticleMetadata(
+                        title="test_1",
+                        link="test_1",
+                        pub_date="test_1",
+                        image_url="test_1",
+                    )
+                ],
+                title="test_1",
+            )
+        ),
+        ArticleSourceRes(
+            data=ArticleSource(
+                articles=[
+                    ArticleMetadata(
+                        title="test_2",
+                        link="test_2",
+                        pub_date="test_2",
+                        image_url="test_2",
+                    )
+                ],
+                title="test_2",
+            )
+        ),
+        ArticleSourceRes(
+            data=ArticleSource(
+                articles=[
+                    ArticleMetadata(
+                        title="test_3",
+                        link="test_3",
+                        pub_date="test_3",
+                        image_url="test_3",
+                    )
+                ],
+                title="test_3",
+            )
+        ),
+    ]
     json_data = [jsonable_encoder(res) for res in res_data]
-    context.log(f"Returning data {json_data}")'''
-    data=[jsonable_encoder(ArticleSourceRes(data=ArticleSource(articles=[ArticleMetadata(title="test", link="test", pub_date="test", image_url="test")], title="test")))]
-    return context.res.json({"status": http.HTTPStatus.OK, "data": data})
+    context.log(f"Returning data {json_data}")
+    return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
