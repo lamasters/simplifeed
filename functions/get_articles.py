@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 
-class ArticleMetadata(BaseModel):
+'''class ArticleMetadata(BaseModel):
     """Model for an article entry in home feed"""
 
     title: str = Field(default="")
@@ -144,11 +144,11 @@ async def fetch_article_content(url: str) -> ArticleContentRes:
         return ArticleContentRes(status=http.HTTPStatus.BAD_REQUEST)
     return ArticleContentRes(data=ArticleContent(tags=[tag.text for tag in tags]))
 
-
+'''
 async def main(context):
     """Main function for the Cloud Function"""
     context.log("Starting parsing request")
-    req_body = json.loads(context.req.body)
+    '''req_body = json.loads(context.req.body)
     context.log(f"Got request body {req_body}")
     req_data = ServerRequest(**req_body)
     context.log(f"Got request {req_data}")
@@ -170,5 +170,5 @@ async def main(context):
         return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "test"})
 
     json_data = [jsonable_encoder(res) for res in res_data]
-    context.log(f"Returning data {json_data}")
+    context.log(f"Returning data {json_data}")'''
     return context.res.json({"status": http.HTTPStatus.OK, "data": "test"})
