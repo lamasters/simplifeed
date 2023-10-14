@@ -150,6 +150,7 @@ def main(context):
     """Main function for the Cloud Function"""
     context.log("Starting parsing request")
     req_body = json.loads(context.req.body)
+    context.log(f"Got request body {req_body}")
     req_data = ServerRequest(**req_body)
     context.log(f"Got request {req_data}")
 
