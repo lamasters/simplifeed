@@ -146,7 +146,7 @@ async def fetch_article_content(url: str) -> ArticleContentRes:
     return ArticleContentRes(data=ArticleContent(tags=[tag.text for tag in tags]))
 
 
-def main(context):
+async def main(context):
     """Main function for the Cloud Function"""
     context.log("Starting parsing request")
     req_body = json.loads(context.req.body)
@@ -163,8 +163,7 @@ def main(context):
         context.log("Fetching arrticle content...")
         tasks = [fetch_article_content(url) for url in req_data.urls]
 
-    loop = asyncio.get_event_loop()
-    res_data = loop.run_until_complete(asyncio.gather(*tasks))
+    res_data = await asyncio.gather(*tasks)
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
