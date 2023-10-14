@@ -166,7 +166,9 @@ async def main(context):
 
     if not res_data:
         context.log("No data fetched")
-        return json.dumps({"status": http.HTTPStatus.BAD_REQUEST, "data": None})
+        context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": None})
+        return
 
     json_data = [res.model_dump_json() for res in res_data]
-    return json.dumps({"status": http.HTTPStatus.OK, "data": json_data})
+    context.log(f"Returning data {json_data}")
+    context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
