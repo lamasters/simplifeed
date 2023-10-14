@@ -95,8 +95,11 @@ def parse_article_meta(item: et.Element, image_url: str) -> ArticleMetadataRes:
 def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     rss_res = None
-    res = requests.get(rss_url)
-    rss_res = res.text
+    try:
+        res = requests.get(rss_url)
+        rss_res = res.text
+    except:
+        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
 
     if rss_res is None:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
@@ -154,25 +157,19 @@ async def main(context):
     context.log(f"Got request {req_data}")
 
     res_data = None
-    tasks = []
-    try:
-        if req_data.type == RequestType.source:
-            context.log("Fetching article sources...")
-            res_data = [fetch_article_source(url) for url in req_data.urls]
-        elif req_data.type == RequestType.article:
-            context.log("Fetching arrticle content...")
-            res_data = [fetch_article_content(url) for url in req_data.urls]
-
-        #res_data = await asyncio.gather(*tasks)
-    except Exception as e:
-        context.log(f"Exception occurred: {e}")
-        return context.res.json({"exception": e})
+    if req_data.type == RequestType.source:
+        context.log("Fetching article sources...")
+        res_data = [fetch_article_source(url) for url in req_data.urls]
+    elif req_data.type == RequestType.article:
+        context.log("Fetching arrticle content...")
+        res_data = [fetch_article_content(url) for url in req_data.urls]
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
         context.log("No data fetched")
         return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
     
+    res_data = filter(lambda res: res.status == http.HTTPStatus.OK, res_data)
     json_data = [jsonable_encoder(res) for res in res_data]
     context.log(f"Returning data {json_data}")
     return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
