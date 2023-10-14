@@ -156,59 +156,59 @@ async def main(context):
     async with aiohttp.ClientSession() as session:
         if req_data.type == RequestType.source:
             context.log("Fetching article sources...")
-            #tasks = [fetch_article_source(url, session) for url in req_data.urls]
+            tasks = [fetch_article_source(url, session) for url in req_data.urls]
         elif req_data.type == RequestType.article:
             context.log("Fetching arrticle content...")
-            #tasks = [fetch_article_content(url, session) for url in req_data.urls]
+            tasks = [fetch_article_content(url, session) for url in req_data.urls]
 
-    '''res_data = await asyncio.gather(*tasks)
+    res_data = await asyncio.gather(*tasks)
     context.log(f"Finished fetching data: {res_data}")
 
     if not res_data:
         context.log("No data fetched")
-        return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "test"})
-    '''
-    res_data = [
-        ArticleSourceRes(
-            data=ArticleSource(
-                articles=[
-                    ArticleMetadata(
-                        title="test_1",
-                        link="test_1",
-                        pub_date="test_1",
-                        image_url="test_1",
-                    )
-                ],
-                title="test_1",
-            )
-        ),
-        ArticleSourceRes(
-            data=ArticleSource(
-                articles=[
-                    ArticleMetadata(
-                        title="test_2",
-                        link="test_2",
-                        pub_date="test_2",
-                        image_url="test_2",
-                    )
-                ],
-                title="test_2",
-            )
-        ),
-        ArticleSourceRes(
-            data=ArticleSource(
-                articles=[
-                    ArticleMetadata(
-                        title="test_3",
-                        link="test_3",
-                        pub_date="test_3",
-                        image_url="test_3",
-                    )
-                ],
-                title="test_3",
-            )
-        ),
-    ]
+        return context.res.json({"status": http.HTTPStatus.BAD_REQUEST, "data": "Failed"})
+    
+    # res_data = [
+    #     ArticleSourceRes(
+    #         data=ArticleSource(
+    #             articles=[
+    #                 ArticleMetadata(
+    #                     title="test_1",
+    #                     link="test_1",
+    #                     pub_date="test_1",
+    #                     image_url="test_1",
+    #                 )
+    #             ],
+    #             title="test_1",
+    #         )
+    #     ),
+    #     ArticleSourceRes(
+    #         data=ArticleSource(
+    #             articles=[
+    #                 ArticleMetadata(
+    #                     title="test_2",
+    #                     link="test_2",
+    #                     pub_date="test_2",
+    #                     image_url="test_2",
+    #                 )
+    #             ],
+    #             title="test_2",
+    #         )
+    #     ),
+    #     ArticleSourceRes(
+    #         data=ArticleSource(
+    #             articles=[
+    #                 ArticleMetadata(
+    #                     title="test_3",
+    #                     link="test_3",
+    #                     pub_date="test_3",
+    #                     image_url="test_3",
+    #                 )
+    #             ],
+    #             title="test_3",
+    #         )
+    #     ),
+    # ]
     json_data = [jsonable_encoder(res) for res in res_data]
     context.log(f"Returning data {json_data}")
     return context.res.json({"status": http.HTTPStatus.OK, "data": json_data})
