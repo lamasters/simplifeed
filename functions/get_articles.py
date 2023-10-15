@@ -28,6 +28,7 @@ class ArticleSource(BaseModel):
 
     articles: list[ArticleMetadata] = Field(default_factory=list)
     title: str = Field(default="")
+    url: str = Field(default="")
 
 
 class ArticleContent(BaseModel):
@@ -128,7 +129,7 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
             ):
                 articles.append(article_meta.data)
 
-    return ArticleSourceRes(data=ArticleSource(articles=articles, title=title))
+    return ArticleSourceRes(data=ArticleSource(articles=articles, title=title, url=rss_url))
 
 
 async def fetch_article_content(url: str) -> ArticleContentRes:
