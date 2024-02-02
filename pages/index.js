@@ -4,7 +4,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { UserSession } from "../util/session";
-import { addFeed, fetchData } from "../util/feed";
+import { fetchData } from "../util/feed";
+import Sidebar from "../components/sidebar";
 
 export default function Home() {
   let session = new UserSession();
@@ -15,7 +16,11 @@ export default function Home() {
   const [opacity, setOpacity] = useState(0.0);
   const [articleContent, setArticleContent] = useState(null);
   const [tutorial, setTutorial] = useState(
-    <div id={styles.tutorial}>Add feeds to start seeing articles!<br/>Try adding <em>https://www.linuxinsider.com/rss-feed</em></div>
+    <div id={styles.tutorial}>
+      Add feeds to start seeing articles!
+      <br />
+      Try adding <em>https://www.linuxinsider.com/rss-feed</em>
+    </div>
   );
   const [collapse, setCollapse] = useState(false);
   const router = useRouter();
@@ -52,72 +57,50 @@ export default function Home() {
         <title>SimpliFeed</title>
       </Head>
       <main>
-        <div id={styles.content} style={{minWidth: collapse ? null : "1000px"}}>
-          <div
-            id={styles.sidebar}
-            style={{
-              width: collapse ? "0px" : "calc(25vw - 50px)",
-              minWidth: collapse ? "0px" : "300px",
-              opacity: collapse ? 0.0 : 1.0,
-            }}
-          >
-            <div id={styles.navbar}>
-              <img
-                className={styles.nav}
-                src="/simplifeed.png"
-                width="64px"
-                height="64px"
-              />
-              <h1 className={styles.nav}>SimpliFeed</h1>
-            </div>
-            <h2>Feeds</h2>
-            <ul id={styles.feedlist}>{feedList}</ul>
-            <div id={styles.add}>
-              <input onChange={updateURL} type="text"></input>
-              <button
-                onClick={() => {
-                  addFeed(url, state);
-                }}
-                type="submit"
-              >
-                Add Feed
-              </button>
-            </div>
-            <button id={styles.logout} onClick={() => session.logout(router)}>
-              Logout
-            </button>
-          </div>
-          <div
-            onClick={() => {
-              setCollapse(!collapse);
-            }}
-            id={styles.collapse}
-          >
-            <b>{collapse ? ">" : "<"}</b>
-          </div>
-          <div
-            id={styles.articles}
-            style={{
-              width: collapse ? "90vw" : "calc(75vw - 50px)",
-              left: collapse ? "5%" : undefined,
-            }}
-          >
-            {tutorial}
-            <ul style={{width: "100%"}}>{filteredArticles}</ul>
-          </div>
+        <Sidebar
+          state={state}
+          feedList={feedList}
+          updateURL={updateURL}
+          collapse={collapse}
+        />
+        <div
+          onClick={() => {
+            setCollapse(!collapse);
+          }}
+          id={styles.collapse}
+        >
+          <b>{collapse ? ">" : "<"}</b>
         </div>
-        { opacity ? <div
-          onClick={() => setOpacity(0.0)}
-          id={styles.backdrop}
-          style={{ opacity: opacity, width: String(100 * opacity) + "%"}}
-        ></div> : null }
-        { opacity ? (<div
-          id={styles.article}
-          style={{ opacity: opacity, width: String(95 * opacity) + "vw"}}
+        <div
+          id={styles.articles}
+          style={{
+            width: collapse ? "90vw" : "calc(75vw - 50px)",
+            left: collapse ? "5%" : undefined,
+          }}
+        >
+          {tutorial}
+          <ul style={{ width: "100%" }}>{filteredArticles}</ul>
+        </div>
+        {opacity ? (
+          <div
+            onClick={() => setOpacity(0.0)}
+            id={styles.backdrop}
+            style={{ opacity: opacity, width: String(100 * opacity) + "%" }}
+          ></div>
+        ) : null}
+        {opacity ? (
+          <div
+            id={styles.article}
+            style={{ opacity: opacity, width: String(95 * opacity) + "vw" }}
           >
             <div id={styles.articlecontent}>{articleContent}</div>
-          </div>) : null }
-        { opacity ? <div onClick={() => setOpacity(0.0)} id={styles.close}>Close</div> : null }
+          </div>
+        ) : null}
+        {opacity ? (
+          <div onClick={() => setOpacity(0.0)} id={styles.close}>
+            Close
+          </div>
+        ) : null}
       </main>
     </div>
   );
