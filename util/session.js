@@ -8,14 +8,15 @@ import {
   Query,
   Role,
 } from "appwrite";
+import { APPWRITE_CONFIG } from "./constants";
 
 import { downloadFeed } from "./rss.js";
 
 export class UserSession {
   constructor() {
     this.client = new Client()
-      .setEndpoint("https://cloud.appwrite.io/v1")
-      .setProject("6466ae2840a206b68738");
+      .setEndpoint(APPWRITE_CONFIG.ENDPOINT)
+      .setProject(APPWRITE_CONFIG.PROJECT);
 
     this.account = new Account(this.client);
     this.database = new Databases(this.client);
@@ -78,8 +79,8 @@ export class UserSession {
   async getFeeds() {
     try {
       let feeds = await this.database.listDocuments(
-        "6466af38420c3ca601c1",
-        "6466af49bd8be929475e",
+        APPWRITE_CONFIG.NEWS_DB,
+        APPWRITE_CONFIG.FEEDS,
         [Query.equal("user_id", this.uid)]
       );
 
@@ -103,8 +104,8 @@ export class UserSession {
 
     try {
       await this.database.createDocument(
-        "6466af38420c3ca601c1",
-        "6466af49bd8be929475e",
+        APPWRITE_CONFIG.NEWS_DB,
+        APPWRITE_CONFIG.FEEDS,
         ID.unique(),
         { url: url, user_id: this.uid },
         [
@@ -122,8 +123,8 @@ export class UserSession {
   async deleteFeed(id) {
     try {
       await this.database.deleteDocument(
-        "6466af38420c3ca601c1",
-        "6466af49bd8be929475e",
+        APPWRITE_CONFIG.NEWS_DB,
+        APPWRITE_CONFIG.FEEDS,
         id
       );
     } catch (err) {
@@ -139,7 +140,7 @@ export class UserSession {
 
     try {
       let res = await this.functions.createExecution(
-        "652ae2169262a1dfc5f8",
+        APPWRITE_CONFIG.FETCH_ARTICLES,
         JSON.stringify({ type: "source", urls: urls }),
         false,
         "/",
@@ -153,7 +154,7 @@ export class UserSession {
         source_data = source.data;
         feeds.push({
           title: source_data.title,
-          items: source_data.articles
+          items: source_data.articles,
         });
       }
       return feeds;
@@ -166,7 +167,7 @@ export class UserSession {
   async getArticle(url, title) {
     try {
       let res = await this.functions.createExecution(
-        "652ae2169262a1dfc5f8",
+        APPWRITE_CONFIG.FETCH_ARTICLES,
         JSON.stringify({ type: "content", urls: [url] }),
         false,
         "/",
