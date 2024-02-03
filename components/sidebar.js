@@ -1,49 +1,84 @@
-import { addFeed } from "../util/feed";
-import styles from "../styles/Home.module.css";
+import { useState } from 'react';
+import { addFeed } from '../util/feed_api';
+import styles from '../styles/sidebar.module.css';
 
+function deleteFeed(feedData, setFeedData, source) {
+    const filtered = feedData.filter((feed) => feed.title !== source);
+    setFeedData(filtered);
+}
 export default function Sidebar(props) {
-  return (
-    <div
-      id={styles.content}
-      style={{ minWidth: props.collapse ? null : "1000px" }}
-    >
-      <div
-        id={styles.sidebar}
-        style={{
-          width: props.collapse ? "0px" : "calc(25vw - 50px)",
-          minWidth: props.collapse ? "0px" : "300px",
-          opacity: props.collapse ? 0.0 : 1.0,
-        }}
-      >
-        <div id={styles.navbar}>
-          <img
-            className={styles.nav}
-            src="/simplifeed.png"
-            width="64px"
-            height="64px"
-          />
-          <h1 className={styles.nav}>SimpliFeed</h1>
+    const [url, setURL] = useState('');
+    return (
+        <div id={styles.sidebar}>
+            <div id={styles.navbar}>
+                <img
+                    className={styles.nav}
+                    src="/simplifeed.png"
+                    width="64px"
+                    height="64px"
+                />
+                <h1 className={styles.nav}>SimpliFeed</h1>
+            </div>
+            <h2>Feeds</h2>
+            <ul id={styles.feedlist}>
+                <li
+                    onClick={() => props.state.setFilter(null)}
+                    className={styles.source}
+                    style={{ width: '100%' }}
+                    key={0}
+                >
+                    All Feeds
+                </li>
+                {props.feedData.map((source) => (
+                    <div className={styles.source_row}>
+                        <img
+                            id={styles.trash}
+                            src="/trash.png"
+                            width="28px"
+                            height="28px"
+                            onClick={async () => {
+                                await props.state.session.deleteFeed(source.id);
+                                deleteFeed(
+                                    props.feedData,
+                                    props.state.setFeedData,
+                                    source.title
+                                );
+                            }}
+                        />
+                        <li
+                            onClick={() => props.state.setFilter(source.title)}
+                            className={styles.source}
+                            key={source.title}
+                        >
+                            {source.title}
+                        </li>
+                    </div>
+                ))}
+            </ul>
+            <div id={styles.add}>
+                <input
+                    onChange={(e) => {
+                        setURL(e.target.value);
+                    }}
+                    type="text"
+                    value={url}
+                ></input>
+                <button
+                    onClick={() => {
+                        addFeed(url, props.state);
+                        setURL('');
+                    }}
+                    type="submit"
+                >
+                    Add Feed
+                </button>
+            </div>
+            <button
+                id={styles.logout}
+                onClick={() => props.state.session.logout(props.state.router)}
+            >
+                Logout
+            </button>
         </div>
-        <h2>Feeds</h2>
-        <ul id={styles.feedlist}>{props.feedList}</ul>
-        <div id={styles.add}>
-          <input onChange={props.updateURL} type="text"></input>
-          <button
-            onClick={() => {
-              addFeed(url, props.state);
-            }}
-            type="submit"
-          >
-            Add Feed
-          </button>
-        </div>
-        <button
-          id={styles.logout}
-          onClick={() => props.state.session.logout(props.state.router)}
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  );
+    );
 }
