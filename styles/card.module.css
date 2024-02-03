@@ -8,6 +8,8 @@
     position: relative;
     width: 24px;
     height: 24px;
+    min-width: 24px;
+    min-height: 24px;
     font-size: 16px;
     line-height: 21px;
     text-align: center;
@@ -40,11 +42,12 @@
     padding: 10px;
     overflow: hidden;
     min-height: 100px;
+    min-width: 300px;
 }
 
 .item:hover {
     cursor: pointer;
-    background-color: #1F262B;
+    background-color: rgb(33, 39, 53);
 }
 
 .itemHeader {

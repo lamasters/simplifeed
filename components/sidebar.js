@@ -21,6 +21,7 @@ function deleteFeed(feedData, setFeedData, source) {
  */
 export default function Sidebar(props) {
     const [url, setURL] = useState('');
+    const [editing, setEditing] = useState(false);
     return (
         <div id={styles.sidebar}>
             <div id={styles.navbar}>
@@ -44,20 +45,24 @@ export default function Sidebar(props) {
                 </li>
                 {props.feedData.map((source) => (
                     <div className={styles.source_row}>
-                        <img
-                            id={styles.trash}
-                            src="/trash.png"
-                            width="28px"
-                            height="28px"
-                            onClick={async () => {
-                                await props.state.session.deleteFeed(source.id);
-                                deleteFeed(
-                                    props.feedData,
-                                    props.state.setFeedData,
-                                    source.title
-                                );
-                            }}
-                        />
+                        {editing ? (
+                            <img
+                                id={styles.trash}
+                                src="/trash.png"
+                                width="28px"
+                                height="28px"
+                                onClick={async () => {
+                                    await props.state.session.deleteFeed(
+                                        source.id
+                                    );
+                                    deleteFeed(
+                                        props.feedData,
+                                        props.state.setFeedData,
+                                        source.title
+                                    );
+                                }}
+                            />
+                        ) : null}
                         <li
                             onClick={() => props.state.setFilter(source.title)}
                             className={styles.source}
@@ -69,6 +74,13 @@ export default function Sidebar(props) {
                 ))}
             </ul>
             <div id={styles.add}>
+                <button
+                    onClick={() => {
+                        setEditing(!editing);
+                    }}
+                >
+                    {editing ? 'Done' : 'Edit Feeds'}
+                </button>
                 <input
                     onChange={(e) => {
                         setURL(e.target.value);

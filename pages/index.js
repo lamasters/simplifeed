@@ -40,6 +40,9 @@ export default function Home() {
     }, [session, router]);
 
     useEffect(() => {
+        if (window.innerHeight > window.innerWidth) {
+            setCollapse(true);
+        }
         fetchData(state);
     }, []);
     return (

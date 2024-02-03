@@ -58,8 +58,9 @@ export default function Login() {
                     <Link
                         href="/signup"
                         style={{
-                            color: '#5b97bb',
+                            color: '#48f',
                             textDecoration: 'underline',
+                            marginTop: '10px',
                         }}
                     >
                         Don't have an account? Sign up here!
