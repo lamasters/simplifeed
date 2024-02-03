@@ -54,6 +54,7 @@ export default function Home() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
+                <meta name="theme-color" content="#12151d" />
                 <link rel="manifest" href="/manifest.json" />
             </Head>
             <div className={styles.main_container}>

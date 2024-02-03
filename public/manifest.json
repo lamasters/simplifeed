@@ -1,7 +1,9 @@
 {
     "name": "SimpliFeed",
-    "short_name": "SF",
+    "short_name": "SimpliFeed",
+    "description": "Your news feed simplified",
     "start_url": "/",
+    "display-overview-mode": "standalone",
     "display": "standalone",
     "background_color": "#12151d",
     "theme_color": "#12151d",
@@ -10,12 +12,30 @@
         {
             "src": "favicon.ico",
             "sizes": "256x256",
-            "type": "image/ico"
+            "type": "image/ico",
+            "purpose": "maskable"
         },
         {
             "src": "simplifeed.png",
             "sizes": "1024x1024",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "simplifeed_preview.png",
+            "sizes": "601x997",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "SimpliFeed Mobile"
+        },
+        {
+            "src": "simplifeed_preview_wide.png",
+            "sizes": "1458x1003",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "SimpliFeed Desktop"
         }
     ]
 }
