@@ -1,0 +1,63 @@
+.date {
+    position: relative;
+    font-size: 12px;
+    color: #9cf;
+}
+
+.icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    line-height: 21px;
+    text-align: center;
+    background-color: #181f24;
+    color: #9cf;
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #8bf;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.info {
+    position: relative;
+    justify-content: left;
+    margin-left: 10px;
+    text-align: center;
+    line-height: 100%;
+    width: 90%;
+    font-size: 18px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    overflow: hidden;
+    min-height: 100px;
+}
+
+.item:hover {
+    cursor: pointer;
+    background-color: #1F262B;
+}
+
+.itemHeader {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.itemTitle {
+    margin-right: 10px;
+}

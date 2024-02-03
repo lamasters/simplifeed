@@ -1,0 +1,51 @@
+#article {
+    position: fixed;
+    width: 95vw;
+    height: 95vh;
+    top: 2.5vh;
+    left: 2.5vw;
+    border-radius: 20px;
+    background-color: rgb(18, 21, 29);
+    box-shadow: 0 0 10px #111;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#articlecontent {
+    width: 70%;
+    min-width: 275px;
+    height: 100%;
+    font-size: 16px;
+    text-align: left;
+    margin: auto;
+    margin-top: 50px;
+}
+
+#backdrop {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    left: 0px;
+    backdrop-filter: blur(10px);
+}
+
+#close {
+    position: fixed;
+    bottom: 3vh;
+    right: calc(3.5vh + 15px);
+    font-size: 16px;
+    color: #9cf;
+    background-color: rgb(55, 96, 192);
+    box-shadow: 0 0 10px #111;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+
+#close:hover {
+    cursor: pointer;
+    background-color: #48f;
+}

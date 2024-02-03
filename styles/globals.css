@@ -4,7 +4,7 @@ body {
   margin: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: #181f24;
+  background-color: rgb(18, 21, 29);
   color: #f9fbf7;
 }
 
@@ -37,26 +37,26 @@ ul {
 button {
   padding: 0.5rem 1rem;
   font-weight: bold;
-  background-color: #3c6477;
+  background-color: rgb(55, 96, 192);
   border-radius: 10px;
   border-width: 0;
-  color: #89ccdc;
+  color: #9cf;
   margin: 5px;
 }
 
 button:hover {
   cursor: pointer;
-  background-color: #506060;
+  background-color: #48f;
 }
 
 input {
   padding: 0.5rem 1rem;
   font-weight: bold;
-  background-color: #3c6477;
+  background-color: rgb(55, 96, 192);
   border-radius: 10px;
   border-width: 0;
   text-align: center;
-  color: #f9fbf7;
+  color: #9cf;
   padding: 15px;
   width: 90%;
   max-width: 500px;
@@ -75,18 +75,17 @@ input:focus {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #181f24;
   border-radius: 10px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #3c6477;
+  background: #48f;
   border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #3c6477;
+  background: #26f;
   border-radius: 10px;
 }
