@@ -1,11 +1,14 @@
-import styles from '../../styles/Login.module.css';
-
 import Head from 'next/head';
 import Link from 'next/link';
+import { UserSession } from '../../util/session';
+import styles from '../../styles/Login.module.css';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { UserSession } from '../../util/session';
 
+/**
+ * Renders the Login component.
+ * @returns {JSX.Element} The rendered Login component.
+ */
 export default function Login() {
     let session = new UserSession();
 
@@ -26,6 +29,11 @@ export default function Login() {
             <Head>
                 <title>SimpliFeed</title>
                 <link rel="icon" href="/favicon.ico" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <link rel="manifest" href="/manifest.json" />
             </Head>
 
             <main id={styles.container}>
@@ -50,8 +58,9 @@ export default function Login() {
                     <Link
                         href="/signup"
                         style={{
-                            color: '#5b97bb',
+                            color: '#48f',
                             textDecoration: 'underline',
+                            marginTop: '10px',
                         }}
                     >
                         Don't have an account? Sign up here!

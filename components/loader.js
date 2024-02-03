@@ -1,5 +1,9 @@
 import styles from '../styles/loader.module.css';
 
+/**
+ * Renders a loader component.
+ * @returns {JSX.Element} The loader component.
+ */
 export default function Loader() {
     return (
         <>

@@ -148,7 +148,6 @@ def fetch_article_content(url: str) -> ArticleContentRes:
 def main(context):
     """Main function for the Cloud Function"""
     context.log("Starting parsing request")
-    context.log(f"Context: {context}")
     req_body = json.loads(context.req.body)
     context.log(f"Got request body {req_body}")
     req_data = ServerRequest(**req_body)
@@ -165,14 +164,14 @@ def main(context):
 
         res_data = tasks
     except Exception as e:
-        #context.log(f"Exception occurred: {e}")
+        context.log(f"Exception occurred fetching data")
         return context.res.json({"exception": str(e)})
-    #context.log(f"Finished fetching data: {res_data}")
+    context.log(f"Finished fetching data")
     
     if not res_data:
-        #context.log("No data fetched")
+        context.log("No data fetched")
         return context.res.json({"data": "Failed"})
     
     json_data = [jsonable_encoder(res) for res in res_data]
-    #context.log(f"Returning data {json_data}")
+    context.log(f"Returning json data")
     return context.res.json({"data": json_data})

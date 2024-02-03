@@ -1,10 +1,13 @@
-import styles from '../../styles/Login.module.css';
-
 import Head from 'next/head';
+import { UserSession } from '../../util/session';
+import styles from '../../styles/Login.module.css';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { UserSession } from '../../util/session';
 
+/**
+ * Renders the signup page.
+ * @returns {JSX.Element} The signup page component.
+ */
 export default function Login() {
     let session = new UserSession();
 
@@ -30,6 +33,11 @@ export default function Login() {
             <Head>
                 <title>SimpliFeed</title>
                 <link rel="icon" href="/favicon.ico" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <link rel="manifest" href="/manifest.json" />
             </Head>
 
             <main id={styles.container}>

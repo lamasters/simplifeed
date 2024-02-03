@@ -1,15 +1,20 @@
-import styles from '../styles/Home.module.css';
-import Head from 'next/head';
-
-import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { UserSession } from '../util/session';
-import { fetchData } from '../util/feed_api';
+
 import Feed from '../components/feed';
+import Head from 'next/head';
 import Loader from '../components/loader';
 import Modal from '../components/modal';
 import Sidebar from '../components/sidebar';
+import { UserSession } from '../util/session';
+import { fetchData } from '../util/feed_api';
+import styles from '../styles/Home.module.css';
+import { useRouter } from 'next/router';
 
+/**
+ * Renders the Home page component.
+ *
+ * @returns {JSX.Element} The rendered Home component.
+ */
 export default function Home() {
     let session = new UserSession();
     const [feedData, setFeedData] = useState([]);
@@ -23,24 +28,33 @@ export default function Home() {
 
     let state = useMemo(() => {
         return {
-            session: session,
+            setArticleContent: setArticleContent,
+            setArticleOpen: setArticleOpen,
             setFeedData: setFeedData,
             setFilter: setFilter,
-            setArticleOpen: setArticleOpen,
-            setArticleContent: setArticleContent,
-            setShowTutorial: setShowTutorial,
             setLoading: setLoading,
+            setShowTutorial: setShowTutorial,
             router: router,
+            session: session,
         };
     }, [session, router]);
 
     useEffect(() => {
+        if (window.innerHeight > window.innerWidth) {
+            setCollapse(true);
+        }
         fetchData(state);
     }, []);
     return (
         <main>
             <Head>
                 <title>SimpliFeed</title>
+                <link rel="icon" href="/favicon.ico" />
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                />
+                <link rel="manifest" href="/manifest.json" />
             </Head>
             <div className={styles.main_container}>
                 {!collapse ? (
@@ -55,9 +69,9 @@ export default function Home() {
                     <b>{collapse ? '>' : '<'}</b>
                 </div>
                 <Feed
-                    showTutorial={showTutorial}
                     feedData={feedData}
                     filter={filter}
+                    showTutorial={showTutorial}
                     state={state}
                 />
             </div>
