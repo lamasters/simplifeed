@@ -1,0 +1,21 @@
+{
+    "name": "SimpliFeed",
+    "short_name": "SF",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#12151d",
+    "theme_color": "#12151d",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "256x256",
+            "type": "image/ico"
+        },
+        {
+            "src": "simplifeed.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        }
+    ]
+}

@@ -1,11 +1,14 @@
-import styles from '../../styles/Login.module.css';
-
 import Head from 'next/head';
 import Link from 'next/link';
+import { UserSession } from '../../util/session';
+import styles from '../../styles/Login.module.css';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { UserSession } from '../../util/session';
 
+/**
+ * Renders the Login component.
+ * @returns {JSX.Element} The rendered Login component.
+ */
 export default function Login() {
     let session = new UserSession();
 

@@ -8,9 +8,20 @@ import {
     Query,
     Role,
 } from 'appwrite';
+
 import { APPWRITE_CONFIG } from './constants';
 
+/**
+ * Represents a logged in user's session
+ * Contains methods to interact with the Appwrite API,
+ * fetch user data, and manage user feeds.
+ * @class
+ */
 export class UserSession {
+    /**
+     * Creates a new UserSession object.
+     * @constructor
+     */
     constructor() {
         this.client = new Client()
             .setEndpoint(APPWRITE_CONFIG.ENDPOINT)
@@ -24,6 +35,12 @@ export class UserSession {
         this.sessionInfo = null;
     }
 
+    /**
+     * Logs in the user with the provided email and password.
+     * @param {string} email - The user's email.
+     * @param {string} password - The user's password.
+     * @param {object} router - The router object used for navigation.
+     */
     async login(email, password, router) {
         try {
             let res = await this.account.createEmailSession(email, password);
@@ -38,6 +55,11 @@ export class UserSession {
         }
     }
 
+    /**
+     * Logs out the user by deleting the current session and redirecting to
+     * the login page.
+     * @param {Object} router - The router object used for navigation.
+     */
     async logout(router) {
         try {
             await this.account.deleteSession('current');
@@ -50,6 +72,12 @@ export class UserSession {
         }
     }
 
+    /**
+     * Registers a user with the provided email and password.
+     * @param {string} email - The email of the user.
+     * @param {string} password - The password of the user.
+     * @param {object} router - The router object.
+     */
     async register(email, password, router) {
         try {
             await this.account.create(ID.unique(), email, password);
@@ -60,6 +88,9 @@ export class UserSession {
         }
     }
 
+    /**
+     * Retrieves existing user session.
+     */
     async getSession() {
         try {
             let res = await this.account.get();
@@ -74,6 +105,11 @@ export class UserSession {
         }
     }
 
+    /**
+     * Retrieves the feeds for the current user.
+     * @returns {Array<Object>|null} The array of feed documents, or null if
+     * an error occurs.
+     */
     async getFeeds() {
         try {
             let feeds = await this.database.listDocuments(
@@ -89,13 +125,21 @@ export class UserSession {
         }
     }
 
+    /**
+     * Creates a feed from the given URL.
+     *
+     * @param {string} url - The URL of the feed source.
+     * @returns {Object|null} - The created feed object, or null if the feed
+     * could not be created.
+     */
     async createFeed(url) {
         if (this.uid == null) {
             await this.getSession();
         }
 
-        let feed;
+        let feed = null;
         try {
+            // Ensure that the feed can be properly parsed
             let res = await this.functions.createExecution(
                 APPWRITE_CONFIG.FETCH_ARTICLES,
                 JSON.stringify({ type: 'source', urls: [url] }),
@@ -103,9 +147,7 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            console.log('SOURCE', res);
             let articleSource = JSON.parse(res.response);
-            console.log(articleSource);
             articleSource = articleSource.data[0];
             feed = {
                 title: articleSource.data.title,
@@ -122,10 +164,11 @@ export class UserSession {
         }
 
         try {
+            let id = ID.unique();
             await this.database.createDocument(
                 APPWRITE_CONFIG.FEEDS_DB,
                 APPWRITE_CONFIG.NEWS,
-                ID.unique(),
+                id,
                 { url: url, user_id: this.uid },
                 [
                     Permission.read(Role.user(this.uid)),
@@ -134,11 +177,16 @@ export class UserSession {
                     Permission.delete(Role.user(this.uid)),
                 ]
             );
+            return { ...feed, id: id };
         } catch (err) {
             console.error(err);
         }
     }
 
+    /**
+     * Deletes a feed from the database.
+     * @param {string} id - The ID of the feed to delete.
+     */
     async deleteFeed(id) {
         try {
             await this.database.deleteDocument(
@@ -151,6 +199,11 @@ export class UserSession {
         }
     }
 
+    /**
+     * Retrieves the article sources by fetching feeds and creating an execution.
+     * @returns {Array<Object>|null} An array of feeds containing the id,
+     * title, and items of each source, or null if an error occurs.
+     */
     async getArticleSources() {
         const sources = await this.getFeeds();
         const ids = new Map();
@@ -171,7 +224,6 @@ export class UserSession {
                 'GET'
             );
             let articleSources = JSON.parse(res.response).data;
-            console.log(articleSources);
             let feeds = [];
             for (let source of articleSources) {
                 if (source.status != 200) continue;
@@ -188,6 +240,12 @@ export class UserSession {
         }
     }
 
+    /**
+     * Retrieves an article from a given URL and generates HTML content for display.
+     * @param {string} url - The URL of the article.
+     * @param {string} title - The title of the article.
+     * @returns {JSX.Element|null} - The generated HTML content for the article, or null if an error occurs.
+     */
     async getArticle(url, title) {
         try {
             let res = await this.functions.createExecution(

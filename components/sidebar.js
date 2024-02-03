@@ -1,11 +1,24 @@
-import { useState } from 'react';
 import { addFeed } from '../util/feed_api';
 import styles from '../styles/sidebar.module.css';
+import { useState } from 'react';
 
+/**
+ * Deletes a feed from the feedData array.
+ * @param {Array} feedData - The array of feed data.
+ * @param {Function} setFeedData - The function to update the feedData state.
+ * @param {string} source - The title of the feed to be deleted.
+ */
 function deleteFeed(feedData, setFeedData, source) {
     const filtered = feedData.filter((feed) => feed.title !== source);
     setFeedData(filtered);
 }
+
+/**
+ * Renders the sidebar component.
+ *
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} The rendered sidebar component.
+ */
 export default function Sidebar(props) {
     const [url, setURL] = useState('');
     return (
@@ -65,7 +78,7 @@ export default function Sidebar(props) {
                 ></input>
                 <button
                     onClick={() => {
-                        addFeed(url, props.state);
+                        addFeed(url, props.state, props.feedData);
                         setURL('');
                     }}
                     type="submit"

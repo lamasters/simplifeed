@@ -1,11 +1,24 @@
-import styles from '../styles/card.module.css';
 import { selectArticle } from '../util/feed_api';
+import styles from '../styles/card.module.css';
 
+/**
+ * Formats a date into a localized string representation.
+ * @param {Date} date - The date to be formatted.
+ * @returns {string} The formatted date string.
+ */
 function formatDate(date) {
     let d = new Date(date);
     return d.toLocaleString();
 }
 
+/**
+ * Renders a card component for displaying an article.
+ *
+ * @param {Object} props - The props for the card component.
+ * @param {Object} props.article - The article object to be displayed.
+ * @param {string} props.state - Hooks to set application state.
+ * @returns {JSX.Element} The rendered card component.
+ */
 export default function Card(props) {
     let icon = '';
     if (!props.article.image) {

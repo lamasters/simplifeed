@@ -1,5 +1,13 @@
 import styles from '../styles/modal.module.css';
 
+/**
+ * Renders a modal component for displaying an article.
+ *
+ * @param {Object} props - The props for the modal component.
+ * @param {boolean} props.setArticleOpen - A function to set the article open state.
+ * @param {string} props.articleContent - The content of the article.
+ * @returns {JSX.Element} The rendered modal component.
+ */
 export default function Modal(props) {
     return (
         <div>
