@@ -40,8 +40,10 @@ export class UserSession {
      * @param {string} email - The user's email.
      * @param {string} password - The user's password.
      * @param {object} router - The router object used for navigation.
+     * @param {function} setLoading - The hook to set the loading status.
      */
-    async login(email, password, router) {
+    async login(email, password, router, setLoading) {
+        setLoading(true);
         try {
             let res = await this.account.createEmailSession(email, password);
             this.sessionInfo = res;
@@ -52,6 +54,8 @@ export class UserSession {
             this.sessionInfo = null;
             console.error(err);
             alert('Login failed');
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -77,14 +81,18 @@ export class UserSession {
      * @param {string} email - The email of the user.
      * @param {string} password - The password of the user.
      * @param {object} router - The router object.
+     * @param {function} setLoading - The hook to set the loading status.
      */
-    async register(email, password, router) {
+    async register(email, password, router, setLoading) {
+        setLoading(true);
         try {
             await this.account.create(ID.unique(), email, password);
             await this.login(email, password, router);
         } catch (err) {
             console.error(err);
             alert('Registration failed');
+        } finally {
+            setLoading(false);
         }
     }
 

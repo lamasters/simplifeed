@@ -21,29 +21,27 @@ export default function Modal(props) {
                 id={styles.backdrop}
             ></div>
             <div id={styles.article}>
-                <div id={styles.articlecontent}>
-                    {props.rawText && props.proUser ? (
-                        <div
-                            className={styles.summarize}
-                            onClick={() => {
-                                getArticleSummary(
-                                    props.state,
-                                    props.rawText,
-                                    setSummary
-                                );
-                            }}
-                        >
-                            <div className={styles.summary_text}>⚡</div>
-                        </div>
-                    ) : null}
-                    {summary ? (
-                        <>
-                            <h2 className={styles.ai_header}>AI Summary</h2>
-                            <div className={styles.summary}>{summary}</div>
-                        </>
-                    ) : null}
-                    {props.articleContent}
-                </div>
+                {props.rawText && props.proUser ? (
+                    <div
+                        className={styles.summarize}
+                        onClick={() => {
+                            getArticleSummary(
+                                props.state,
+                                props.rawText,
+                                setSummary
+                            );
+                        }}
+                    >
+                        <div className={styles.summary_text}>⚡</div>
+                    </div>
+                ) : null}
+                {summary ? (
+                    <>
+                        <h2 className={styles.ai_header}>AI Summary</h2>
+                        <div className={styles.summary}>{summary}</div>
+                    </>
+                ) : null}
+                <div id={styles.articlecontent}>{props.articleContent}</div>
             </div>
             <div
                 onClick={() => props.state.setArticleOpen(false)}
