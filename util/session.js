@@ -244,9 +244,10 @@ export class UserSession {
      * Retrieves an article from a given URL and generates HTML content for display.
      * @param {string} url - The URL of the article.
      * @param {string} title - The title of the article.
+     * @param {function} setRawText - The hook to set the raw text of the article.
      * @returns {JSX.Element|null} - The generated HTML content for the article, or null if an error occurs.
      */
-    async getArticle(url, title) {
+    async getArticle(url, title, setRawText) {
         try {
             let res = await this.functions.createExecution(
                 APPWRITE_CONFIG.FETCH_ARTICLES,
@@ -273,18 +274,64 @@ export class UserSession {
                 </h1>,
                 <br />,
             ];
+            let rawText = '';
             for (let tag of article.tags) {
+                rawText += tag + '\n';
                 content.push(<p>{tag}</p>);
                 content.push(<br />);
             }
             for (let i = 0; i < 15; i++) {
                 content.push(<br />);
             }
+            setRawText(rawText);
 
             return <div>{content}</div>;
         } catch (err) {
             console.error(err);
             return null;
         }
+    }
+
+    /**
+     * Checks if the user has access to AI features.
+     * @param {function} setProUser - The hook to set the pro user status.
+     */
+    async checkProUser(setProUser) {
+        try {
+            let res = await this.database.listDocuments(
+                APPWRITE_CONFIG.USERS_DB,
+                APPWRITE_CONFIG.PRO_USERS,
+                [Query.equal('user_id', this.uid)]
+            );
+            if (res.documents.length > 0) {
+                setProUser(true);
+            } else {
+                setProUser(false);
+            }
+        } catch (e) {
+            setProUser(false);
+            console.error(e);
+        }
+    }
+
+    /**
+     * Retrieves the AI summary of an article.
+     * @param {string} article - The article to retrieve the summary for.
+     */
+    async getSummary(article) {
+        try {
+            let res = await this.functions.createExecution(
+                APPWRITE_CONFIG.SUMMARIZE_ARTICLE,
+                JSON.stringify({ user_id: this.uid, article: article }),
+                false,
+                '/',
+                'GET'
+            );
+            return JSON.parse(res.response).summary;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return '';
     }
 }

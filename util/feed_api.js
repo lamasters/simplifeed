@@ -24,6 +24,7 @@ export async function fetchData(state) {
     localStorage.setItem('feedData', JSON.stringify(feedData));
     state.setFeedData(feedData);
     state.setLoading(false);
+    await state.session.checkProUser(state.setProUser);
 }
 
 /**
@@ -37,7 +38,8 @@ export async function selectArticle(article, state) {
     state.setArticleContent(null);
     let articleContent = await state.session.getArticle(
         article.link,
-        article.title
+        article.title,
+        state.setRawText
     );
     state.setArticleContent(articleContent);
     state.setLoading(false);
@@ -53,4 +55,17 @@ export async function addFeed(url, state, feedData) {
     let feed = await state.session.createFeed(url);
     let newFeedData = feedData.concat(feed);
     state.setFeedData(newFeedData);
+}
+
+/**
+ * Retrieves the summary of an article using the provided session object.
+ * @param {Object} state - Hooks to set application state.
+ * @param {Object} article - The article text.
+ * @param {Function} setSummary - The function to set the summary.
+ */
+export async function getArticleSummary(state, article, setSummary) {
+    state.setLoading(true);
+    let summary = await state.session.getSummary(article);
+    setSummary(summary);
+    state.setLoading(false);
 }

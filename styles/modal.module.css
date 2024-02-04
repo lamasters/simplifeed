@@ -49,3 +49,42 @@
     cursor: pointer;
     background-color: #48f;
 }
+
+.summarize {
+    margin: auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 255, 0.8);
+    line-height: 50px;
+    text-align: center;
+}
+
+.summarize:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 255, 0.3);
+}
+
+.summary_text {
+    font-size: 24px;
+    background: linear-gradient(rgb(34, 34, 255), rgb(15, 255, 15));
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ai_header {
+    text-align: center;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    background: linear-gradient(rgb(34, 34, 255), rgb(15, 255, 15));
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.summary {
+    max-width: 800px;
+    margin: auto;
+    margin-bottom: 25px;
+    font-size: 18px;
+    line-height: 22px;
+}

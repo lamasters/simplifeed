@@ -1,0 +1,2 @@
+appwrite==4.1.0
+openai==1.11.0

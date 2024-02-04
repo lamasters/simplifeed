@@ -24,6 +24,8 @@ export default function Home() {
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [proUser, setProUser] = useState(false);
+    const [rawText, setRawText] = useState('');
     const router = useRouter();
 
     let state = useMemo(() => {
@@ -33,6 +35,8 @@ export default function Home() {
             setFeedData: setFeedData,
             setFilter: setFilter,
             setLoading: setLoading,
+            setProUser: setProUser,
+            setRawText: setRawText,
             setShowTutorial: setShowTutorial,
             router: router,
             session: session,
@@ -79,8 +83,10 @@ export default function Home() {
             {loading ? <Loader /> : null}
             {articleOpen ? (
                 <Modal
-                    setArticleOpen={setArticleOpen}
                     articleContent={articleContent}
+                    proUser={proUser}
+                    rawText={rawText}
+                    state={state}
                 />
             ) : null}
         </main>
