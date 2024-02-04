@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Loader from '../../components/loader';
 import { UserSession } from '../../util/session';
 import styles from '../../styles/Login.module.css';
 import { useRouter } from 'next/router';
@@ -14,6 +15,7 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirm] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const updateEmail = (e) => {
@@ -66,7 +68,12 @@ export default function Login() {
                     <button
                         onClick={() => {
                             if (password === confirmPassword) {
-                                session.register(email, password, router);
+                                session.register(
+                                    email,
+                                    password,
+                                    router,
+                                    setLoading
+                                );
                             } else {
                                 alert("Passwords don't match");
                             }
@@ -76,6 +83,7 @@ export default function Login() {
                         Sign Up
                     </button>
                 </div>
+                {loading ? <Loader /> : null}
             </main>
         </div>
     );

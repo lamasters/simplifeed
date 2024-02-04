@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import Loader from '../../components/loader';
 import { UserSession } from '../../util/session';
 import styles from '../../styles/Login.module.css';
 import { useRouter } from 'next/router';
@@ -14,6 +15,7 @@ export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const updateEmail = (e) => {
@@ -49,7 +51,7 @@ export default function Login() {
                     <input onChange={updatePassword} type="password" />
                     <button
                         onClick={() => {
-                            session.login(email, password, router);
+                            session.login(email, password, router, setLoading);
                         }}
                         type="submit"
                     >
@@ -65,6 +67,7 @@ export default function Login() {
                     >
                         Don't have an account? Sign up here!
                     </Link>
+                    {loading ? <Loader /> : null}
                 </div>
             </main>
         </div>
