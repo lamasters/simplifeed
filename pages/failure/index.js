@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 /**
  * Renders the Login component.
  * @returns {JSX.Element} The rendered login failed component.
