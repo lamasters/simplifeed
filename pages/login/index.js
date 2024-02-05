@@ -52,8 +52,8 @@ export default function Login() {
                             try {
                                 session.account.createOAuth2Session(
                                     'google',
-                                    'https://simplifeed.org',
-                                    'https://simplifeed.org/login'
+                                    window.location.origin,
+                                    `${window.location.origin}/login`
                                 );
                             } catch (e) {
                                 console.error(e);
