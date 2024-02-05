@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import Loader from '../../components/loader';
 import { UserSession } from '../../util/session';
@@ -45,9 +46,32 @@ export default function Login() {
                 </header>
 
                 <div id={styles.cluster}>
-                    <label>Email:</label>
+                    <div
+                        className={styles.sso}
+                        onClick={() => {
+                            try {
+                                session.account.createOAuth2Session(
+                                    'google',
+                                    'https://simplifeed.org',
+                                    'https://simplifeed.org/login'
+                                );
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }}
+                    >
+                        <Image
+                            src="/google.png"
+                            width={28}
+                            height={28}
+                            alt="Google logo"
+                            style={{ marginRight: '5px' }}
+                        />
+                        Continue with Google
+                    </div>
+                    <label>Email</label>
                     <input onChange={updateEmail} type="text" />
-                    <label>Password:</label>
+                    <label>Password</label>
                     <input onChange={updatePassword} type="password" />
                     <button
                         onClick={() => {
