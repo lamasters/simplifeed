@@ -21,7 +21,7 @@ export default function Success() {
 
             <main>
                 <h1>SUCCESSFUL LOGIN</h1>
-                <Link href={window.location.origin}>Continue</Link>
+                <Link href="/">Continue</Link>
             </main>
         </div>
     );
