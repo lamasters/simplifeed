@@ -52,8 +52,8 @@ export default function Login() {
                             try {
                                 session.account.createOAuth2Session(
                                     'google',
-                                    window.location.origin,
-                                    `${window.location.origin}/login`
+                                    `${window.location.origin}/success`,
+                                    `${window.location.origin}/failure`
                                 );
                             } catch (e) {
                                 console.error(e);
