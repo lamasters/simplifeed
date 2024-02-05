@@ -15,7 +15,7 @@ export default function Failure() {
                 <link rel="manifest" href="/manifest.json" />
             </Head>
 
-            <main id={styles.container}>
+            <main>
                 <h1>FAILED LOGIN</h1>
             </main>
         </div>

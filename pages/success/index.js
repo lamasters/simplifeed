@@ -17,7 +17,7 @@ export default function Success() {
                 <link rel="manifest" href="/manifest.json" />
             </Head>
 
-            <main id={styles.container}>
+            <main>
                 <h1>SUCCESSFUL LOGIN</h1>
                 <Link href={window.location.origin}>Continue</Link>
             </main>
