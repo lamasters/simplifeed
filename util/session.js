@@ -65,11 +65,15 @@ export class UserSession {
      */
     async magicUrlLogin(email) {
         try {
-            console.log('Redirect url', `${window.location.hostname}`);
+            let redirectUrl = `${window.location.protocol}//${window.location.hostname.replace('www.', '')}`;
+            if (window.location.port) {
+                redirectUrl += `:${window.location.port}`;
+            }
+            console.log(redirectUrl);
             await this.account.createMagicURLSession(
                 ID.unique(),
                 email,
-                'https://simplifeed.org'
+                redirectUrl
             );
         } catch (e) {
             console.error(e);
