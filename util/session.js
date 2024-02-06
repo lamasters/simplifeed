@@ -69,7 +69,7 @@ export class UserSession {
             await this.account.createMagicURLSession(
                 ID.unique(),
                 email,
-                `${window.location.hostname}`
+                'https://simplifeed.org'
             );
         } catch (e) {
             console.error(e);
