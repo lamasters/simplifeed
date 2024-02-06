@@ -70,9 +70,9 @@ export class UserSession {
                 email,
                 `${window.location.origin}`
             );
-            console.log(res);
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            console.error(e);
+            alert('Sending login link failed');
         }
     }
 
@@ -139,7 +139,7 @@ export class UserSession {
     async getSession() {
         try {
             let res = await this.updateMagicUrlSession();
-            console.log('Magic URL Session', res);
+            console.log('Magic URL Session');
             this.sessionInfo = res;
             this.uid = res.userId;
             return res;
@@ -148,7 +148,7 @@ export class UserSession {
         }
         try {
             let res = await this.account.getSession('current');
-            console.log('Email Session', res);
+            console.log('Email Session');
             this.sessionInfo = res;
             this.uid = res.userId;
             return res;
