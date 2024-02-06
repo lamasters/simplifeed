@@ -65,10 +65,10 @@ export class UserSession {
      */
     async magicUrlLogin(email) {
         try {
-            let res = await this.account.createMagicURLSession(
+            await this.account.createMagicURLSession(
                 ID.unique(),
                 email,
-                `${window.location.origin}`
+                `${window.location.hostname}`
             );
         } catch (e) {
             console.error(e);
