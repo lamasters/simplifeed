@@ -9,6 +9,10 @@ export async function fetchData(state) {
         state.router.push('/login');
         return;
     }
+    if (!info.verified) {
+        state.router.push('/not-verified');
+        return;
+    }
 
     // Pull feed data from local storage
     let storedFeeds = localStorage.getItem('feedData');

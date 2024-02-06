@@ -81,6 +81,23 @@ export class UserSession {
         }
     }
 
+    async updateVerification(router, setVerified, setLoading) {
+        setLoading(true);
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const secret = urlParams.get('secret');
+            const userId = urlParams.get('userId');
+            await this.account.updateVerification(userId, secret);
+            setVerified(true);
+            router.push('/');
+        } catch (e) {
+            setVerified(false);
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     /**
      * Updates the session using the magic URL parameters.
      */
@@ -142,27 +159,42 @@ export class UserSession {
      * Retrieves existing user session.
      */
     async getSession() {
+        let userSession = { $id: null };
+        let verified = false;
+        this.uid = null;
+        this.sessionInfo = null;
         try {
-            let res = await this.updateMagicUrlSession();
+            userSession = await this.updateMagicUrlSession();
             console.log('Magic URL Session');
-            this.sessionInfo = res;
-            this.uid = res.userId;
-            return res;
+            this.sessionInfo = userSession;
+            this.uid = userSession.userId;
         } catch (e) {
             console.error(e);
         }
-        try {
-            let res = await this.account.getSession('current');
-            console.log('Email Session');
-            this.sessionInfo = res;
-            this.uid = res.userId;
-            return res;
-        } catch (err) {
-            this.uid = null;
-            this.sessionInfo = null;
-            console.error(err);
-            return { $id: null };
+        if (!userSession?.$id) {
+            try {
+                userSession = await this.account.getSession('current');
+                console.log(userSession);
+                console.log('Email Session');
+                this.sessionInfo = userSession;
+                this.uid = userSession.userId;
+            } catch (err) {
+                console.error(err);
+            }
         }
+
+        if (userSession.$id) {
+            const account = await this.account.get();
+            verified = account?.emailVerification;
+            if (!verified) {
+                let redirectUrl = `${window.location.protocol}//${window.location.hostname.replace('www.', '')}`;
+                if (window.location.port) {
+                    redirectUrl += `:${window.location.port}`;
+                }
+                this.account.createVerification(`${redirectUrl}/verify`);
+            }
+        }
+        return { ...userSession, verified: verified };
     }
 
     /**
