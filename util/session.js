@@ -65,6 +65,7 @@ export class UserSession {
      */
     async magicUrlLogin(email) {
         try {
+            console.log('Redirect url', `${window.location.hostname}`);
             await this.account.createMagicURLSession(
                 ID.unique(),
                 email,
