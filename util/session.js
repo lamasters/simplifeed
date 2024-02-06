@@ -60,6 +60,43 @@ export class UserSession {
     }
 
     /**
+     * Send an email with a sign in link to the user
+     * @param {string} email - The user's email
+     */
+    async magicUrlLogin(email) {
+        try {
+            let res = await this.account.createMagicURLSession(
+                ID.unique(),
+                email,
+                `${window.location.origin}`
+            );
+            console.log(res);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    /**
+     * Updates the session using the magic URL parameters.
+     */
+    async updateMagicUrlSession() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const secret = urlParams.get('secret');
+            const userId = urlParams.get('userId');
+
+            const user = await this.account.updateMagicURLSession(
+                userId,
+                secret
+            );
+            return user;
+        } catch (e) {
+            console.error(e);
+            return undefined;
+        }
+    }
+
+    /**
      * Logs out the user by deleting the current session and redirecting to
      * the login page.
      * @param {Object} router - The router object used for navigation.
@@ -101,9 +138,19 @@ export class UserSession {
      */
     async getSession() {
         try {
-            let res = await this.account.get();
+            let res = await this.updateMagicUrlSession();
+            console.log('Magic URL Session', res);
             this.sessionInfo = res;
-            this.uid = res.$id;
+            this.uid = res.userId;
+            return res;
+        } catch (e) {
+            console.error(e);
+        }
+        try {
+            let res = await this.account.getSession('current');
+            console.log('Email Session', res);
+            this.sessionInfo = res;
+            this.uid = res.userId;
             return res;
         } catch (err) {
             this.uid = null;

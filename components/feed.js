@@ -80,7 +80,10 @@ export default function Feed(props) {
                     {articleList.map((article) => (
                         <>
                             <Card article={article} state={props.state} />
-                            <div className={styles.divider}></div>
+                            <div
+                                className={styles.divider}
+                                key={article.title + '_divider'}
+                            ></div>
                         </>
                     ))}
                 </ul>
