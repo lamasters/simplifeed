@@ -16,6 +16,7 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [usePassword, setUsePassword] = useState(false);
     const router = useRouter();
 
     const updateEmail = (e) => {
@@ -45,18 +46,48 @@ export default function Login() {
                 </header>
 
                 <div id={styles.cluster}>
-                    <label>Email:</label>
+                    <label>Email</label>
                     <input onChange={updateEmail} type="text" />
-                    <label>Password:</label>
-                    <input onChange={updatePassword} type="password" />
-                    <button
+                    <div
+                        className={styles.sso}
                         onClick={() => {
-                            session.login(email, password, router, setLoading);
+                            session.magicUrlLogin(email);
                         }}
-                        type="submit"
                     >
-                        Sign In
-                    </button>
+                        Email Sign In Link
+                    </div>
+                    {!usePassword ? (
+                        <>
+                            <h3>Or</h3>
+                            <div
+                                className={styles.sso}
+                                onClick={() => {
+                                    setUsePassword(true);
+                                }}
+                            >
+                                Enter Password
+                            </div>
+                        </>
+                    ) : null}
+                    {usePassword ? (
+                        <>
+                            <label>Password</label>
+                            <input onChange={updatePassword} type="password" />
+                            <button
+                                onClick={() => {
+                                    session.login(
+                                        email,
+                                        password,
+                                        router,
+                                        setLoading
+                                    );
+                                }}
+                                type="submit"
+                            >
+                                Sign In
+                            </button>
+                        </>
+                    ) : null}
                     <Link
                         href="/signup"
                         style={{

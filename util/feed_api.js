@@ -7,6 +7,7 @@ export async function fetchData(state) {
     let info = await state.session.getSession();
     if (info.$id == null) {
         state.router.push('/login');
+        return;
     }
 
     // Pull feed data from local storage
