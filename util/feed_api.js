@@ -1,3 +1,5 @@
+import { FETCH_INTERVAL } from './constants';
+
 /**
  * Fetches feed data and updates the state.
  * @param {Object} state - Hooks to set application state.
@@ -18,18 +20,39 @@ export async function fetchData(state) {
     let storedFeeds = localStorage.getItem('feedData');
     if (storedFeeds) {
         state.setFeedData(JSON.parse(storedFeeds));
+        state.setLoadedData(JSON.parse(storedFeeds));
         state.setLoading(false);
         if (storedFeeds.length > 0) state.setShowTutorial(false);
+        state.setLoading(false);
     }
-    let feedData = await state.session.getArticleSources();
-    if (feedData === null) return;
-    if (feedData.length > 0) state.setShowTutorial(false);
+    const lastFetch = localStorage.getItem('lastFetch');
+    if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
+    if (lastFetch && Date.now() - lastFetch > FETCH_INTERVAL) {
+        localStorage.setItem('lastFetch', Date.now());
+        let feedData = await state.session.getArticleSources();
+        if (feedData === null) return;
+        if (feedData.length > 0) state.setShowTutorial(false);
 
-    // Update the feed data in the state and local storage
-    localStorage.setItem('feedData', JSON.stringify(feedData));
-    state.setFeedData(feedData);
+        if (!storedFeeds) {
+            state.setFeedData(feedData);
+        }
+        state.setLoadedData(feedData);
+    }
     state.setLoading(false);
     await state.session.checkProUser(state.setProUser);
+}
+
+export async function backgroundFetch(state) {
+    let lastFetch = localStorage.getItem('lastFetch');
+    if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
+    if (lastFetch && Date.now() - lastFetch > FETCH_INTERVAL) {
+        localStorage.setItem('lastFetch', Date.now());
+        let feedData = await state.session.getArticleSources();
+        if (feedData) {
+            state.setLoadedData(feedData);
+        }
+    } else {
+    }
 }
 
 /**

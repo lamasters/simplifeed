@@ -8,3 +8,5 @@ export const APPWRITE_CONFIG = {
     PRO_USERS: '65bed3fb0512dd5b5d27',
     SUMMARIZE_ARTICLE: '65bed72070bb85067dd9',
 };
+
+export const FETCH_INTERVAL = 1000 * 60 * 5; // 5 minutes

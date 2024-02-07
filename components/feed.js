@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Card from './card';
 import styles from '../styles/feed.module.css';
@@ -33,16 +33,46 @@ export function sortFeedItems(articles) {
 }
 
 /**
+ * Concatenates the items from multiple sources into a single array.
+ *
+ * @param {Array} sources - An array of sources, each containing an 'items' property.
+ * @returns {Array} - An array containing all the items from the sources.
+ */
+export function concatSources(sources) {
+    let articles = [];
+    for (let source of sources) {
+        articles = articles.concat(source.items);
+    }
+    return articles;
+}
+
+/**
+ * Compares two feed objects and checks if their articles are equal.
+ * @param {Object} a - The first feed object.
+ * @param {Object} b - The second feed object.
+ * @returns {boolean} - Returns true if the articles in the feeds are equal, otherwise returns false.
+ */
+function feedsEqual(a, b) {
+    let articlesA = concatSources(a);
+    let articlesB = concatSources(b);
+    sortFeedItems(articlesA);
+    sortFeedItems(articlesB);
+    if (articlesA.length !== articlesB.length) return false;
+    console.log('ARTICLES A', articlesA, 'ARTICLES B', articlesB);
+    for (let i = 0; i < articlesA.length; i++) {
+        if (articlesA[i].title !== articlesB[i].title) return false;
+    }
+    return true;
+}
+
+/**
  * Creates an article list based on the provided feed data, filter, and sets the article list using the provided setter function.
  * @param {Array} feedData - The feed data containing articles from different sources.
  * @param {Function} setArticleList - The setter function to set the article list.
  * @param {string} [filter] - Optional filter to only include articles from a specific source.
  */
 function createArticleList(feedData, setArticleList, filter) {
-    let articles = [];
-    for (let source of feedData) {
-        articles = articles.concat(source.items);
-    }
+    let articles = concatSources(feedData);
     if (filter) {
         articles = articles.filter((item) => item.source == filter);
     }
@@ -65,8 +95,9 @@ export default function Feed(props) {
     useEffect(() => {
         createArticleList(props.feedData, setArticleList, props.filter);
     }, [props.feedData, props.filter]);
+    const feedRef = useRef();
     return (
-        <div id={styles.feed_container}>
+        <div ref={feedRef} id={styles.feed_container}>
             <div id={styles.feed_content}>
                 {props.showTutorial ? (
                     <div id={styles.tutorial}>
@@ -74,6 +105,26 @@ export default function Feed(props) {
                         <br />
                         Try adding{' '}
                         <em>https://www.linuxinsider.com/rss-feed</em>
+                    </div>
+                ) : null}
+                {!feedsEqual(props.feedData, props.loadedData) ? (
+                    <div
+                        className={styles.update}
+                        onClick={() => {
+                            // Update the feed data in the state and local storage
+                            localStorage.setItem(
+                                'feedData',
+                                JSON.stringify(props.loadedData)
+                            );
+                            props.state.setFeedData(props.loadedData);
+                            feedRef.current.scrollTo({
+                                top: 0,
+                                left: 0,
+                                behavior: 'smooth',
+                            });
+                        }}
+                    >
+                        Get Latest
                     </div>
                 ) : null}
                 <ul style={{ width: '100%' }}>

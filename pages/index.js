@@ -1,15 +1,16 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
+import { backgroundFetch, fetchData } from '../util/feed_api';
 import { useEffect, useMemo, useState } from 'react';
 
+import { FETCH_INTERVAL } from '../util/constants';
 import Feed from '../components/feed';
 import Head from 'next/head';
 import Loader from '../components/loader';
 import Modal from '../components/modal';
 import Sidebar from '../components/sidebar';
 import { UserSession } from '../util/session';
-import { fetchData } from '../util/feed_api';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 
@@ -21,6 +22,7 @@ import { useRouter } from 'next/router';
 export default function Home() {
     let session = new UserSession();
     const [feedData, setFeedData] = useState([]);
+    const [loadedData, setLoadedData] = useState([]);
     const [filter, setFilter] = useState(null);
     const [articleOpen, setArticleOpen] = useState(false);
     const [articleContent, setArticleContent] = useState(null);
@@ -29,6 +31,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [proUser, setProUser] = useState(false);
     const [rawText, setRawText] = useState('');
+    let fetchProcess = null;
     const addFeedFail = () =>
         toast.error('Failed to subscribe to feed', {
             position: 'bottom-center',
@@ -61,6 +64,7 @@ export default function Home() {
             setArticleOpen: setArticleOpen,
             setFeedData: setFeedData,
             setFilter: setFilter,
+            setLoadedData: setLoadedData,
             setLoading: setLoading,
             setProUser: setProUser,
             setRawText: setRawText,
@@ -71,10 +75,15 @@ export default function Home() {
     }, [session, router]);
 
     useEffect(() => {
+        if (fetchProcess) clearInterval(fetchProcess);
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
         fetchData(state);
+        fetchProcess = setInterval(
+            () => backgroundFetch(state),
+            FETCH_INTERVAL
+        );
     }, []);
     return (
         <main>
@@ -107,6 +116,7 @@ export default function Home() {
                 </div>
                 <Feed
                     feedData={feedData}
+                    loadedData={loadedData}
                     filter={filter}
                     showTutorial={showTutorial}
                     state={state}
