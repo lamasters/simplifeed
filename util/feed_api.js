@@ -27,7 +27,7 @@ export async function fetchData(state) {
     }
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
-    if (lastFetch && Date.now() - lastFetch > FETCH_INTERVAL) {
+    if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         localStorage.setItem('lastFetch', Date.now());
         let feedData = await state.session.getArticleSources();
         if (feedData === null) return;
@@ -43,7 +43,7 @@ export async function fetchData(state) {
 }
 
 export async function backgroundFetch(state) {
-    let lastFetch = localStorage.getItem('lastFetch');
+    const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
     if (lastFetch && Date.now() - lastFetch > FETCH_INTERVAL) {
         localStorage.setItem('lastFetch', Date.now());
