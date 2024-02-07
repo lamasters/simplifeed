@@ -58,17 +58,17 @@ export default function Sidebar(props) {
                                     deleteFeed(
                                         props.feedData,
                                         props.state.setFeedData,
-                                        source.title
+                                        source?.title
                                     );
                                 }}
                             />
                         ) : null}
                         <li
-                            onClick={() => props.state.setFilter(source.title)}
+                            onClick={() => props.state.setFilter(source?.title)}
                             className={styles.source}
-                            key={source.title}
+                            key={source?.title}
                         >
-                            {source.title}
+                            {source?.title}
                         </li>
                     </div>
                 ))}
@@ -90,7 +90,12 @@ export default function Sidebar(props) {
                 ></input>
                 <button
                     onClick={() => {
-                        addFeed(url, props.state, props.feedData);
+                        addFeed(
+                            url,
+                            props.state,
+                            props.feedData,
+                            props.addFeedFail
+                        );
                         setURL('');
                     }}
                     type="submit"
@@ -100,7 +105,12 @@ export default function Sidebar(props) {
             </div>
             <button
                 id={styles.logout}
-                onClick={() => props.state.session.logout(props.state.router)}
+                onClick={() =>
+                    props.state.session.logout(
+                        props.state.router,
+                        props.logoutFail
+                    )
+                }
             >
                 Logout
             </button>

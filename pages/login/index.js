@@ -1,3 +1,7 @@
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Slide, ToastContainer, toast } from 'react-toastify';
+
 import Head from 'next/head';
 import Link from 'next/link';
 import Loader from '../../components/loader';
@@ -18,6 +22,42 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [usePassword, setUsePassword] = useState(false);
     const router = useRouter();
+    const sent = () =>
+        toast.success(`Email sent to ${email}!`, {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    const sendFail = () =>
+        toast.error(`Sending email failed`, {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    const loginFail = () =>
+        toast.error(`Login failed`, {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
 
     const updateEmail = (e) => {
         setEmail(e.target.value);
@@ -51,7 +91,7 @@ export default function Login() {
                     <div
                         className={styles.sso}
                         onClick={() => {
-                            session.magicUrlLogin(email);
+                            session.magicUrlLogin(email, sent, sendFail);
                         }}
                     >
                         Email Sign In Link
@@ -79,7 +119,8 @@ export default function Login() {
                                         email,
                                         password,
                                         router,
-                                        setLoading
+                                        setLoading,
+                                        loginFail
                                     );
                                 }}
                                 type="submit"
@@ -100,6 +141,8 @@ export default function Login() {
                     </Link>
                     {loading ? <Loader /> : null}
                 </div>
+
+                <ToastContainer />
             </main>
         </div>
     );

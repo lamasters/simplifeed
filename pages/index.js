@@ -1,3 +1,6 @@
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Slide, ToastContainer, toast } from 'react-toastify';
 import { useEffect, useMemo, useState } from 'react';
 
 import Feed from '../components/feed';
@@ -26,6 +29,30 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [proUser, setProUser] = useState(false);
     const [rawText, setRawText] = useState('');
+    const addFeedFail = () =>
+        toast.error('Failed to subscribe to feed', {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    const logoutFail = () =>
+        toast.error('Failed to logout', {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
     const router = useRouter();
 
     let state = useMemo(() => {
@@ -63,7 +90,12 @@ export default function Home() {
             </Head>
             <div className={styles.main_container}>
                 {!collapse ? (
-                    <Sidebar state={state} feedData={feedData} />
+                    <Sidebar
+                        state={state}
+                        feedData={feedData}
+                        addFeedFail={addFeedFail}
+                        logoutFail={logoutFail}
+                    />
                 ) : null}
                 <div
                     onClick={() => {
@@ -89,6 +121,7 @@ export default function Home() {
                     state={state}
                 />
             ) : null}
+            <ToastContainer />
         </main>
     );
 }

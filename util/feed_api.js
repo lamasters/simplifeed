@@ -56,8 +56,9 @@ export async function selectArticle(article, state) {
  * @param {object} state - The state object containing session and feed data.
  * @param {Array} feedData - The current feed data.
  */
-export async function addFeed(url, state, feedData) {
-    let feed = await state.session.createFeed(url);
+export async function addFeed(url, state, feedData, addFeedFail) {
+    let feed = await state.session.createFeed(url, addFeedFail);
+    if (feed === null) return;
     let newFeedData = feedData.concat(feed);
     state.setFeedData(newFeedData);
 }

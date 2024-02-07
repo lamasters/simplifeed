@@ -42,7 +42,7 @@ export class UserSession {
      * @param {object} router - The router object used for navigation.
      * @param {function} setLoading - The hook to set the loading status.
      */
-    async login(email, password, router, setLoading) {
+    async login(email, password, router, setLoading, loginFail) {
         setLoading(true);
         try {
             let res = await this.account.createEmailSession(email, password);
@@ -53,7 +53,7 @@ export class UserSession {
             this.uid = null;
             this.sessionInfo = null;
             console.error(err);
-            alert('Login failed');
+            loginFail();
         } finally {
             setLoading(false);
         }
@@ -63,21 +63,22 @@ export class UserSession {
      * Send an email with a sign in link to the user
      * @param {string} email - The user's email
      */
-    async magicUrlLogin(email) {
+    async magicUrlLogin(email, sent, failed) {
         try {
             let redirectUrl = `${window.location.protocol}//${window.location.hostname.replace('www.', '')}`;
             if (window.location.port) {
                 redirectUrl += `:${window.location.port}`;
             }
-            console.log(redirectUrl);
+            console.debug(redirectUrl);
             await this.account.createMagicURLSession(
                 ID.unique(),
                 email,
                 redirectUrl
             );
+            sent();
         } catch (e) {
             console.error(e);
-            alert('Sending login link failed');
+            failed();
         }
     }
 
@@ -123,7 +124,7 @@ export class UserSession {
      * the login page.
      * @param {Object} router - The router object used for navigation.
      */
-    async logout(router) {
+    async logout(router, logoutFail) {
         try {
             await this.account.deleteSession('current');
             this.sessionInfo = null;
@@ -131,7 +132,7 @@ export class UserSession {
             router.push('/login');
         } catch (err) {
             console.error(err);
-            alert('Logout failed');
+            logoutFail();
         }
     }
 
@@ -142,14 +143,14 @@ export class UserSession {
      * @param {object} router - The router object.
      * @param {function} setLoading - The hook to set the loading status.
      */
-    async register(email, password, router, setLoading) {
+    async register(email, password, router, setLoading, signupFail) {
         setLoading(true);
         try {
             await this.account.create(ID.unique(), email, password);
             await this.login(email, password, router);
         } catch (err) {
             console.error(err);
-            alert('Registration failed');
+            signupFail();
         } finally {
             setLoading(false);
         }
@@ -165,7 +166,7 @@ export class UserSession {
         this.sessionInfo = null;
         try {
             userSession = await this.updateMagicUrlSession();
-            console.log('Magic URL Session');
+            console.debug('Magic URL Session');
             this.sessionInfo = userSession;
             this.uid = userSession.userId;
         } catch (e) {
@@ -174,8 +175,7 @@ export class UserSession {
         if (!userSession?.$id) {
             try {
                 userSession = await this.account.getSession('current');
-                console.log(userSession);
-                console.log('Email Session');
+                console.debug('Email Session');
                 this.sessionInfo = userSession;
                 this.uid = userSession.userId;
             } catch (err) {
@@ -183,7 +183,7 @@ export class UserSession {
             }
         }
 
-        if (userSession.$id) {
+        if (userSession?.$id) {
             const account = await this.account.get();
             verified = account?.emailVerification;
             if (!verified) {
@@ -224,7 +224,11 @@ export class UserSession {
      * @returns {Object|null} - The created feed object, or null if the feed
      * could not be created.
      */
-    async createFeed(url) {
+    async createFeed(url, addFeedFail) {
+        if (!url) {
+            addFeedFail();
+            return null;
+        }
         if (this.uid == null) {
             await this.getSession();
         }
@@ -246,12 +250,12 @@ export class UserSession {
                 items: articleSource.data.articles,
             };
         } catch (err) {
-            alert('Could not add feed source');
             console.error(err);
+            addFeedFail();
             return null;
         }
         if (feed == null) {
-            alert('Could not add feed source');
+            addFeedFail();
             return null;
         }
 
