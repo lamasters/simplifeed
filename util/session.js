@@ -165,21 +165,21 @@ export class UserSession {
         this.uid = null;
         this.sessionInfo = null;
         try {
-            userSession = await this.updateMagicUrlSession();
-            console.debug('Magic URL Session');
+            userSession = await this.account.getSession('current');
+            console.debug('Existing Session');
             this.sessionInfo = userSession;
             this.uid = userSession.userId;
-        } catch (e) {
-            console.error(e);
+        } catch (err) {
+            console.error(err);
         }
         if (!userSession?.$id) {
             try {
-                userSession = await this.account.getSession('current');
-                console.debug('Email Session');
+                userSession = await this.updateMagicUrlSession();
+                console.debug('Magic URL Session');
                 this.sessionInfo = userSession;
                 this.uid = userSession.userId;
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                console.error(e);
             }
         }
 

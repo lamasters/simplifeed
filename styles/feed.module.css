@@ -29,3 +29,20 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.update {
+    position: fixed;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: #48f;
+    z-index: 1;
+}
+
+.update:hover {
+    cursor: pointer;
+    background-color: #69f;
+}

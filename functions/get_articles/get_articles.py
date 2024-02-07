@@ -103,7 +103,10 @@ def fetch_article_source(rss_url: str) -> ArticleSourceRes:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
 
     rss_data = html.unescape(rss_res).replace("&", "&amp;")
-    xml_root = et.fromstring(rss_data)
+    try:
+        xml_root = et.fromstring(rss_data)
+    except et.ParseError:
+        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
 
     if not xml_root:
         return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
