@@ -1,3 +1,7 @@
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Slide, ToastContainer, toast } from 'react-toastify';
+
 import Head from 'next/head';
 import Loader from '../../components/loader';
 import { UserSession } from '../../util/session';
@@ -16,6 +20,30 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirm] = useState('');
     const [loading, setLoading] = useState(false);
+    const signupFail = () =>
+        toast.error('Failed to create an account', {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    const passwordMismatch = () =>
+        toast.error("Passwords don't match", {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
     const router = useRouter();
 
     const updateEmail = (e) => {
@@ -72,10 +100,11 @@ export default function Login() {
                                     email,
                                     password,
                                     router,
-                                    setLoading
+                                    setLoading,
+                                    signupFail
                                 );
                             } else {
-                                alert("Passwords don't match");
+                                passwordMismatch();
                             }
                         }}
                         type="submit"
@@ -85,6 +114,7 @@ export default function Login() {
                 </div>
                 {loading ? <Loader /> : null}
             </main>
+            <ToastContainer />
         </div>
     );
 }
