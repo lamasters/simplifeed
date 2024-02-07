@@ -51,7 +51,6 @@ export async function backgroundFetch(state) {
         if (feedData) {
             state.setLoadedData(feedData);
         }
-    } else {
     }
 }
 

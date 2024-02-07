@@ -58,7 +58,6 @@ function feedsEqual(a, b) {
     sortFeedItems(articlesA);
     sortFeedItems(articlesB);
     if (articlesA.length !== articlesB.length) return false;
-    console.log('ARTICLES A', articlesA, 'ARTICLES B', articlesB);
     for (let i = 0; i < articlesA.length; i++) {
         if (articlesA[i].title !== articlesB[i].title) return false;
     }
