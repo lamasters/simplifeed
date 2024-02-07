@@ -27,7 +27,6 @@ export async function fetchData(state) {
     }
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
-        localStorage.setItem('lastFetch', Date.now());
         let feedData = await state.session.getArticleSources();
         if (feedData === null) return;
         if (feedData.length > 0) state.setShowTutorial(false);
@@ -36,6 +35,7 @@ export async function fetchData(state) {
             state.setFeedData(feedData);
         }
         state.setLoadedData(feedData);
+        localStorage.setItem('lastFetch', Date.now());
         console.debug('Feed data loaded');
     } else {
         console.debug('Using cached feed data');
@@ -48,10 +48,10 @@ export async function backgroundFetch(state) {
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         console.debug('Background fetch');
-        localStorage.setItem('lastFetch', Date.now());
         let feedData = await state.session.getArticleSources();
         if (feedData) {
             state.setLoadedData(feedData);
+            localStorage.setItem('lastFetch', Date.now());
         }
     } else {
         console.debug('Background fetch skipped');
