@@ -21,25 +21,17 @@ export async function fetchData(state) {
     if (storedFeeds) {
         state.setFeedData(JSON.parse(storedFeeds));
         state.setLoadedData(JSON.parse(storedFeeds));
-        state.setLoading(false);
         if (storedFeeds.length > 0) state.setShowTutorial(false);
-        state.setLoading(false);
     }
-    const lastFetch = localStorage.getItem('lastFetch');
-    if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
-        let feedData = await state.session.getArticleSources();
-        if (feedData === null) return;
-        if (feedData.length > 0) state.setShowTutorial(false);
+    let feedData = await state.session.getArticleSources();
+    if (feedData === null) return;
+    if (feedData.length > 0) state.setShowTutorial(false);
 
-        if (!storedFeeds) {
-            state.setFeedData(feedData);
-        }
-        state.setLoadedData(feedData);
-        localStorage.setItem('lastFetch', Date.now());
-        console.debug('Feed data loaded');
-    } else {
-        console.debug('Using cached feed data');
-    }
+    state.setFeedData(feedData);
+    state.setLoadedData(feedData);
+    localStorage.setItem('lastFetch', Date.now());
+    localStorage.setItem('feedData', JSON.stringify(feedData));
+
     state.setLoading(false);
     await state.session.checkProUser(state.setProUser);
 }
@@ -87,6 +79,7 @@ export async function addFeed(url, state, feedData, addFeedFail) {
     if (feed === null) return;
     let newFeedData = feedData.concat(feed);
     state.setFeedData(newFeedData);
+    state.setLoadedData(newFeedData);
 }
 
 /**

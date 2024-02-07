@@ -229,7 +229,7 @@ export class UserSession {
             addFeedFail();
             return null;
         }
-        if (this.uid == null) {
+        if (this.uid === null) {
             await this.getSession();
         }
 
