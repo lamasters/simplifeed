@@ -26,7 +26,6 @@ export async function fetchData(state) {
         state.setLoading(false);
     }
     const lastFetch = localStorage.getItem('lastFetch');
-    if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         localStorage.setItem('lastFetch', Date.now());
         let feedData = await state.session.getArticleSources();
@@ -37,6 +36,9 @@ export async function fetchData(state) {
             state.setFeedData(feedData);
         }
         state.setLoadedData(feedData);
+        console.debug('Feed data loaded');
+    } else {
+        console.debug('Using cached feed data');
     }
     state.setLoading(false);
     await state.session.checkProUser(state.setProUser);
@@ -44,13 +46,15 @@ export async function fetchData(state) {
 
 export async function backgroundFetch(state) {
     const lastFetch = localStorage.getItem('lastFetch');
-    if (!lastFetch) localStorage.setItem('lastFetch', Date.now());
-    if (lastFetch && Date.now() - lastFetch > FETCH_INTERVAL) {
+    if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
+        console.debug('Background fetch');
         localStorage.setItem('lastFetch', Date.now());
         let feedData = await state.session.getArticleSources();
         if (feedData) {
             state.setLoadedData(feedData);
         }
+    } else {
+        console.debug('Background fetch skipped');
     }
 }
 
