@@ -80,10 +80,7 @@ export default function Home() {
             setCollapse(true);
         }
         fetchData(state);
-        fetchProcess = setInterval(
-            () => backgroundFetch(state),
-            FETCH_INTERVAL
-        );
+        fetchProcess = setInterval(() => backgroundFetch(state), 30000);
     }, []);
     return (
         <main>
