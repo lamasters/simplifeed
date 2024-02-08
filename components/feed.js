@@ -106,9 +106,10 @@ export default function Feed(props) {
                         <em>https://www.linuxinsider.com/rss-feed</em>
                     </div>
                 ) : null}
-                {!feedsEqual(props.feedData, props.loadedData) ? (
+                {!feedsEqual(props.feedData, props.loadedData) &&
+                !props.articleOpen ? (
                     <div
-                        className={styles.update}
+                        className={`${styles.update} ${styles.slide_bottom}`}
                         onClick={() => {
                             // Update the feed data in the state and local storage
                             localStorage.setItem(

@@ -2,7 +2,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import { backgroundFetch, fetchData } from '../util/feed_api';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { FETCH_INTERVAL } from '../util/constants';
 import Feed from '../components/feed';
@@ -31,7 +31,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [proUser, setProUser] = useState(false);
     const [rawText, setRawText] = useState('');
-    let fetchProcess = null;
+    const fetchProcess = useRef();
     const addFeedFail = () =>
         toast.error('Failed to subscribe to feed', {
             position: 'bottom-center',
@@ -75,12 +75,12 @@ export default function Home() {
     }, [session, router]);
 
     useEffect(() => {
-        if (fetchProcess) clearInterval(fetchProcess);
+        clearInterval(fetchProcess.current);
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
         fetchData(state);
-        fetchProcess = setInterval(() => backgroundFetch(state), 30000);
+        fetchProcess.current = setInterval(() => backgroundFetch(state), 30000);
     }, []);
     return (
         <main>
@@ -112,6 +112,7 @@ export default function Home() {
                     <b>{collapse ? '>' : '<'}</b>
                 </div>
                 <Feed
+                    articleOpen={articleOpen}
                     feedData={feedData}
                     loadedData={loadedData}
                     filter={filter}
