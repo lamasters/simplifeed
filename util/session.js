@@ -358,7 +358,7 @@ export class UserSession {
             let article = articles_res.data;
             let content = [
                 <a
-                    href={`//${url}`}
+                    href={url}
                     target="_blank"
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
