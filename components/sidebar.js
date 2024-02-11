@@ -3,14 +3,22 @@ import styles from '../styles/sidebar.module.css';
 import { useState } from 'react';
 
 /**
- * Deletes a feed from the feedData array.
+ * Deletes a feed from the feedData and loadedData arrays, updates the filter state, and saves the updated feedData to localStorage.
  * @param {Array} feedData - The array of feed data.
- * @param {Function} setFeedData - The function to update the feedData state.
+ * @param {Array} loadedData - The array of loaded feed data.
+ * @param {string} filter - The current filter value.
+ * @param {object} state - Hooks to manipulate application state.
  * @param {string} source - The title of the feed to be deleted.
  */
-function deleteFeed(feedData, setFeedData, source) {
-    const filtered = feedData.filter((feed) => feed.title !== source);
-    setFeedData(filtered);
+function deleteFeed(feedData, loadedData, filter, state, source) {
+    const filteredFeed = feedData.filter((feed) => feed.title !== source);
+    state.setFeedData(filteredFeed);
+    const filteredLoaded = loadedData.filter((feed) => feed.title !== source);
+    state.setLoadedData(filteredLoaded);
+    if (filter === source) {
+        state.setFilter(null);
+    }
+    localStorage.setItem('feedData', JSON.stringify(filteredFeed));
 }
 
 /**
@@ -59,7 +67,9 @@ export default function Sidebar(props) {
                                     );
                                     deleteFeed(
                                         props.feedData,
-                                        props.state.setFeedData,
+                                        props.loadedData,
+                                        props.filter,
+                                        props.state,
                                         source?.title
                                     );
                                 }}

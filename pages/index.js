@@ -99,6 +99,8 @@ export default function Home() {
                     <Sidebar
                         state={state}
                         feedData={feedData}
+                        loadedData={loadedData}
+                        filter={filter}
                         addFeedFail={addFeedFail}
                         logoutFail={logoutFail}
                     />
