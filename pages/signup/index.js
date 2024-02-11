@@ -44,6 +44,18 @@ export default function Login() {
             theme: 'dark',
             transition: Slide,
         });
+    const loginFailed = () =>
+        toast.error('Login failed', {
+            position: 'bottom-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
     const router = useRouter();
 
     const updateEmail = (e) => {
@@ -76,7 +88,12 @@ export default function Login() {
                     <h1>SimpliFeed</h1>
                 </header>
 
-                <div id={styles.cluster}>
+                <form
+                    id={styles.cluster}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                    }}
+                >
                     <label>Email:</label>
                     <input onChange={updateEmail} type="text" />
                     <label>Password:</label>
@@ -101,7 +118,8 @@ export default function Login() {
                                     password,
                                     router,
                                     setLoading,
-                                    signupFail
+                                    signupFail,
+                                    loginFailed
                                 );
                             } else {
                                 passwordMismatch();
@@ -111,7 +129,7 @@ export default function Login() {
                     >
                         Sign Up
                     </button>
-                </div>
+                </form>
                 {loading ? <Loader /> : null}
             </main>
             <ToastContainer />

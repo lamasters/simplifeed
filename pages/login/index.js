@@ -85,27 +85,39 @@ export default function Login() {
                     <h1>SimpliFeed</h1>
                 </header>
 
-                <div id={styles.cluster}>
+                <form
+                    id={styles.cluster}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        console.log('logging in');
+                        if (!usePassword) {
+                            session.magicUrlLogin(email, sent, sendFail);
+                        }
+                    }}
+                >
                     <label>Email</label>
                     <input onChange={updateEmail} type="text" />
-                    <div
-                        className={styles.sso}
-                        onClick={() => {
-                            session.magicUrlLogin(email, sent, sendFail);
-                        }}
-                    >
-                        Email Sign In Link
-                    </div>
                     {!usePassword ? (
                         <>
-                            <h3>Or</h3>
+                            <div
+                                className={styles.sso}
+                                onClick={() => {
+                                    session.magicUrlLogin(
+                                        email,
+                                        sent,
+                                        sendFail
+                                    );
+                                }}
+                            >
+                                Continue
+                            </div>
                             <div
                                 className={styles.sso}
                                 onClick={() => {
                                     setUsePassword(true);
                                 }}
                             >
-                                Enter Password
+                                Alternative Sign In
                             </div>
                         </>
                     ) : null}
@@ -127,20 +139,20 @@ export default function Login() {
                             >
                                 Sign In
                             </button>
+                            <Link
+                                href="/signup"
+                                style={{
+                                    color: '#48f',
+                                    textDecoration: 'underline',
+                                    marginTop: '10px',
+                                }}
+                            >
+                                Don't have an account? Sign up here!
+                            </Link>
                         </>
                     ) : null}
-                    <Link
-                        href="/signup"
-                        style={{
-                            color: '#48f',
-                            textDecoration: 'underline',
-                            marginTop: '10px',
-                        }}
-                    >
-                        Don't have an account? Sign up here!
-                    </Link>
                     {loading ? <Loader /> : null}
-                </div>
+                </form>
 
                 <ToastContainer />
             </main>
