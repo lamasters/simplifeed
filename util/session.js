@@ -143,11 +143,18 @@ export class UserSession {
      * @param {object} router - The router object.
      * @param {function} setLoading - The hook to set the loading status.
      */
-    async register(email, password, router, setLoading, signupFail) {
+    async register(
+        email,
+        password,
+        router,
+        setLoading,
+        signupFail,
+        loginFailed
+    ) {
         setLoading(true);
         try {
             await this.account.create(ID.unique(), email, password);
-            await this.login(email, password, router);
+            await this.login(email, password, router, setLoading, loginFailed);
         } catch (err) {
             console.error(err);
             signupFail();
