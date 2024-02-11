@@ -35,16 +35,18 @@ export default function Sidebar(props) {
             </div>
             <h2>Feeds</h2>
             <ul id={styles.feedlist}>
-                <li
-                    onClick={() => props.state.setFilter(null)}
-                    className={styles.source}
-                    style={{ width: '100%' }}
-                    key={0}
-                >
-                    All Feeds
-                </li>
+                <div className={styles.source_row}>
+                    <li
+                        onClick={() => props.state.setFilter(null)}
+                        className={styles.source}
+                        style={{ width: '100%' }}
+                        key={0}
+                    >
+                        All Feeds
+                    </li>
+                </div>
                 {props.feedData.map((source) => (
-                    <div className={styles.source_row}>
+                    <div className={styles.source_row} key={source?.title}>
                         {editing ? (
                             <img
                                 id={styles.trash}
@@ -66,7 +68,6 @@ export default function Sidebar(props) {
                         <li
                             onClick={() => props.state.setFilter(source?.title)}
                             className={styles.source}
-                            key={source?.title}
                         >
                             {source?.title}
                         </li>
