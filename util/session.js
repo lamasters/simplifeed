@@ -361,7 +361,21 @@ export class UserSession {
             );
             let articles_res = JSON.parse(res.response).data[0];
             if (articles_res.status != 200)
-                return <div>Error fetching article.</div>;
+                return (
+                    <div>
+                        Couldn't parse article.{' '}
+                        <a
+                            href={url}
+                            target="_blank"
+                            style={{
+                                color: 'blue',
+                                textDecoration: 'underline',
+                            }}
+                        >
+                            View original article.
+                        </a>
+                    </div>
+                );
             let article = articles_res.data;
             let content = [
                 <a
@@ -369,7 +383,7 @@ export class UserSession {
                     target="_blank"
                     style={{ color: 'blue', textDecoration: 'underline' }}
                 >
-                    View original content
+                    View original article
                 </a>,
                 <br />,
                 <h1 style={{ textAlign: 'center', margin: '10px' }}>
