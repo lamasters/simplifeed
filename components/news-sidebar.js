@@ -1,4 +1,4 @@
-import { addFeed } from '../util/feed_api';
+import { addFeed } from '../util/feed-api';
 import styles from '../styles/sidebar.module.css';
 import { useState } from 'react';
 
@@ -27,7 +27,7 @@ function deleteFeed(feedData, loadedData, filter, state, source) {
  * @param {Object} props - The component props.
  * @returns {JSX.Element} The rendered sidebar component.
  */
-export default function Sidebar(props) {
+export default function NewsSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
     return (

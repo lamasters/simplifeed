@@ -6,10 +6,10 @@ deploy_ai:
     --code="./functions/summarize_article" \
     --activate=true
 
-deploy_articles:
+deploy_feeds:
 	appwrite functions createDeployment \
     --functionId=652ae2169262a1dfc5f8 \
-    --entrypoint='get_articles.py' \
+    --entrypoint='get_feeds.py' \
 	--commands='pip install -r requirements.txt' \
-    --code="./functions/get_articles" \
+    --code="./functions/get_feeds" \
     --activate=true

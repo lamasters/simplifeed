@@ -1,0 +1,23 @@
+.episode {
+    padding: 10px;
+}
+
+.episode:hover {
+    cursor: pointer;
+    background-color: rgb(33, 39, 53);
+}
+
+.cover {
+    width: 75px;
+    height: 75px;
+    margin-right: 25px;
+}
+
+.description {
+    margin: auto;
+    text-align: left;
+}
+
+.source {
+    margin-right: 25px;
+}

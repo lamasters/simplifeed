@@ -1,4 +1,4 @@
-import { selectArticle } from '../util/feed_api';
+import { selectArticle } from '../util/feed-api';
 import styles from '../styles/card.module.css';
 
 /**
@@ -6,7 +6,7 @@ import styles from '../styles/card.module.css';
  * @param {Date} date - The date to be formatted.
  * @returns {string} The formatted date string.
  */
-function formatDate(date) {
+export function formatDate(date) {
     let d = new Date(date);
     return d.toLocaleString();
 }
@@ -21,12 +21,12 @@ function formatDate(date) {
  */
 export default function Card(props) {
     let icon = '';
-    if (!props.article.image) {
+    if (!props.article.image_url) {
         icon = <div className={styles.icon}>{props.article.source[0]}</div>;
     } else {
         icon = (
             <img
-                src={props.article.image}
+                src={props.article.image_url}
                 width="24px"
                 height="24px"
                 style={{
