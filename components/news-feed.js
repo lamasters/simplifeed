@@ -38,7 +38,7 @@ export function sortFeedItems(articles) {
  * @param {Array} sources - An array of sources, each containing an 'items' property.
  * @returns {Array} - An array containing all the items from the sources.
  */
-export function concatSources(sources) {
+function concatSources(sources) {
     let articles = [];
     for (let source of sources) {
         articles = articles.concat(source.items);
@@ -89,7 +89,7 @@ function createArticleList(feedData, setArticleList, filter) {
  * @param {string} props.state - Hooks to set the application state.
  * @returns {JSX.Element} The rendered feed component.
  */
-export default function Feed(props) {
+export default function NewsFeed(props) {
     const [articleList, setArticleList] = useState([]);
     const [seenTutorial, setSeenTutorial] = useState(false);
     useEffect(() => {
@@ -101,6 +101,7 @@ export default function Feed(props) {
         createArticleList(props.feedData, setArticleList, props.filter);
     }, [props.feedData, props.filter]);
     const feedRef = useRef();
+    console.log('Article list', articleList);
     return (
         <div ref={feedRef} id={styles.feed_container}>
             <div id={styles.feed_content}>

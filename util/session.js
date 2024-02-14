@@ -571,4 +571,68 @@ export class UserSession {
             }
         }
     }
+    /**
+     * Retrieves the user's podcasts.
+     * @returns {Array<Object>|null} The user's podcasts, or null if an error occurs.
+     */
+    async getPodcasts() {
+        let podcasts = [];
+        try {
+            const res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.PODCASTS,
+                [Query.equal('user_id', this.uid)]
+            );
+            podcasts = res.documents;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+
+        const ids = new Map();
+        podcasts.forEach((source) => {
+            ids.set(source.url, source.$id);
+        });
+        const urls = podcasts.map((source) => source.url);
+
+        try {
+            let res = await this.functions.createExecution(
+                APPWRITE_CONFIG.FETCH_ARTICLES,
+                JSON.stringify({ type: 'podcast', urls: urls }),
+                false,
+                '/',
+                'GET'
+            );
+            let podcastSources = JSON.parse(res.response).data;
+            let feeds = [];
+            for (let source of podcastSources) {
+                if (source.status != 200) continue;
+                feeds.push({
+                    id: ids.get(source.data.url),
+                    title: source.data.title,
+                    episodes: source.data.episodes,
+                });
+            }
+            return feeds;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+}
+
+export class Hook {
+    constructor(value, hook) {
+        this.value = value;
+        this.hook = hook;
+    }
+
+    get() {
+        return this.value;
+    }
+
+    set(value) {
+        this.value = value;
+        this.hook(value);
+    }
 }

@@ -1,4 +1,4 @@
-import { getArticleSummary } from '../util/feed_api';
+import { getArticleSummary } from '../util/feed-api';
 import styles from '../styles/modal.module.css';
 import { useState } from 'react';
 

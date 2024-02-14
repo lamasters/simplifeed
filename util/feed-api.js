@@ -26,6 +26,7 @@ export async function fetchData(state, fetchFeedsFail) {
     let feedData = await state.session.getArticleSources(fetchFeedsFail);
     if (feedData === null) return;
     if (feedData.length > 0) state.setShowTutorial(false);
+    console.log(feedData);
 
     state.setFeedData(feedData);
     state.setLoadedData(feedData);
@@ -36,6 +37,28 @@ export async function fetchData(state, fetchFeedsFail) {
     state.setProUser(true);
     // AI FOR EVERYONE!
     // await state.session.checkProUser(state.setProUser);
+}
+
+/**
+ * Fetch podcast data and update the state.
+ * @param {hooks} hooks
+ */
+export async function fetchPodcasts(hooks) {
+    hooks.loading.set(true);
+    let info = await hooks.session.getSession();
+    if (info.$id == null) {
+        hooks.router.push('/login');
+        return;
+    }
+    if (!info.verified) {
+        hooks.router.push('/not-verified');
+        return;
+    }
+
+    let podcasts = await hooks.session.getPodcasts();
+    if (podcasts === null) return;
+    hooks.podcastData.set(podcasts);
+    hooks.loading.set(false);
 }
 
 export async function backgroundFetch(state) {
