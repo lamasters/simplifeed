@@ -3,8 +3,10 @@
 import json
 import os
 from appwrite.client import Client
+from appwrite.input_file import InputFile
 from appwrite.query import Query
 from appwrite.services.databases import Databases
+from appwrite.services.storage import Storage
 from openai import OpenAI
 
 
@@ -34,6 +36,16 @@ def main(context):
             {"error": "User does not have permission to use AI summaries"}
         )
 
+    context.log("Checking if article has already been summarized")
+    article_hash = str(hash(req_body["article"]))
+    summaries = Storage(appwrite_client)
+    try:
+        summary = summaries.get_file_download("664bcddf002e5c7eba87", article_hash)
+        context.log("Summary found in storage, returning")
+        return context.res.json(summary)
+    except:
+        context.log("No summary found, generating one")
+
     context.log("Getting article summary")
     try:
         openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -42,7 +54,8 @@ def main(context):
             messages=[
                 {
                     "role": "system",
-                    "content": "Summarize the following article, highlighting the main points and providing key takeaways.",
+                    "content": "Summarize the following article, highlighting the main points "
+                    "and providing key takeaways.",
                 },
                 {"role": "user", "content": req_body["article"]},
             ],
@@ -51,5 +64,20 @@ def main(context):
         context.log(f"Failed to summarize article {e}")
         return context.res.json({"error": "Failed to generate article summary"})
 
-    context.log("Generated summary, returning to user")
-    return context.res.json({"summary": res.choices[0].message.content})
+    context.log("Generated summary, uploading to storage")
+    summary = {"summary": res.choices[0].message.content}
+    try:
+        summaries.create_file(
+            "664bcddf002e5c7eba87",
+            article_hash,
+            InputFile.from_bytes(
+                json.dumps(summary).encode(),
+                filename=article_hash,
+                mime_type="application/json",
+            ),
+        )
+        context.log("Summary uploaded to storage")
+    except:
+        context.log("Failed to upload summary to storage")
+    context.log("Returning summary")
+    return context.res.json(summary)
