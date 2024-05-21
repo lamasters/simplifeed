@@ -100,6 +100,5 @@ export async function getArticleSummary(state, article, setSummary) {
 
 export async function searchFeeds(state, query) {
     let feeds = await state.session.searchFeeds(query);
-    console.log(feeds);
     return feeds;
 }
