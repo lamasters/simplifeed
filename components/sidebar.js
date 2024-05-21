@@ -1,4 +1,6 @@
-import { addFeed } from '../util/feed_api';
+import { addFeed, searchFeeds } from '../util/feed_api';
+
+import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
 import { useState } from 'react';
 
@@ -21,6 +23,22 @@ function deleteFeed(feedData, loadedData, filter, state, source) {
     localStorage.setItem('feedData', JSON.stringify(filteredFeed));
 }
 
+function sortedFeeds(feedData) {
+    let feedDataCopy = feedData.slice();
+    feedDataCopy.sort((a, b) => {
+        let a_title = a.title.toLowerCase();
+        let b_title = b.title.toLowerCase();
+        if (a_title < b_title) {
+            return -1;
+        }
+        if (a_title > b_title) {
+            return 1;
+        }
+        return 0;
+    });
+    return feedDataCopy;
+}
+
 /**
  * Renders the sidebar component.
  *
@@ -30,6 +48,7 @@ function deleteFeed(feedData, loadedData, filter, state, source) {
 export default function Sidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
+    const [feedOptions, setFeedOptions] = useState([]);
     return (
         <div id={styles.sidebar}>
             <div id={styles.navbar}>
@@ -53,7 +72,7 @@ export default function Sidebar(props) {
                         All Feeds
                     </li>
                 </div>
-                {props.feedData.map((source) => (
+                {sortedFeeds(props.feedData).map((source) => (
                     <div className={styles.source_row} key={source?.title}>
                         {editing ? (
                             <img
@@ -92,13 +111,27 @@ export default function Sidebar(props) {
                 >
                     {editing ? 'Done' : 'Edit Feeds'}
                 </button>
-                <input
-                    onChange={(e) => {
+                <label>Search Feeds</label>
+                <Typeahead
+                    options={feedOptions}
+                    maxVisible={5}
+                    onChange={async (e) => {
                         setURL(e.target.value);
+                        let feeds = await searchFeeds(
+                            props.state,
+                            e.target.value
+                        );
+                        setFeedOptions(feeds);
                     }}
-                    type="text"
-                    value={url}
-                ></input>
+                    onOptionSelected={(url) => {
+                        setURL(url);
+                        setFeedOptions([]);
+                    }}
+                    customClasses={{
+                        results: styles.search_results,
+                        listItem: styles.search_item,
+                    }}
+                />
                 <button
                     onClick={() => {
                         addFeed(
@@ -107,7 +140,6 @@ export default function Sidebar(props) {
                             props.feedData,
                             props.addFeedFail
                         );
-                        setURL('');
                     }}
                     type="submit"
                 >
