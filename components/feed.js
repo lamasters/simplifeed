@@ -94,8 +94,9 @@ export default function Feed(props) {
     const [seenTutorial, setSeenTutorial] = useState(false);
     useEffect(() => {
         let storedSeenTutorial = localStorage.getItem('seenTutorial');
-        setSeenTutorial(storedSeenTutorial);
-        if (!storedSeenTutorial) {
+        if (storedSeenTutorial !== null) {
+            setSeenTutorial(true);
+        } else {
             localStorage.setItem('seenTutorial', true);
         }
         createArticleList(props.feedData, setArticleList, props.filter);
