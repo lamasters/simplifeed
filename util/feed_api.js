@@ -99,6 +99,5 @@ export async function getArticleSummary(state, article, setSummary) {
 }
 
 export async function searchFeeds(state, query) {
-    let feeds = await state.session.searchFeeds(query);
-    return feeds;
+    return await state.session.searchFeeds(query);
 }

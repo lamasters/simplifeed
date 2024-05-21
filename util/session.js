@@ -470,6 +470,6 @@ export class UserSession {
             console.error(err);
         }
         feeds.sort();
-        return feeds.slice(0, 5);
+        return feeds;
     }
 }
