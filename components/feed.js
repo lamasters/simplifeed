@@ -91,7 +91,13 @@ function createArticleList(feedData, setArticleList, filter) {
  */
 export default function Feed(props) {
     const [articleList, setArticleList] = useState([]);
+    const [seenTutorial, setSeenTutorial] = useState(false);
     useEffect(() => {
+        let storedSeenTutorial = localStorage.getItem('seenTutorial');
+        setSeenTutorial(storedSeenTutorial);
+        if (!storedSeenTutorial) {
+            localStorage.setItem('seenTutorial', true);
+        }
         createArticleList(props.feedData, setArticleList, props.filter);
     }, [props.feedData, props.filter]);
     const feedRef = useRef();
@@ -99,12 +105,16 @@ export default function Feed(props) {
         <div ref={feedRef} id={styles.feed_container}>
             <div id={styles.feed_content}>
                 {props.showTutorial ? (
-                    <div id={styles.tutorial}>
-                        Add feeds to start seeing articles!
-                        <br />
-                        Try adding{' '}
-                        <em>https://www.linuxinsider.com/rss-feed</em>
-                    </div>
+                    seenTutorial ? (
+                        <div id={styles.tutorial}>Loading articles...</div>
+                    ) : (
+                        <div id={styles.tutorial}>
+                            Add feeds to start seeing articles!
+                            <br />
+                            Try adding{' '}
+                            <em>https://www.linuxinsider.com/rss-feed</em>
+                        </div>
+                    )
                 ) : null}
                 {!feedsEqual(props.feedData, props.loadedData) &&
                 !props.articleOpen ? (
