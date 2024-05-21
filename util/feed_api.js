@@ -75,6 +75,9 @@ export async function selectArticle(article, state) {
  * @param {Array} feedData - The current feed data.
  */
 export async function addFeed(url, state, feedData, addFeedFail) {
+    if (!url.includes('https://') && !url.includes('http://')) {
+        url = 'https://' + url;
+    }
     let feed = await state.session.createFeed(url, addFeedFail);
     if (feed === null) return;
     let newFeedData = feedData.concat(feed);
@@ -93,4 +96,8 @@ export async function getArticleSummary(state, article, setSummary) {
     let summary = await state.session.getSummary(article);
     setSummary(summary);
     state.setLoading(false);
+}
+
+export async function searchFeeds(state, query) {
+    return await state.session.searchFeeds(query);
 }

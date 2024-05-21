@@ -250,7 +250,7 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            let articleSource = JSON.parse(res.response);
+            let articleSource = JSON.parse(res.responseBody);
             articleSource = articleSource.data[0];
             feed = {
                 title: articleSource.data.title,
@@ -326,7 +326,7 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            let articleSources = JSON.parse(res.response).data;
+            let articleSources = JSON.parse(res.responseBody).data;
             let feeds = [];
             for (let source of articleSources) {
                 if (source.status != 200) continue;
@@ -359,7 +359,7 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            let articles_res = JSON.parse(res.response).data[0];
+            let articles_res = JSON.parse(res.responseBody).data[0];
             if (articles_res.status != 200)
                 return (
                     <div>
@@ -444,11 +444,32 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            return JSON.parse(res.response).summary;
+            return JSON.parse(res.responseBody).summary;
         } catch (err) {
             console.error(err);
         }
 
         return '';
+    }
+
+    async searchFeeds(query) {
+        let feeds = [];
+        try {
+            let res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.NEWS,
+                [Query.contains('url', query), Query.limit(100)]
+            );
+            for (let feed of res.documents) {
+                let feed_url = new URL(feed.url);
+                if (!feeds.includes(feed_url.hostname + feed_url.pathname)) {
+                    feeds.push(feed_url.hostname + feed_url.pathname);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        feeds.sort();
+        return feeds;
     }
 }

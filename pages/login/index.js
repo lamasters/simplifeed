@@ -89,7 +89,6 @@ export default function Login() {
                     id={styles.cluster}
                     onSubmit={(e) => {
                         e.preventDefault();
-                        console.log('logging in');
                         if (!usePassword) {
                             session.magicUrlLogin(email, sent, sendFail);
                         }

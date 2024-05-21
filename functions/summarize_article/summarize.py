@@ -2,6 +2,7 @@
 
 import json
 import os
+from hashlib import md5
 from appwrite.client import Client
 from appwrite.input_file import InputFile
 from appwrite.query import Query
@@ -37,7 +38,7 @@ def main(context):
         )
 
     context.log("Checking if article has already been summarized")
-    article_hash = str(hash(req_body["article"]))
+    article_hash = md5(req_body["article"].encode()).hexdigest()
     summaries = Storage(appwrite_client)
     try:
         summary = summaries.get_file_download("664bcddf002e5c7eba87", article_hash)
