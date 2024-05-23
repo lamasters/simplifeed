@@ -45,7 +45,10 @@ export class UserSession {
     async login(email, password, router, setLoading, loginFail) {
         setLoading(true);
         try {
-            let res = await this.account.createEmailSession(email, password);
+            let res = await this.account.createEmailPasswordSession(
+                email,
+                password
+            );
             this.sessionInfo = res;
             this.uid = res.$id;
             router.push('/');
@@ -69,8 +72,11 @@ export class UserSession {
             if (window.location.port) {
                 redirectUrl += `:${window.location.port}`;
             }
-            console.debug(redirectUrl);
-            await this.account.createMagicURLSession(
+            if (!this.account) {
+                this.account = new Account(this.client);
+            }
+            console.log(this.account);
+            await this.account.createMagicURLToken(
                 ID.unique(),
                 email,
                 redirectUrl
