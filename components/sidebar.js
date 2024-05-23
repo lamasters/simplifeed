@@ -60,6 +60,9 @@ function getFeedIcon(source, editing, props) {
             />
         );
     } else {
+        if (!source.url) {
+            return null;
+        }
         let url = source.url.replace('https://', '').split('/')[0];
         try {
             url = new URL(source.url).origin;
