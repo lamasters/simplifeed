@@ -60,9 +60,14 @@ function getFeedIcon(source, editing) {
             />
         );
     } else {
-        let url = new URL(source.url).origin;
-        if (source.items.length > 0) {
-            url = new URL(source.items[0]?.link).origin;
+        let url = source.url.replace('https://', '').split('/')[0];
+        try {
+            url = new URL(source.url).origin;
+            if (source.items.length > 0) {
+                url = new URL(source.items[0]?.link).origin;
+            }
+        } catch {
+            console.error('Invalid URL');
         }
         return (
             <img
