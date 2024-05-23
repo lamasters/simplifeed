@@ -22,7 +22,18 @@ function formatDate(date) {
 export default function Card(props) {
     let icon = '';
     if (!props.article.image) {
-        icon = <div className={styles.icon}>{props.article.source[0]}</div>;
+        let url = new URL(props.article.link);
+        icon = (
+            <img
+                src={`https://www.google.com/s2/favicons?sz=64&domain=${url.origin}`}
+                width={36}
+                height={36}
+                style={{
+                    marginLeft: '10px',
+                    marginRight: '10px',
+                }}
+            />
+        );
     } else {
         icon = (
             <img

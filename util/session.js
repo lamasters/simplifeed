@@ -333,6 +333,7 @@ export class UserSession {
                 feeds.push({
                     id: ids.get(source.data.url),
                     title: source.data.title,
+                    url: source.data.url,
                     items: source.data.articles,
                 });
             }
