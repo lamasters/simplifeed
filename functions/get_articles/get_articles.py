@@ -49,6 +49,7 @@ class ArticleSourceRes(BaseModel):
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
     data: Optional[ArticleSource] = Field(default=None)
+    message: Optional[str] = Field(default=None)
 
 
 class ArticleContentRes(BaseModel):
@@ -74,18 +75,24 @@ class ServerRequest(BaseModel):
 
 def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) -> ArticleMetadataRes:
     """Parse an article entry in RSS feed into ArticleMetadata"""
-    title_item = item.find("title")
-    link_item = item.find("link")
-    pub_date_item = item.find("pubDate")
 
-    if title_item is None or link_item is None:
+    title = None
+    link = None
+    pub_date = ""
+    for child in item:
+        if "title" in child.tag:
+            title = child.text
+        elif "link" in child.tag:
+            link = child.text
+            if link is None:
+                link = child.attrib.get("href")
+        elif "pubDate" in child.tag or "published" in child.tag:
+            pub_date = child.text
+
+    if title is None or link is None:
         return ArticleMetadataRes(status=http.HTTPStatus.BAD_REQUEST)
 
-    title = title_item.text
-    link = link_item.text
-    pub_date = pub_date_item.text if pub_date_item is not None else ""
-
-    assert title is not None and link is not None and pub_date is not None
+    assert title is not None and link is not None
     return ArticleMetadataRes(
         data=ArticleMetadata(
             title=title.strip(), link=link, pub_date=pub_date, source=source.strip(), image_url=image_url,
@@ -100,30 +107,43 @@ def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     rss_res = res.text
 
     if rss_res is None:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
+        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="Failed to fetch RSS feed")
 
     rss_data = html.unescape(rss_res).replace("&", "&amp;")
     try:
         xml_root = et.fromstring(rss_data)
     except et.ParseError:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
+        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse xml")
 
     if not xml_root:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
+        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="No xml root found in RSS feed")
 
     channel = xml_root.find("channel")
-    if not channel:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST)
-
-    articles: list[ArticleMetadata] = []
+    article_tag = "item"
     image_url = ""
     title = ""
-    if (title_tag := channel.find("title")) is not None:
-        title = title_tag.text if title_tag.text is not None else ""
-    if (image := channel.find("image.url")) is not None:
-        image_url = image.text if image.text is not None else None
+    if not channel:
+        article_tag = "entry"
+        found_entry = False
+        for child in xml_root:
+            if "title" in child.tag:
+                title = child.text if child.text is not None else ""
+            elif "image" in child.tag:
+                image_url = child.text if child.text is not None else ""
+            elif "entry" in child.tag:
+                found_entry = True
+        channel = xml_root
+        if not found_entry:
+            return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="No channel found in RSS feed")
+    else:
+        if (title_tag := channel.find("title")) is not None:
+            title = title_tag.text if title_tag.text is not None else ""
+        if (image := channel.find("image.url")) is not None:
+            image_url = image.text if image.text is not None else None
+    
+    articles: list[ArticleMetadata] = []
     for child in channel:
-        if child.tag == "item":
+        if article_tag in child.tag:
             article_meta = parse_article_meta(child, title, image_url)
             if (
                 article_meta.status == http.HTTPStatus.OK

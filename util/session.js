@@ -333,6 +333,7 @@ export class UserSession {
                 feeds.push({
                     id: ids.get(source.data.url),
                     title: source.data.title,
+                    url: source.data.url,
                     items: source.data.articles,
                 });
             }
@@ -377,6 +378,7 @@ export class UserSession {
                     </div>
                 );
             let article = articles_res.data;
+            let url_origin = new URL(url).origin;
             let content = [
                 <a
                     href={url}
@@ -386,9 +388,32 @@ export class UserSession {
                     View original article
                 </a>,
                 <br />,
-                <h1 style={{ textAlign: 'center', margin: '10px' }}>
-                    {title}
-                </h1>,
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyItems: 'center',
+                        alignItems: 'center',
+                        margin: '10px',
+                    }}
+                >
+                    <img
+                        src={`https://www.google.com/s2/favicons?sz=64&domain=${url_origin}`}
+                        width="48px"
+                        height="48px"
+                        style={{
+                            alignSelf: 'center',
+                        }}
+                    />
+                    <h1
+                        style={{
+                            textAlign: 'center',
+                            width: 'calc(100% - 64px)',
+                        }}
+                    >
+                        {title}
+                    </h1>
+                </div>,
                 <br />,
             ];
             let rawText = '';

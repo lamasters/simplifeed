@@ -39,6 +39,42 @@ function sortedFeeds(feedData) {
     return feedDataCopy;
 }
 
+function getFeedIcon(source, editing) {
+    if (editing) {
+        return (
+            <img
+                id={styles.trash}
+                src="/trash.png"
+                width="28px"
+                height="28px"
+                onClick={async () => {
+                    await props.state.session.deleteFeed(source.id);
+                    deleteFeed(
+                        props.feedData,
+                        props.loadedData,
+                        props.filter,
+                        props.state,
+                        source?.title
+                    );
+                }}
+            />
+        );
+    } else {
+        let url = new URL(source.url).origin;
+        if (source.items.length > 0) {
+            url = new URL(source.items[0]?.link).origin;
+        }
+        return (
+            <img
+                id={styles.icon}
+                src={`https://www.google.com/s2/favicons?sz=64&domain=${url}`}
+                width="28px"
+                height="28px"
+            />
+        );
+    }
+}
+
 /**
  * Renders the sidebar component.
  *
@@ -74,26 +110,7 @@ export default function Sidebar(props) {
                 </div>
                 {sortedFeeds(props.feedData).map((source) => (
                     <div className={styles.source_row} key={source?.title}>
-                        {editing ? (
-                            <img
-                                id={styles.trash}
-                                src="/trash.png"
-                                width="28px"
-                                height="28px"
-                                onClick={async () => {
-                                    await props.state.session.deleteFeed(
-                                        source.id
-                                    );
-                                    deleteFeed(
-                                        props.feedData,
-                                        props.loadedData,
-                                        props.filter,
-                                        props.state,
-                                        source?.title
-                                    );
-                                }}
-                            />
-                        ) : null}
+                        {getFeedIcon(source, editing)}
                         <li
                             onClick={() => props.state.setFilter(source?.title)}
                             className={styles.source}

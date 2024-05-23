@@ -67,6 +67,12 @@
     border-radius: 50%;
 }
 
+#icon {
+    position: relative;
+    top: 5px;
+    margin-right: 10px;
+}
+
 .nav {
     margin-right: 10px;
     color: #48f;
