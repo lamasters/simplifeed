@@ -39,7 +39,7 @@ function sortedFeeds(feedData) {
     return feedDataCopy;
 }
 
-function getFeedIcon(source, editing) {
+function getFeedIcon(source, editing, props) {
     if (editing) {
         return (
             <img
@@ -115,7 +115,7 @@ export default function Sidebar(props) {
                 </div>
                 {sortedFeeds(props.feedData).map((source) => (
                     <div className={styles.source_row} key={source?.title}>
-                        {getFeedIcon(source, editing)}
+                        {getFeedIcon(source, editing, props)}
                         <li
                             onClick={() => props.state.setFilter(source?.title)}
                             className={styles.source}
