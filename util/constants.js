@@ -7,6 +7,8 @@ export const APPWRITE_CONFIG = {
     FETCH_ARTICLES: '652ae2169262a1dfc5f8',
     PRO_USERS: '65bed3fb0512dd5b5d27',
     SUMMARIZE_ARTICLE: '65bed72070bb85067dd9',
+    READ_ARTICLES: '66516bb20028df1fa403',
+    RANKING_USERS: '66516ef600273d9b13a0',
 };
 
 export const FETCH_INTERVAL = 1000 * 60 * 5; // 5 minutes
