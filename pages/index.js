@@ -20,7 +20,6 @@ import { useRouter } from 'next/router';
  * @returns {JSX.Element} The rendered Home component.
  */
 export default function Home() {
-    let session = new UserSession();
     const [feedData, setFeedData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
     const [filter, setFilter] = useState(null);
@@ -70,9 +69,9 @@ export default function Home() {
             setRawText: setRawText,
             setShowTutorial: setShowTutorial,
             router: router,
-            session: session,
+            session: new UserSession(),
         };
-    }, [session, router]);
+    }, [router]);
 
     useEffect(() => {
         clearInterval(fetchProcess.current);

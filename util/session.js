@@ -503,4 +503,34 @@ export class UserSession {
         feeds.sort();
         return feeds;
     }
+
+    async recordArticleRead(article, id) {
+        let rankingUser = false;
+        try {
+            let res = await this.database.listDocuments(
+                APPWRITE_CONFIG.USERS_DB,
+                APPWRITE_CONFIG.RANKING_USERS,
+                [Query.equal('user_id', this.uid)]
+            );
+            rankingUser = res.documents.length > 0;
+        } catch {
+            rankingUser = false;
+        }
+        if (rankingUser) {
+            try {
+                await this.database.createDocument(
+                    APPWRITE_CONFIG.FEEDS_DB,
+                    APPWRITE_CONFIG.READ_ARTICLES,
+                    ID.unique(),
+                    {
+                        user_id: this.uid,
+                        title: article.title,
+                        url: article.link,
+                    }
+                );
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
 }

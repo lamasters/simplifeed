@@ -66,6 +66,7 @@ export async function selectArticle(article, state) {
     );
     state.setArticleContent(articleContent);
     state.setLoading(false);
+    await state.session.recordArticleRead(article);
 }
 
 /**
