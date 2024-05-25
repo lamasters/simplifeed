@@ -12,7 +12,7 @@ from openai import OpenAI
 
 
 def main(context):
-    """Summarize an article using OpenAI's GPT-3.5 model."""
+    """Summarize an article using the configured OpenAI model."""
     context.log("Initializing appwrite client")
     req_body = json.loads(context.req.body)
 
@@ -48,17 +48,19 @@ def main(context):
         context.log("No summary found, generating one")
 
     context.log("Getting article summary")
+    article = req_body["article"].replace("  ", "").replace("\n", "").replace("\r", "").replace("\t", "")
     try:
         openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         res = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
+            model=os.getenv("OPENAI_MODEL_ID"),
             messages=[
                 {
                     "role": "system",
                     "content": "Summarize the following article, highlighting the main points "
-                    "and providing key takeaways.",
+                    "and providing key takeaways. Keep the summary to one paragraph to make it "
+                    "digestible for readers.",
                 },
-                {"role": "user", "content": req_body["article"]},
+                {"role": "user", "content": article},
             ],
         )
     except Exception as e:
