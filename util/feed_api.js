@@ -33,7 +33,8 @@ export async function fetchData(state) {
     localStorage.setItem('feedData', JSON.stringify(feedData));
 
     state.setLoading(false);
-    await state.session.checkProUser(state.setProUser);
+    state.setProUser(true);
+    // await state.session.checkProUser(state.setProUser);
 }
 
 export async function backgroundFetch(state) {
