@@ -21,6 +21,7 @@ class ArticleMetadata(BaseModel):
     pub_date: str = Field(default="")
     source: str = Field(default="")
     image_url: Optional[str] = Field(default=None)
+    author: Optional[str] = Field(default=None)
 
 
 class ArticleSource(BaseModel):
@@ -79,6 +80,7 @@ def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) 
     title = None
     link = None
     pub_date = ""
+    author = None
     for child in item:
         if "title" in child.tag:
             title = child.text
@@ -88,6 +90,11 @@ def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) 
                 link = child.attrib.get("href")
         elif "pubDate" in child.tag or "published" in child.tag:
             pub_date = child.text
+        elif "creator" in child.tag:
+            author = child.text
+        elif "author" in child.tag:
+            if name := child.find("name") is not None:
+                author = name.text
 
     if title is None or link is None:
         return ArticleMetadataRes(status=http.HTTPStatus.BAD_REQUEST)
@@ -95,7 +102,7 @@ def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) 
     assert title is not None and link is not None
     return ArticleMetadataRes(
         data=ArticleMetadata(
-            title=title.strip(), link=link, pub_date=pub_date, source=source.strip(), image_url=image_url,
+            title=title.strip(), link=link, pub_date=pub_date, source=source.strip(), image_url=image_url, author=author
         )
     )
 
