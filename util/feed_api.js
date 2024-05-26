@@ -34,6 +34,7 @@ export async function fetchData(state) {
 
     state.setLoading(false);
     state.setProUser(true);
+    // AI FOR EVERYONE!
     // await state.session.checkProUser(state.setProUser);
 }
 
@@ -63,6 +64,8 @@ export async function selectArticle(article, state) {
     let articleContent = await state.session.getArticle(
         article.link,
         article.title,
+        article.author,
+        article.pub_date,
         state.setRawText
     );
     state.setArticleContent(articleContent);

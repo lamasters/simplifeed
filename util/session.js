@@ -357,7 +357,7 @@ export class UserSession {
      * @param {function} setRawText - The hook to set the raw text of the article.
      * @returns {JSX.Element|null} - The generated HTML content for the article, or null if an error occurs.
      */
-    async getArticle(url, title, setRawText) {
+    async getArticle(url, title, author, pubDate, setRawText) {
         try {
             let res = await this.functions.createExecution(
                 APPWRITE_CONFIG.FETCH_ARTICLES,
@@ -385,6 +385,8 @@ export class UserSession {
                 );
             let article = articles_res.data;
             let url_origin = new URL(url).origin;
+            let flex_dir =
+                window.innerWidth > window.innerHeight ? 'row' : 'column';
             let content = [
                 <a
                     href={url}
@@ -397,7 +399,7 @@ export class UserSession {
                 <div
                     style={{
                         display: 'flex',
-                        flexDirection: 'row',
+                        flexDirection: flex_dir,
                         justifyItems: 'center',
                         alignItems: 'center',
                         margin: '10px',
@@ -420,6 +422,8 @@ export class UserSession {
                         {title}
                     </h1>
                 </div>,
+                author ? <h3>{author}</h3> : null,
+                <h3>{new Date(pubDate).toLocaleString()}</h3>,
                 <br />,
             ];
             let rawText = '';
