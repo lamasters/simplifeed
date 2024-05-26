@@ -387,11 +387,18 @@ export class UserSession {
             let url_origin = new URL(url).origin;
             let flex_dir =
                 window.innerWidth > window.innerHeight ? 'row' : 'column';
+            let width = Math.min(screen.width, window.innerWidth);
             let content = [
                 <a
                     href={url}
                     target="_blank"
-                    style={{ color: 'blue', textDecoration: 'underline' }}
+                    style={{
+                        color: 'blue',
+                        textDecoration: 'underline',
+                        display: 'block',
+                        width: '90%',
+                        margin: 'auto',
+                    }}
                 >
                     View original article
                 </a>,
@@ -402,7 +409,11 @@ export class UserSession {
                         flexDirection: flex_dir,
                         justifyItems: 'center',
                         alignItems: 'center',
-                        margin: '10px',
+                        margin: 'auto',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                        width: '90%',
+                        minWidth: `${Math.max(width * 0.8, 275)}px`,
                     }}
                 >
                     <img
@@ -417,19 +428,34 @@ export class UserSession {
                         style={{
                             textAlign: 'center',
                             width: 'calc(100% - 64px)',
+                            marginTop: '10px',
                         }}
                     >
                         {title}
                     </h1>
                 </div>,
-                author ? <h3>{author}</h3> : null,
-                <h3>{new Date(pubDate).toLocaleString()}</h3>,
+                author ? (
+                    <h3 style={{ margin: 'auto', width: '70%' }}>{author}</h3>
+                ) : null,
+                <h3 style={{ margin: 'auto', width: '70%' }}>
+                    {new Date(pubDate).toLocaleString()}
+                </h3>,
                 <br />,
             ];
             let rawText = '';
             for (let tag of article.tags) {
                 rawText += tag + '\n';
-                content.push(<p>{tag}</p>);
+                content.push(
+                    <p
+                        style={{
+                            width: '70%',
+                            minWidth: `${Math.max(width * 0.7, 275)}px`,
+                            margin: 'auto',
+                        }}
+                    >
+                        {tag}
+                    </p>
+                );
                 content.push(<br />);
             }
             for (let i = 0; i < 15; i++) {
