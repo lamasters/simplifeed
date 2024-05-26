@@ -1,17 +1,20 @@
 """Serverless Function to fetch articles from RSS feed"""
+
 import enum
-from fastapi.encoders import jsonable_encoder
 import html
 import http
 import json
-import requests
 import xml.etree.ElementTree as et
-from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
-from pydantic import BaseModel, Field
 from typing import Optional
 
+import requests
+from bs4 import BeautifulSoup
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel, Field
+
 THREADS = ThreadPoolExecutor(max_workers=10)
+
 
 class ArticleMetadata(BaseModel):
     """Model for an article entry in home feed"""
@@ -74,7 +77,9 @@ class ServerRequest(BaseModel):
     urls: list[str] = Field(default_factory=list)
 
 
-def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) -> ArticleMetadataRes:
+def parse_article_meta(
+    item: et.Element, source: str, image_url: Optional[str]
+) -> ArticleMetadataRes:
     """Parse an article entry in RSS feed into ArticleMetadata"""
 
     title = None
@@ -102,7 +107,12 @@ def parse_article_meta(item: et.Element, source: str, image_url: Optional[str]) 
     assert title is not None and link is not None
     return ArticleMetadataRes(
         data=ArticleMetadata(
-            title=title.strip(), link=link, pub_date=pub_date, source=source.strip(), image_url=image_url, author=author
+            title=title.strip(),
+            link=link,
+            pub_date=pub_date,
+            source=source.strip(),
+            image_url=image_url,
+            author=author,
         )
     )
 
@@ -114,16 +124,22 @@ def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     rss_res = res.text
 
     if rss_res is None:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="Failed to fetch RSS feed")
+        return ArticleSourceRes(
+            status=http.HTTPStatus.BAD_REQUEST, message="Failed to fetch RSS feed"
+        )
 
     rss_data = html.unescape(rss_res).replace("&", "&amp;")
     try:
         xml_root = et.fromstring(rss_data)
     except et.ParseError:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse xml")
+        return ArticleSourceRes(
+            status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse xml"
+        )
 
     if not xml_root:
-        return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="No xml root found in RSS feed")
+        return ArticleSourceRes(
+            status=http.HTTPStatus.BAD_REQUEST, message="No xml root found in RSS feed"
+        )
 
     channel = xml_root.find("channel")
     article_tag = "item"
@@ -141,13 +157,16 @@ def fetch_article_source(rss_url: str) -> ArticleSourceRes:
                 found_entry = True
         channel = xml_root
         if not found_entry:
-            return ArticleSourceRes(status=http.HTTPStatus.BAD_REQUEST, message="No channel found in RSS feed")
+            return ArticleSourceRes(
+                status=http.HTTPStatus.BAD_REQUEST,
+                message="No channel found in RSS feed",
+            )
     else:
         if (title_tag := channel.find("title")) is not None:
             title = title_tag.text if title_tag.text is not None else ""
         if (image := channel.find("image.url")) is not None:
             image_url = image.text if image.text is not None else None
-    
+
     articles: list[ArticleMetadata] = []
     for child in channel:
         if article_tag in child.tag:
@@ -158,7 +177,9 @@ def fetch_article_source(rss_url: str) -> ArticleSourceRes:
             ):
                 articles.append(article_meta.data)
 
-    return ArticleSourceRes(data=ArticleSource(articles=articles, title=title.strip(), url=rss_url))
+    return ArticleSourceRes(
+        data=ArticleSource(articles=articles, title=title.strip(), url=rss_url)
+    )
 
 
 def fetch_article_content(url: str) -> ArticleContentRes:
@@ -197,11 +218,11 @@ def main(context):
         context.log(f"Exception occurred fetching data")
         return context.res.json({"exception": str(e)})
     context.log(f"Finished fetching data")
-    
+
     if not res_data:
         context.log("No data fetched")
         return context.res.json({"data": "Failed"})
-    
+
     json_data = [jsonable_encoder(res) for res in res_data]
     context.log(f"Returning json data")
     return context.res.json({"data": json_data})

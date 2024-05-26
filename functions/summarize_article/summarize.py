@@ -3,6 +3,7 @@
 import json
 import os
 from hashlib import md5
+
 from appwrite.client import Client
 from appwrite.input_file import InputFile
 from appwrite.query import Query
@@ -48,7 +49,13 @@ def main(context):
         context.log("No summary found, generating one")
 
     context.log("Getting article summary")
-    article = req_body["article"].replace("  ", "").replace("\n", "").replace("\r", "").replace("\t", "")
+    article = (
+        req_body["article"]
+        .replace("  ", "")
+        .replace("\n", "")
+        .replace("\r", "")
+        .replace("\t", "")
+    )
     try:
         openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         res = openai_client.chat.completions.create(
