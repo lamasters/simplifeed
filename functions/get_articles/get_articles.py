@@ -1,19 +1,19 @@
 """Serverless Function to fetch articles from RSS feed"""
-
+import asyncio
 import enum
-import html
+import functools
 import http
 import json
-import xml.etree.ElementTree as et
-from concurrent.futures import ThreadPoolExecutor
-from typing import Optional
+from concurrent.futures import ProcessPoolExecutor
+from typing import Dict, Optional
 
+import feedparser
 import requests
 from bs4 import BeautifulSoup
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
-THREADS = ThreadPoolExecutor(max_workers=10)
+PROC_POOL = ProcessPoolExecutor(max_workers=10)
 
 
 class ArticleMetadata(BaseModel):
@@ -78,33 +78,17 @@ class ServerRequest(BaseModel):
 
 
 def parse_article_meta(
-    item: et.Element, source: str, image_url: Optional[str]
+    item: Dict, source: str, image_url: Optional[str]
 ) -> ArticleMetadataRes:
     """Parse an article entry in RSS feed into ArticleMetadata"""
-
-    title = None
-    link = None
-    pub_date = ""
-    author = None
-    for child in item:
-        if "title" in child.tag:
-            title = child.text
-        elif "link" in child.tag:
-            link = child.text
-            if link is None:
-                link = child.attrib.get("href")
-        elif "pubDate" in child.tag or "published" in child.tag:
-            pub_date = child.text
-        elif "creator" in child.tag:
-            author = child.text
-        elif "author" in child.tag:
-            if name := child.find("name") is not None:
-                author = name.text
+    title = item.get("title")
+    link = item.get("link")
+    pub_date = item.get("published", "")
+    author = item.get("author")
 
     if title is None or link is None:
         return ArticleMetadataRes(status=http.HTTPStatus.BAD_REQUEST)
 
-    assert title is not None and link is not None
     return ArticleMetadataRes(
         data=ArticleMetadata(
             title=title.strip(),
@@ -117,68 +101,37 @@ def parse_article_meta(
     )
 
 
-def fetch_article_source(rss_url: str) -> ArticleSourceRes:
+async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
-    rss_res = None
-    res = requests.get(rss_url)
-    rss_res = res.text
-
-    if rss_res is None:
-        return ArticleSourceRes(
-            status=http.HTTPStatus.BAD_REQUEST, message="Failed to fetch RSS feed"
-        )
-
-    rss_data = html.unescape(rss_res).replace("&", "&amp;")
     try:
-        xml_root = et.fromstring(rss_data)
-    except et.ParseError:
+        loop = asyncio.get_event_loop()
+        feed = await loop.run_in_executor(PROC_POOL, functools.partial(feedparser.parse, rss_url))
+    except:
         return ArticleSourceRes(
-            status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse xml"
+            status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse RSS feed"
         )
-
-    if not xml_root:
+    if not feed['entries']:
         return ArticleSourceRes(
-            status=http.HTTPStatus.BAD_REQUEST, message="No xml root found in RSS feed"
+            status=http.HTTPStatus.BAD_REQUEST, message="No entries found in RSS feed"
         )
-
-    channel = xml_root.find("channel")
-    article_tag = "item"
+    
+    feed_title = feed['feed'].get('title', "")
     image_url = ""
-    title = ""
-    if not channel:
-        article_tag = "entry"
-        found_entry = False
-        for child in xml_root:
-            if "title" in child.tag:
-                title = child.text if child.text is not None else ""
-            elif "image" in child.tag:
-                image_url = child.text if child.text is not None else ""
-            elif "entry" in child.tag:
-                found_entry = True
-        channel = xml_root
-        if not found_entry:
-            return ArticleSourceRes(
-                status=http.HTTPStatus.BAD_REQUEST,
-                message="No channel found in RSS feed",
-            )
-    else:
-        if (title_tag := channel.find("title")) is not None:
-            title = title_tag.text if title_tag.text is not None else ""
-        if (image := channel.find("image.url")) is not None:
-            image_url = image.text if image.text is not None else None
+    if image := feed['feed'].get('image'):
+        image_url = image.get('url', "")
+
 
     articles: list[ArticleMetadata] = []
-    for child in channel:
-        if article_tag in child.tag:
-            article_meta = parse_article_meta(child, title, image_url)
-            if (
-                article_meta.status == http.HTTPStatus.OK
-                and article_meta.data is not None
-            ):
-                articles.append(article_meta.data)
+    for entry in feed['entries']:
+        article_meta = parse_article_meta(entry, feed_title, image_url)
+        if (
+            article_meta.status == http.HTTPStatus.OK
+            and article_meta.data is not None
+        ):
+            articles.append(article_meta.data)
 
     return ArticleSourceRes(
-        data=ArticleSource(articles=articles, title=title.strip(), url=rss_url)
+        data=ArticleSource(articles=articles, title=feed_title.strip(), url=rss_url)
     )
 
 
@@ -195,8 +148,7 @@ def fetch_article_content(url: str) -> ArticleContentRes:
         return ArticleContentRes(status=http.HTTPStatus.BAD_REQUEST)
     return ArticleContentRes(data=ArticleContent(tags=[tag.text for tag in tags]))
 
-
-def main(context):
+async def main(context):
     """Main function for the Cloud Function"""
     context.log("Starting parsing request")
     req_body = json.loads(context.req.body)
@@ -204,16 +156,17 @@ def main(context):
     req_data = ServerRequest(**req_body)
 
     res_data = None
-    tasks = []
+    results = []
     try:
         if req_data.type == RequestType.source:
             context.log("Fetching article sources...")
-            tasks = [fetch_article_source(url) for url in req_data.urls]
+            tasks = [fetch_article_source(url) for url in urls]
+            results = await asyncio.gather(*tasks)
         elif req_data.type == RequestType.article:
             context.log("Fetching article content...")
-            tasks = [fetch_article_content(url) for url in req_data.urls]
+            results = [fetch_article_content(url) for url in req_data.urls]
 
-        res_data = tasks
+        res_data = results
     except Exception as e:
         context.log(f"Exception occurred fetching data")
         return context.res.json({"exception": str(e)})
