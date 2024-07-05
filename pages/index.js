@@ -95,6 +95,7 @@ export default function Home() {
                 />
                 <meta name="theme-color" content="#12151d" />
                 <link rel="manifest" href="/manifest.json" />
+                <link href="https://techhub.social/@masters" rel="me" />
             </Head>
             <div className={styles.main_container}>
                 {!collapse ? (
