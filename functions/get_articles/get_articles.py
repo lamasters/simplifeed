@@ -1,7 +1,6 @@
 """Serverless Function to fetch articles from RSS feed"""
 import asyncio
 import enum
-import functools
 import http
 import json
 from concurrent.futures import ProcessPoolExecutor
@@ -105,7 +104,7 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     """Download RSS feed and parse into ArticleSource"""
     try:
         loop = asyncio.get_event_loop()
-        feed = await loop.run_in_executor(PROC_POOL, functools.partial(feedparser.parse, rss_url))
+        feed = await asyncio.wait_for(loop.run_in_executor(PROC_POOL, feedparser.parse, rss_url), timeout=5)
     except:
         return ArticleSourceRes(
             status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse RSS feed"
@@ -160,7 +159,7 @@ async def main(context):
     try:
         if req_data.type == RequestType.source:
             context.log("Fetching article sources...")
-            tasks = [fetch_article_source(url) for url in urls]
+            tasks = [fetch_article_source(url) for url in req_data.urls]
             results = await asyncio.gather(*tasks)
         elif req_data.type == RequestType.article:
             context.log("Fetching article content...")
