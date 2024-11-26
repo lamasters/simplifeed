@@ -313,7 +313,7 @@ export class UserSession {
      * @returns {Array<Object>|null} An array of feeds containing the id,
      * title, and items of each source, or null if an error occurs.
      */
-    async getArticleSources() {
+    async getArticleSources(fetchFeedsFail) {
         const sources = await this.getFeeds();
         const ids = new Map();
         sources.forEach((source) => {
@@ -332,16 +332,24 @@ export class UserSession {
                 '/',
                 'GET'
             );
-            let articleSources = JSON.parse(res.responseBody).data;
-            let feeds = [];
-            for (let source of articleSources) {
-                if (source.status != 200) continue;
+            const articleSources = JSON.parse(res.responseBody).data;
+            const feeds = [];
+            const failedFeeds = [];
+            for (const source of articleSources) {
+                if (source.status != 200) {
+                    console.error(source.message);
+                    failedFeeds.push(source.data.url);
+                    continue;
+                }
                 feeds.push({
                     id: ids.get(source.data.url),
                     title: source.data.title,
                     url: source.data.url,
                     items: source.data.articles,
                 });
+            }
+            if (fetchFeedsFail && failedFeeds.length > 0) {
+                fetchFeedsFail(failedFeeds.join('\n'));
             }
             return feeds;
         } catch (err) {

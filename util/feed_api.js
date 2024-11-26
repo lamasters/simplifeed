@@ -4,7 +4,7 @@ import { FETCH_INTERVAL } from './constants';
  * Fetches feed data and updates the state.
  * @param {Object} state - Hooks to set application state.
  */
-export async function fetchData(state) {
+export async function fetchData(state, fetchFeedsFail) {
     state.setLoading(true);
     let info = await state.session.getSession();
     if (info.$id == null) {
@@ -23,7 +23,7 @@ export async function fetchData(state) {
         state.setLoadedData(JSON.parse(storedFeeds));
         if (storedFeeds.length > 0) state.setShowTutorial(false);
     }
-    let feedData = await state.session.getArticleSources();
+    let feedData = await state.session.getArticleSources(fetchFeedsFail);
     if (feedData === null) return;
     if (feedData.length > 0) state.setShowTutorial(false);
 
@@ -42,7 +42,7 @@ export async function backgroundFetch(state) {
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         console.debug('Background fetch');
-        let feedData = await state.session.getArticleSources();
+        let feedData = await state.session.getArticleSources(null);
         if (feedData) {
             state.setLoadedData(feedData);
             localStorage.setItem('lastFetch', Date.now());

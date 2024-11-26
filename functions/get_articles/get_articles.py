@@ -105,9 +105,9 @@ async def fetch_article_source(rss_url: str) -> ArticleSourceRes:
     try:
         loop = asyncio.get_event_loop()
         feed = await asyncio.wait_for(loop.run_in_executor(PROC_POOL, feedparser.parse, rss_url), timeout=5)
-    except:
+    except Exception:
         return ArticleSourceRes(
-            status=http.HTTPStatus.BAD_REQUEST, message="Failed to parse RSS feed"
+            status=http.HTTPStatus.BAD_REQUEST, message=f"Failed to parse RSS feed", data=ArticleSource(url=rss_url)
         )
     if not feed['entries']:
         return ArticleSourceRes(
