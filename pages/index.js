@@ -55,6 +55,19 @@ export default function Home() {
             theme: 'dark',
             transition: Slide,
         });
+    const fetchFeedsFail = (feeds) => {
+        toast.error(`Failed to update feeds:\n${feeds}`, {
+            position: 'bottom-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    };
     const router = useRouter();
 
     let state = useMemo(() => {
@@ -78,7 +91,7 @@ export default function Home() {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
-        fetchData(state);
+        fetchData(state, fetchFeedsFail);
         fetchProcess.current = setInterval(
             () => backgroundFetch(state),
             FETCH_INTERVAL
