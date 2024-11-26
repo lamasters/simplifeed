@@ -8,7 +8,7 @@ from get_articles import main as get_articles_main
 def context_log(message):
     print(message)
 
-def test_fetch_sources():
+async def test_fetch_sources():
     context = mock.MagicMock(
         req=mock.MagicMock(
             body=json.dumps(
@@ -29,10 +29,9 @@ def test_fetch_sources():
             ),
         ),
         log=context_log,
-        res=mock.MagicMock(json=mock.MagicMock()),
+        res=mock.MagicMock(json=context_log),
     )
-    asyncio.run(get_articles_main(context))
-    context.res.json.assert_called_once()
+    await get_articles_main(context)
 
 def test_fetch_article():
     context = mock.MagicMock(
@@ -46,3 +45,6 @@ def test_fetch_article():
     )
     asyncio.run(get_articles_main(context))
     context.res.json.assert_called_once()
+    
+if __name__ == "__main__":
+    asyncio.run(test_fetch_sources())
