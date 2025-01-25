@@ -317,7 +317,7 @@ export class UserSession {
         const sources = await this.getFeeds();
         const ids = new Map();
         sources.forEach((source) => {
-            ids.set(source.url, source.$id);
+            if (source?.url && source?.$id) ids.set(source.url, source.$id);
         });
         const urls = sources.map((source) => source.url);
         if (urls == null) {
@@ -336,17 +336,23 @@ export class UserSession {
             const feeds = [];
             const failedFeeds = [];
             for (const source of articleSources) {
-                if (source.status != 200) {
+                if (source?.status != 200 && source?.data?.url) {
                     console.error(source.message);
                     failedFeeds.push(source.data.url);
                     continue;
                 }
-                feeds.push({
-                    id: ids.get(source.data.url),
-                    title: source.data.title,
-                    url: source.data.url,
-                    items: source.data.articles,
-                });
+                if (
+                    source?.data?.url &&
+                    source?.data?.title &&
+                    source?.data?.articles
+                ) {
+                    feeds.push({
+                        id: ids.get(source.data.url),
+                        title: source.data.title,
+                        url: source.data.url,
+                        items: source.data.articles,
+                    });
+                }
             }
             if (fetchFeedsFail && failedFeeds.length > 0) {
                 fetchFeedsFail(failedFeeds.join('\n'));
