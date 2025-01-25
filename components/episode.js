@@ -41,6 +41,11 @@ export default function Episode(props) {
                 props.state.setListenTime(listenTime || 0);
                 props.state.setPlaying(true);
                 props.state.setPodcast(props.episode);
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: props.episode.title,
+                    artist: props.episode.source,
+                    artwork: [{ src: props.episode.image_url }],
+                });
             }}
             style={{ color: textColor }}
         >
