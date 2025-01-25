@@ -1,18 +1,18 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
-import { backgroundFetch, fetchData } from '../util/feed_api';
+import { backgroundFetch, fetchData } from '../util/feed-api';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { FETCH_INTERVAL } from '../util/constants';
-import Feed from '../components/feed';
 import Head from 'next/head';
 import Loader from '../components/loader';
 import Modal from '../components/modal';
-import Sidebar from '../components/sidebar';
+import NewsFeed from '../components/news-feed';
+import NewsSidebar from '../components/news-sidebar';
 import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
+import { FETCH_INTERVAL } from '../util/constants';
 
 /**
  * Renders the Home page component.
@@ -70,7 +70,7 @@ export default function Home() {
     };
     const router = useRouter();
 
-    let state = useMemo(() => {
+    const state = useMemo(() => {
         return {
             setArticleContent: setArticleContent,
             setArticleOpen: setArticleOpen,
@@ -81,6 +81,7 @@ export default function Home() {
             setProUser: setProUser,
             setRawText: setRawText,
             setShowTutorial: setShowTutorial,
+            setCollapse: setCollapse,
             router: router,
             session: new UserSession(),
         };
@@ -111,8 +112,8 @@ export default function Home() {
                 <link href="https://techhub.social/@masters" rel="me" />
             </Head>
             <div className={styles.main_container}>
-                {!collapse ? (
-                    <Sidebar
+                {!collapse && (
+                    <NewsSidebar
                         state={state}
                         feedData={feedData}
                         loadedData={loadedData}
@@ -120,33 +121,26 @@ export default function Home() {
                         addFeedFail={addFeedFail}
                         logoutFail={logoutFail}
                     />
-                ) : null}
-                <div
-                    onClick={() => {
-                        setCollapse(!collapse);
-                    }}
-                    id={styles.collapse}
-                >
-                    <b>{collapse ? '>' : '<'}</b>
-                </div>
-                <Feed
+                )}
+                <NewsFeed
                     articleOpen={articleOpen}
                     feedData={feedData}
                     loadedData={loadedData}
                     filter={filter}
                     showTutorial={showTutorial}
                     state={state}
+                    collapse={collapse}
                 />
             </div>
-            {loading ? <Loader /> : null}
-            {articleOpen ? (
+            {loading && <Loader />}
+            {articleOpen && (
                 <Modal
                     articleContent={articleContent}
                     proUser={proUser}
                     rawText={rawText}
                     state={state}
                 />
-            ) : null}
+            )}
             <ToastContainer />
         </main>
     );

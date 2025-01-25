@@ -1,26 +1,6 @@
-#collapse {
-    height: 35px;
-    width: 35px;
-    min-width: 30px;
-    padding: 2px;
-    border-top-right-radius: 100%;
-    border-bottom-right-radius: 100%;
-    background-color: rgb(55, 96, 192);
-    color: #9cf;
-    font-size: 24px;
-    line-height: 30px;
-    text-align: center;
-}
-
-#collapse:hover {
-    cursor: pointer;
-    background-color: #48f;
-}
-
 .main_container {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    align-items: center;
     overflow: hidden;
 }

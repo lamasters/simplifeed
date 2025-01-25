@@ -1,4 +1,4 @@
-import { addFeed, searchFeeds } from '../util/feed_api';
+import { addFeed, searchFeeds } from '../util/feed-api';
 
 import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
@@ -89,19 +89,13 @@ function getFeedIcon(source, editing, props) {
  * @param {Object} props - The component props.
  * @returns {JSX.Element} The rendered sidebar component.
  */
-export default function Sidebar(props) {
+export default function NewsSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
     const [feedOptions, setFeedOptions] = useState([]);
     return (
         <div id={styles.sidebar}>
             <div id={styles.navbar}>
-                <img
-                    className={styles.nav}
-                    src="/simplifeed.png"
-                    width="64px"
-                    height="64px"
-                />
                 <h1 className={styles.nav}>SimpliFeed</h1>
             </div>
             <h2>Feeds</h2>
@@ -171,6 +165,12 @@ export default function Sidebar(props) {
                     Add Feed
                 </button>
             </div>
+            <button
+                onClick={() => props.state.router.push('/podcasts')}
+                type="submit"
+            >
+                Switch to Podcasts
+            </button>
             <button
                 id={styles.logout}
                 onClick={() =>
