@@ -7,4 +7,12 @@
     height: 130px;
     padding: 10px;
     box-shadow: #48f 0 0 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.episode_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap-mode: nowrap;
 }

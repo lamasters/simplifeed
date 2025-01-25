@@ -111,7 +111,7 @@ export default function Podcasts() {
             {playing && (
                 <>
                     <div className={styles.episode_info}>
-                        <h2>
+                        <h2 className={styles.episode_title}>
                             {podcast.source} - {podcast.title}
                         </h2>
                     </div>
