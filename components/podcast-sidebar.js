@@ -1,30 +1,34 @@
-import { addFeed, searchFeeds } from '../util/feed-api';
+import { addPodcast, searchPodcasts } from '../util/feed-api';
 
 import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
 import { useState } from 'react';
 
 /**
- * Deletes a feed from the feedData and loadedData arrays, updates the filter state, and saves the updated feedData to localStorage.
- * @param {Array} feedData - The array of feed data.
- * @param {Array} loadedData - The array of loaded feed data.
+ * Deletes a podcast from the podcastData and loadedData arrays, updates the filter state, and saves the updated podcastData to localStorage.
+ * @param {Array} podcastData - The array of podcast data.
+ * @param {Array} loadedData - The array of loaded podcast data.
  * @param {string} filter - The current filter value.
  * @param {object} state - Hooks to manipulate application state.
- * @param {string} source - The title of the feed to be deleted.
+ * @param {string} source - The title of the podcast to be deleted.
  */
-function deleteFeed(feedData, loadedData, filter, state, source) {
-    const filteredFeed = feedData.filter((feed) => feed.title !== source);
-    state.setFeedData(filteredFeed);
-    const filteredLoaded = loadedData.filter((feed) => feed.title !== source);
+function deletePodcast(podcastData, loadedData, filter, state, source) {
+    const filteredFeed = podcastData.filter(
+        (podcast) => podcast.title !== source
+    );
+    state.setPodcastData(filteredFeed);
+    const filteredLoaded = loadedData.filter(
+        (podcast) => podcast.title !== source
+    );
     state.setLoadedData(filteredLoaded);
     if (filter === source) {
         state.setFilter(null);
     }
-    localStorage.setItem('feedData', JSON.stringify(filteredFeed));
+    localStorage.setItem('podcastData', JSON.stringify(filteredFeed));
 }
 
-function sortedFeeds(feedData) {
-    let feedDataCopy = feedData.slice();
+function sortedPodcasts(podcastData) {
+    let feedDataCopy = podcastData.slice();
     feedDataCopy.sort((a, b) => {
         let a_title = a.title.toLowerCase();
         let b_title = b.title.toLowerCase();
@@ -39,7 +43,7 @@ function sortedFeeds(feedData) {
     return feedDataCopy;
 }
 
-function getFeedIcon(source, editing, props) {
+function getPodcastIcon(source, editing, props) {
     if (editing) {
         return (
             <img
@@ -48,9 +52,9 @@ function getFeedIcon(source, editing, props) {
                 width="28px"
                 height="28px"
                 onClick={async () => {
-                    await props.state.session.deleteFeed(source.id);
-                    deleteFeed(
-                        props.feedData,
+                    await props.state.session.deletePodcast(source.id);
+                    deletePodcast(
+                        props.podcastData,
                         props.loadedData,
                         props.filter,
                         props.state,
@@ -60,7 +64,7 @@ function getFeedIcon(source, editing, props) {
             />
         );
     } else {
-        if (!source.url) {
+        if (!source?.url) {
             return null;
         }
         let url = source.url.replace('https://', '').split('/')[0];
@@ -89,7 +93,7 @@ function getFeedIcon(source, editing, props) {
  * @param {Object} props - The component props.
  * @returns {JSX.Element} The rendered sidebar component.
  */
-export default function NewsSidebar(props) {
+export default function PodcastSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
     const [feedOptions, setFeedOptions] = useState([]);
@@ -98,7 +102,7 @@ export default function NewsSidebar(props) {
             <div id={styles.navbar}>
                 <h1 className={styles.nav}>SimpliFeed</h1>
             </div>
-            <h2>Feeds</h2>
+            <h2>Podcasts</h2>
             <ul id={styles.feedlist}>
                 <div className={styles.source_row}>
                     <li
@@ -107,12 +111,12 @@ export default function NewsSidebar(props) {
                         style={{ width: '100%' }}
                         key={0}
                     >
-                        All Feeds
+                        All Podcasts
                     </li>
                 </div>
-                {sortedFeeds(props.feedData).map((source) => (
+                {sortedPodcasts(props.podcastData).map((source) => (
                     <div className={styles.source_row} key={source?.title}>
-                        {getFeedIcon(source, editing, props)}
+                        {getPodcastIcon(source, editing, props)}
                         <li
                             onClick={() => props.state.setFilter(source?.title)}
                             className={styles.source}
@@ -130,13 +134,13 @@ export default function NewsSidebar(props) {
                 >
                     {editing ? 'Done' : 'Edit Feeds'}
                 </button>
-                <label>Search Feeds</label>
+                <label>Search Podcasts</label>
                 <Typeahead
                     options={feedOptions}
                     maxVisible={5}
                     onChange={async (e) => {
                         setURL(e.target.value);
-                        let feeds = await searchFeeds(
+                        let feeds = await searchPodcasts(
                             props.state,
                             e.target.value
                         );
@@ -153,23 +157,20 @@ export default function NewsSidebar(props) {
                 />
                 <button
                     onClick={() => {
-                        addFeed(
+                        addPodcast(
                             url,
                             props.state,
-                            props.feedData,
-                            props.addFeedFail
+                            props.podcastData,
+                            props.addPodcastFail
                         );
                     }}
                     type="submit"
                 >
-                    Add Feed
+                    Add Podcast
                 </button>
             </div>
-            <button
-                onClick={() => props.state.router.push('/podcasts')}
-                type="submit"
-            >
-                Switch to Podcasts
+            <button onClick={() => props.state.router.push('/')}>
+                Switch to News
             </button>
             <button
                 id={styles.logout}

@@ -1,10 +1,9 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Head from 'next/head';
-import { Hook } from '../../util/session';
 import Loader from '../../components/loader';
 import PodcastFeed from '../../components/podcast-feed';
 import { UserSession } from '../../util/session';
@@ -12,16 +11,20 @@ import base_styles from '../../styles/Home.module.css';
 import { fetchPodcasts } from '../../util/feed-api';
 import styles from '../../styles/podcasts.module.css';
 import { useRouter } from 'next/router';
+import AudioPlayer from 'react-h5-audio-player';
+import PodcastSidebar from '../../components/podcast-sidebar';
 
 export default function Podcasts() {
-    const session = new UserSession();
-
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
     const [playing, setPlaying] = useState(false);
     const [podcast, setPodcast] = useState('');
     const [podcastData, setPodcastData] = useState([]);
+    const [loadedData, setLoadedData] = useState([]);
+    const [filter, setFilter] = useState(null);
     const [showTutorial, setShowTutorial] = useState(true);
+    const [listenTime, setListenTime] = useState(0);
+    const [listenTimes, setListenTimes] = useState(new Map());
 
     const errorToast = (message) =>
         toast.error(message, {
@@ -36,32 +39,42 @@ export default function Podcasts() {
             transition: Slide,
         });
     const router = useRouter();
+    const audioPlayer = useRef();
 
-    const hooks = useMemo(() => {
+    const state = useMemo(() => {
         return {
-            collapse: new Hook(collapse, setCollapse),
-            loading: new Hook(loading, setLoading),
-            playing: new Hook(playing, setPlaying),
-            podcast: new Hook(podcast, setPodcast),
-            podcastData: new Hook(podcastData, setPodcastData),
-            showTutorial: new Hook(showTutorial, setShowTutorial),
+            setFilter: setFilter,
+            setLoading: setLoading,
+            setPlaying: setPlaying,
+            setPodcast: setPodcast,
+            setPodcastData: setPodcastData,
+            setLoadedData: setLoadedData,
+            setShowTutorial: setShowTutorial,
+            setListenTime: setListenTime,
+            setListenTimes,
+            setListenTimes,
+            setCollapse: setCollapse,
             errorToast: errorToast,
             router: router,
-            session: session,
+            session: new UserSession(),
         };
-    }, [
-        collapse,
-        loading,
-        playing,
-        podcast,
-        podcastData,
-        showTutorial,
-        router,
-        session,
-    ]);
+    }, [router]);
+
+    const onPodcastEnd = () => {
+        setPlaying(false);
+        state.session
+            .setPodcastFinished(`${podcast.source} - ${podcast.title}`)
+            .then();
+        const newListenTimes = new Map(listenTimes);
+        newListenTimes.set(`${podcast.source} - ${podcast.title}`, [0, true]);
+        setListenTimes(newListenTimes);
+    };
 
     useEffect(() => {
-        fetchPodcasts(hooks);
+        if (window.innerHeight > window.innerWidth) {
+            setCollapse(true);
+        }
+        fetchPodcasts(state);
     }, []);
     return (
         <main>
@@ -76,38 +89,70 @@ export default function Podcasts() {
                 <link rel="manifest" href="/manifest.json" />
             </Head>
             <div className={base_styles.main_container}>
-                {collapse ? null : null}
-                <div
-                    onClick={() => {
-                        setCollapse(!collapse);
-                    }}
-                    id={base_styles.collapse}
-                >
-                    <b>{collapse ? '>' : '<'}</b>
-                </div>
-                <PodcastFeed hooks={hooks} />
+                {!collapse && (
+                    <PodcastSidebar
+                        state={state}
+                        podcastData={podcastData}
+                        loadedData={loadedData}
+                        filter={filter}
+                        addPodcastFail={errorToast}
+                    />
+                )}
+                <PodcastFeed
+                    state={state}
+                    podcastData={podcastData}
+                    loadedData={loadedData}
+                    filter={filter}
+                    showTutorial={showTutorial}
+                    listenTimes={listenTimes}
+                    collapse={collapse}
+                />
             </div>
-            {playing ? (
+            {playing && (
                 <>
                     <div className={styles.episode_info}>
                         <h2>
                             {podcast.source} - {podcast.title}
                         </h2>
                     </div>
-                    <audio
-                        controls
+                    <AudioPlayer
+                        ref={audioPlayer}
+                        showDownloadProgress={true}
+                        showFilledProgress={true}
+                        showJumpControls={true}
+                        showFilledVolume={true}
+                        loop={false}
+                        autoPlay={true}
+                        autoPlayAfterSrcChange={true}
+                        src={podcast.audio}
                         style={{
                             position: 'fixed',
                             width: '100%',
                             bottom: '0px',
                         }}
-                        height="50"
-                        src={podcast.audio}
-                        autoPlay={true}
-                    ></audio>
+                        onEnded={onPodcastEnd}
+                        onLoadStart={() => setLoading(true)}
+                        onLoadedData={() => {
+                            setLoading(false);
+                            if (listenTime) {
+                                audioPlayer.current.audio.current.currentTime =
+                                    listenTime;
+                            }
+                        }}
+                        listenInterval={15000}
+                        onListen={() => {
+                            state.session
+                                .setPodcastListenTime(
+                                    `${podcast.source} - ${podcast.title}`,
+                                    audioPlayer.current.audio.current
+                                        .currentTime
+                                )
+                                .then();
+                        }}
+                    />
                 </>
-            ) : null}
-            {loading ? <Loader /> : null}
+            )}
+            {loading && <Loader />}
             <ToastContainer />
         </main>
     );

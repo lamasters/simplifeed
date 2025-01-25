@@ -2,13 +2,49 @@ import { selectArticle } from '../util/feed-api';
 import styles from '../styles/card.module.css';
 
 /**
- * Formats a date into a localized string representation.
- * @param {Date} date - The date to be formatted.
- * @returns {string} The formatted date string.
+ * Time since the article was published.
+ * @param {Date} datetime - The datetime the article was published.
+ * @returns {string} The time since the article was published.
  */
-export function formatDate(date) {
-    let d = new Date(date);
-    return d.toLocaleString();
+export function timeSince(datetime) {
+    let d = new Date(datetime);
+    let seconds = Math.floor((new Date() - d) / 1000);
+
+    let interval = seconds / 31536000;
+
+    if (interval > 1) {
+        return (
+            Math.floor(interval) +
+            ` year${Math.floor(interval) === 1 ? '' : 's'} ago`
+        );
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+        return (
+            Math.floor(interval) +
+            ` month${Math.floor(interval) === 1 ? '' : 's'} ago`
+        );
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+        return (
+            Math.floor(interval) +
+            ` day${Math.floor(interval) === 1 ? '' : 's'} ago`
+        );
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+        return (
+            Math.floor(interval) +
+            ` hour${Math.floor(interval) === 1 ? '' : 's'} ago`
+        );
+    }
+
+    interval = seconds / 60;
+    if (interval > 30) {
+        return Math.floor(interval) + ' minutes ago';
+    }
+    return 'Just now';
 }
 
 /**
@@ -62,7 +98,7 @@ export default function Card(props) {
                     <b>{props.article.source}</b>
                 </div>
                 <div className={styles.date}>
-                    {formatDate(props.article.pub_date)}
+                    {timeSince(props.article.pub_date)}
                 </div>
             </div>
             <div className={styles.info}>{props.article.title}</div>

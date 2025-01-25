@@ -26,7 +26,6 @@ export async function fetchData(state, fetchFeedsFail) {
     let feedData = await state.session.getArticleSources(fetchFeedsFail);
     if (feedData === null) return;
     if (feedData.length > 0) state.setShowTutorial(false);
-    console.log(feedData);
 
     state.setFeedData(feedData);
     state.setLoadedData(feedData);
@@ -41,24 +40,41 @@ export async function fetchData(state, fetchFeedsFail) {
 
 /**
  * Fetch podcast data and update the state.
- * @param {hooks} hooks
+ * @param {state} state
  */
-export async function fetchPodcasts(hooks) {
-    hooks.loading.set(true);
-    let info = await hooks.session.getSession();
+export async function fetchPodcasts(state) {
+    state.setLoading(true);
+    let info = await state.session.getSession();
     if (info.$id == null) {
-        hooks.router.push('/login');
+        state.router.push('/login');
         return;
     }
     if (!info.verified) {
-        hooks.router.push('/not-verified');
+        state.router.push('/not-verified');
         return;
     }
-
-    let podcasts = await hooks.session.getPodcasts();
+    // Pull feed data from local storage
+    let storedPodcasts = localStorage.getItem('podcastData');
+    if (storedPodcasts) {
+        state.setPodcastData(JSON.parse(storedPodcasts));
+        state.setLoadedData(JSON.parse(storedPodcasts));
+    }
+    let podcasts = await state.session.getPodcasts(state.errorToast);
     if (podcasts === null) return;
-    hooks.podcastData.set(podcasts);
-    hooks.loading.set(false);
+    state.setPodcastData(podcasts);
+    state.setLoadedData(podcasts);
+    localStorage.setItem('lastFetch', Date.now());
+    localStorage.setItem('podcastData', JSON.stringify(podcasts));
+    const listenTimes = await state.session.getPodcastListenTimes();
+    const episodeNamesToListenTimes = new Map();
+    listenTimes.forEach((listenTime) => {
+        episodeNamesToListenTimes.set(listenTime.title, [
+            listenTime.time,
+            listenTime.finished,
+        ]);
+    });
+    state.setListenTimes(episodeNamesToListenTimes);
+    state.setLoading(false);
 }
 
 export async function backgroundFetch(state) {
@@ -114,6 +130,23 @@ export async function addFeed(url, state, feedData, addFeedFail) {
 }
 
 /**
+ * Adds a podcast to the state and updates the podcast data.
+ * @param {string} url - The URL of the podcast to be added.
+ * @param {object} state - The state object containing session and feed data.
+ * @param {Array} podcastData - The current feed data.
+ */
+export async function addPodcast(url, state, podcastData, addPodcastFail) {
+    if (!url.includes('https://') && !url.includes('http://')) {
+        url = 'https://' + url;
+    }
+    let podcast = await state.session.createPodcast(url, addPodcastFail);
+    if (podcast === null) return;
+    let newPodcastData = podcastData.concat(podcast);
+    state.setPodcastData(newPodcastData);
+    state.setLoadedData(newPodcastData);
+}
+
+/**
  * Retrieves the summary of an article using the provided session object.
  * @param {Object} state - Hooks to set application state.
  * @param {Object} article - The article text.
@@ -128,4 +161,8 @@ export async function getArticleSummary(state, article, setSummary) {
 
 export async function searchFeeds(state, query) {
     return await state.session.searchFeeds(query);
+}
+
+export async function searchPodcasts(state, query) {
+    return await state.session.searchPodcasts(query);
 }

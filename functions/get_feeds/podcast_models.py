@@ -41,3 +41,4 @@ class PodcastSourceRes(BaseModel):
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
     data: Optional[PodcastSource] = Field(default=None)
+    message: Optional[str] = Field(default=None)

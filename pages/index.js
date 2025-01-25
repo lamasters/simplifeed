@@ -12,6 +12,7 @@ import NewsSidebar from '../components/news-sidebar';
 import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
+import { FETCH_INTERVAL } from '../util/constants';
 
 /**
  * Renders the Home page component.
@@ -80,6 +81,7 @@ export default function Home() {
             setProUser: setProUser,
             setRawText: setRawText,
             setShowTutorial: setShowTutorial,
+            setCollapse: setCollapse,
             router: router,
             session: new UserSession(),
         };
@@ -110,7 +112,7 @@ export default function Home() {
                 <link href="https://techhub.social/@masters" rel="me" />
             </Head>
             <div className={styles.main_container}>
-                {!collapse ? (
+                {!collapse && (
                     <NewsSidebar
                         state={state}
                         feedData={feedData}
@@ -119,15 +121,7 @@ export default function Home() {
                         addFeedFail={addFeedFail}
                         logoutFail={logoutFail}
                     />
-                ) : null}
-                <div
-                    onClick={() => {
-                        setCollapse(!collapse);
-                    }}
-                    id={styles.collapse}
-                >
-                    <b>{collapse ? '>' : '<'}</b>
-                </div>
+                )}
                 <NewsFeed
                     articleOpen={articleOpen}
                     feedData={feedData}
@@ -135,17 +129,18 @@ export default function Home() {
                     filter={filter}
                     showTutorial={showTutorial}
                     state={state}
+                    collapse={collapse}
                 />
             </div>
-            {loading ? <Loader /> : null}
-            {articleOpen ? (
+            {loading && <Loader />}
+            {articleOpen && (
                 <Modal
                     articleContent={articleContent}
                     proUser={proUser}
                     rawText={rawText}
                     state={state}
                 />
-            ) : null}
+            )}
             <ToastContainer />
         </main>
     );

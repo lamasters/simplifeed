@@ -13,40 +13,57 @@ function concatShows(sources) {
 }
 
 export default function PodcastFeed(props) {
-    const hooks = props.hooks;
-    const shows = props.hooks.podcastData.get();
+    const state = props.state;
 
     const [episodes, setEpisodes] = useState([]);
 
     useEffect(() => {
-        if (shows.length > 0) {
-            hooks.showTutorial.set(false);
-            let list = concatShows(shows);
-            console.log(list);
+        if (props.podcastData.length > 0) {
+            state.setShowTutorial(false);
+            let list = concatShows(props.podcastData);
             sortFeedItems(list);
-            setEpisodes(list);
+            if (props.filter == null) {
+                setEpisodes(list);
+            } else {
+                setEpisodes(list.filter((item) => item.source == props.filter));
+            }
         }
-    }, [shows]);
+    }, [props.podcastData, props.filter]);
     return (
-        <div id={styles.feed_container} style={{ paddingBottom: '110px' }}>
-            <div id={styles.feed_content}>
-                {hooks.showTutorial.get() ? (
-                    <div id={styles.tutorial}>
-                        It's pretty quiet around here...
-                    </div>
-                ) : null}
-                <ul style={{ width: '100%' }}>
-                    {episodes.map((episode) => (
-                        <>
-                            <Episode episode={episode} hooks={props.hooks} />
-                            <div
-                                className={styles.divider}
-                                key={episode.title + '_divider'}
-                            ></div>
-                        </>
-                    ))}
-                </ul>
+        <>
+            <div id={styles.collapse_container}>
+                <img
+                    id={styles.collapse}
+                    onClick={() => props.state.setCollapse(!props.collapse)}
+                    src="/sidebar.svg"
+                    width="30px"
+                    height="30px"
+                />
             </div>
-        </div>
+            <div id={styles.feed_container} style={{ paddingBottom: '110px' }}>
+                <div id={styles.feed_content}>
+                    {props.showTutorial && (
+                        <div id={styles.tutorial}>
+                            It's pretty quiet around here...
+                        </div>
+                    )}
+                    <ul style={{ width: '100%' }}>
+                        {episodes.map((episode) => (
+                            <>
+                                <Episode
+                                    episode={episode}
+                                    state={props.state}
+                                    listenTimes={props.listenTimes}
+                                />
+                                <div
+                                    className={styles.divider}
+                                    key={episode.title + '_divider'}
+                                ></div>
+                            </>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </>
     );
 }

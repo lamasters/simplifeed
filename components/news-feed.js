@@ -101,55 +101,64 @@ export default function NewsFeed(props) {
         createArticleList(props.feedData, setArticleList, props.filter);
     }, [props.feedData, props.filter]);
     const feedRef = useRef();
-    console.log('Article list', articleList);
     return (
-        <div ref={feedRef} id={styles.feed_container}>
-            <div id={styles.feed_content}>
-                {props.showTutorial ? (
-                    seenTutorial ? (
-                        <div id={styles.tutorial}>Loading articles...</div>
-                    ) : (
-                        <div id={styles.tutorial}>
-                            Add feeds to start seeing articles!
-                            <br />
-                            Try adding{' '}
-                            <em>https://www.linuxinsider.com/rss-feed</em>
-                        </div>
-                    )
-                ) : null}
-                {!feedsEqual(props.feedData, props.loadedData) &&
-                !props.articleOpen ? (
-                    <div
-                        className={`${styles.update} ${styles.slide_bottom}`}
-                        onClick={() => {
-                            // Update the feed data in the state and local storage
-                            localStorage.setItem(
-                                'feedData',
-                                JSON.stringify(props.loadedData)
-                            );
-                            props.state.setFeedData(props.loadedData);
-                            feedRef.current.scrollTo({
-                                top: 0,
-                                left: 0,
-                                behavior: 'smooth',
-                            });
-                        }}
-                    >
-                        Get Latest
-                    </div>
-                ) : null}
-                <ul style={{ width: '100%' }}>
-                    {articleList.map((article) => (
-                        <>
-                            <Card article={article} state={props.state} />
-                            <div
-                                className={styles.divider}
-                                key={article.title + '_divider'}
-                            ></div>
-                        </>
-                    ))}
-                </ul>
+        <>
+            <div id={styles.collapse_container}>
+                <img
+                    id={styles.collapse}
+                    onClick={() => props.state.setCollapse(!props.collapse)}
+                    src="/sidebar.svg"
+                    width="30px"
+                    height="30px"
+                />
             </div>
-        </div>
+            <div ref={feedRef} id={styles.feed_container}>
+                <div id={styles.feed_content}>
+                    {props.showTutorial &&
+                        (seenTutorial ? (
+                            <div id={styles.tutorial}>Loading articles...</div>
+                        ) : (
+                            <div id={styles.tutorial}>
+                                Add feeds to start seeing articles!
+                                <br />
+                                Try adding{' '}
+                                <em>https://www.linuxinsider.com/rss-feed</em>
+                            </div>
+                        ))}
+                    {!feedsEqual(props.feedData, props.loadedData) &&
+                        !props.articleOpen && (
+                            <div
+                                className={`${styles.update} ${styles.slide_bottom}`}
+                                onClick={() => {
+                                    // Update the feed data in the state and local storage
+                                    localStorage.setItem(
+                                        'feedData',
+                                        JSON.stringify(props.loadedData)
+                                    );
+                                    props.state.setFeedData(props.loadedData);
+                                    feedRef.current.scrollTo({
+                                        top: 0,
+                                        left: 0,
+                                        behavior: 'smooth',
+                                    });
+                                }}
+                            >
+                                Get Latest
+                            </div>
+                        )}
+                    <ul style={{ width: '100%' }}>
+                        {articleList.map((article) => (
+                            <>
+                                <Card article={article} state={props.state} />
+                                <div
+                                    className={styles.divider}
+                                    key={article.title + '_divider'}
+                                ></div>
+                            </>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </>
     );
 }

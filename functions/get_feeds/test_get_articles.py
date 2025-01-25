@@ -2,7 +2,7 @@ import asyncio
 import json
 import mock
 
-from get_articles import main as get_articles_main
+from get_feeds import main as get_feeds_main
 
 
 def context_log(message):
@@ -31,7 +31,7 @@ async def test_fetch_sources():
         log=context_log,
         res=mock.MagicMock(json=context_log),
     )
-    await get_articles_main(context)
+    await get_feeds_main(context)
 
 def test_fetch_article():
     context = mock.MagicMock(
@@ -43,8 +43,26 @@ def test_fetch_article():
         log=context_log,
         res=mock.MagicMock(json=mock.MagicMock()),
     )
-    asyncio.run(get_articles_main(context))
+    asyncio.run(get_feeds_main(context))
     context.res.json.assert_called_once()
     
+async def test_fetch_podcasts():
+    context = mock.MagicMock(
+        req=mock.MagicMock(
+            body=json.dumps(
+                {
+                    "type": "podcast",
+                    "urls": [
+                        "https://rss.art19.com/the-headgum-podcast",
+                    ],
+                }
+            ),
+        ),
+        log=context_log,
+        res=mock.MagicMock(json=mock.MagicMock()),
+    )
+    await get_feeds_main(context)
+    
+    
 if __name__ == "__main__":
-    asyncio.run(test_fetch_sources())
+    asyncio.run(test_fetch_podcasts())

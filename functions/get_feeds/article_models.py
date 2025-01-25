@@ -14,6 +14,7 @@ class ArticleMetadata(BaseModel):
     pub_date: str = Field(default="")
     source: str = Field(default="")
     image_url: Optional[str] = Field(default=None)
+    author: Optional[str] = Field(default=None)
 
 
 class ArticleSource(BaseModel):
@@ -42,6 +43,7 @@ class ArticleSourceRes(BaseModel):
 
     status: http.HTTPStatus = Field(default=http.HTTPStatus.OK)
     data: Optional[ArticleSource] = Field(default=None)
+    message: Optional[str] = Field(default=None)
 
 
 class ArticleContentRes(BaseModel):
