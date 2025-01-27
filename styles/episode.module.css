@@ -6,7 +6,7 @@
 
 .episode:hover {
     cursor: pointer;
-    background-color: rgb(33, 39, 53);
+    background-color: var(--background-hover);
 }
 
 .cover {

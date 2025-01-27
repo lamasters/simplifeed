@@ -58,6 +58,7 @@ def main(context):
     )
     try:
         openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        context.log(f"Generating summary using model {os.getenv('OPENAI_MODEL_ID')}")
         res = openai_client.chat.completions.create(
             model=os.getenv("OPENAI_MODEL_ID"),
             messages=[

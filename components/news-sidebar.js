@@ -44,9 +44,9 @@ function getFeedIcon(source, editing, props) {
         return (
             <img
                 id={styles.trash}
-                src="/trash.png"
-                width="28px"
-                height="28px"
+                src="/close.svg"
+                width="24px"
+                height="24px"
                 onClick={async () => {
                     await props.state.session.deleteFeed(source.id);
                     deleteFeed(
@@ -98,7 +98,7 @@ export default function NewsSidebar(props) {
             <div id={styles.navbar}>
                 <h1 className={styles.nav}>SimpliFeed</h1>
             </div>
-            <h2>Feeds</h2>
+            <h2>News</h2>
             <ul id={styles.feedlist}>
                 <div className={styles.source_row}>
                     <li

@@ -31,7 +31,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: #1f304b;
+    background-color: var(--accent-primary);
     border-radius: 10px;
     padding: 7px;
     margin-bottom: 25px;
@@ -39,5 +39,5 @@
 
 .sso:hover {
     cursor: pointer;
-    background-color: #48f;
+    background-color: var(--accent-primary-hover);
 }

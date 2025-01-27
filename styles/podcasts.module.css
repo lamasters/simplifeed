@@ -2,11 +2,11 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
-    color: #9cf;
-    background-color: rgb(18, 21, 29);
+    color: var(--text-secondary);
+    background-color: var(--background);
     height: 130px;
     padding: 10px;
-    box-shadow: #48f 0 0 20px;
+    box-shadow: var(--accent-primary) 0 0 20px;
     padding-left: 15px;
     padding-right: 15px;
 }

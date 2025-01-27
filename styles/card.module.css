@@ -1,7 +1,7 @@
 .date {
     position: relative;
     font-size: 12px;
-    color: #9cf;
+    color: var(--text-secondary);
 }
 
 .icon {
@@ -13,12 +13,12 @@
     font-size: 16px;
     line-height: 21px;
     text-align: center;
-    background-color: #181f24;
-    color: #9cf;
+    background-color: var(--background);
+    color: var(--text-secondary);
     border-radius: 50%;
     border-width: 2px;
     border-style: solid;
-    border-color: #8bf;
+    border-color: var(--text-secondary);
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -47,7 +47,7 @@
 
 .item:hover {
     cursor: pointer;
-    background-color: rgb(33, 39, 53);
+    background-color: var(--background-hover);
 }
 
 .itemHeader {
