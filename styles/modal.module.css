@@ -57,9 +57,11 @@
     margin: auto;
     margin-bottom: 25px;
     margin-top: 25px;
-    padding: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     width: fit-content;
     height: 50px;
+    line-height: 50px;
     border-radius: 50px;
     box-shadow: 0 0 20px var(--summarize-shadow);
     background: var(--summary-gradient);
