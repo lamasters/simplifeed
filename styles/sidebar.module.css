@@ -24,9 +24,7 @@
 }
 
 #logout {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
+    margin-top: 100px;
 }
 
 #navbar {
@@ -51,20 +49,20 @@
     align-items: center;
     border-right-style: solid;
     border-right-width: 1px;
-    border-right-color: #69f;
+    border-right-color: var(--accent-secondary);
     overflow-y: scroll;
 }
 
 #trash {
-    position: relative;
-    top: 5px;
-    margin-right: 10px;
+    padding: 3px;
+    border: 2px solid #000;
+    border-radius: 100%;
+    filter: invert(15%) sepia(71%) saturate(7284%) hue-rotate(358deg) brightness(107%) contrast(112%);
 }
 
 #trash:hover {
     cursor: pointer;
-    background-color: #5b97bb;
-    border-radius: 50%;
+    filter: invert(75%) sepia(50%) saturate(854%) hue-rotate(302deg) brightness(102%) contrast(124%);
 }
 
 #icon {
@@ -75,7 +73,7 @@
 
 .nav {
     text-align: center;
-    color: #48f;
+    color: var(--text-primary);
 }
 
 .source {
@@ -92,7 +90,7 @@
 
 .source:hover {
     cursor: pointer;
-    background-color: rgb(33, 39, 53);
+    background-color: var(--background-hover);
 }
 
 .source_row {
@@ -108,11 +106,11 @@
     text-align: center;
     border-top-style: solid;
     border-top-width: 1px;
-    border-top-color: #69f;
+    border-top-color: var(--accent-secondary);
 }
 
 .search_results {
-    background-color: rgb(33, 39, 53);
+    background-color: var(--background-hover);
     padding: 5px;
     border-radius: 5px;
 }
@@ -127,5 +125,5 @@
 }
 
 .search_item:hover {
-    background-color: #5b97bb;
+    background-color: var(--accent-secondary-hover);
 }

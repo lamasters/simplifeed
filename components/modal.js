@@ -32,7 +32,7 @@ export default function Modal(props) {
                             );
                         }}
                     >
-                        <div className={styles.summary_text}>⚡</div>
+                        <div className={styles.summary_text}>✨ Summarize</div>
                     </div>
                 ) : null}
                 {summary ? (
@@ -47,7 +47,13 @@ export default function Modal(props) {
                 onClick={() => props.state.setArticleOpen(false)}
                 id={styles.close}
             >
-                Close
+                <img
+                    id={styles.close_icon}
+                    src="/close.svg"
+                    alt="Close"
+                    height="24px"
+                    width="24px"
+                />
             </div>
         </div>
     );

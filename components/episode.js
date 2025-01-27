@@ -31,8 +31,6 @@ export default function Episode(props) {
         listenText = `Continue from ${formatListenTime(listenTime)}`;
     }
 
-    const textColor = finished ? 'gray' : 'white';
-
     return (
         <li
             className={styles.episode}
@@ -47,7 +45,7 @@ export default function Episode(props) {
                     artwork: [{ src: props.episode.image_url }],
                 });
             }}
-            style={{ color: textColor }}
+            style={finished ? { color: 'gray' } : {}}
         >
             <div>
                 <div
