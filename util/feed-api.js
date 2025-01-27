@@ -122,7 +122,11 @@ export async function addFeed(url, state, feedData, addFeedFail) {
     if (!url.includes('https://') && !url.includes('http://')) {
         url = 'https://' + url;
     }
-    let feed = await state.session.createFeed(url, addFeedFail);
+    let feed = await state.session.createFeed(
+        url,
+        addFeedFail,
+        state.setLoading
+    );
     if (feed === null) return;
     let newFeedData = feedData.concat(feed);
     state.setFeedData(newFeedData);
@@ -139,7 +143,11 @@ export async function addPodcast(url, state, podcastData, addPodcastFail) {
     if (!url.includes('https://') && !url.includes('http://')) {
         url = 'https://' + url;
     }
-    let podcast = await state.session.createPodcast(url, addPodcastFail);
+    let podcast = await state.session.createPodcast(
+        url,
+        addPodcastFail,
+        state.setLoading
+    );
     if (podcast === null) return;
     let newPodcastData = podcastData.concat(podcast);
     state.setPodcastData(newPodcastData);

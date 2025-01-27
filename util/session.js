@@ -237,9 +237,11 @@ export class UserSession {
      * @returns {Object|null} - The created feed object, or null if the feed
      * could not be created.
      */
-    async createFeed(url, addFeedFail) {
+    async createFeed(url, addFeedFail, setLoading) {
+        setLoading(true);
         if (!url) {
             addFeedFail();
+            setLoading(false);
             return null;
         }
         if (this.uid === null) {
@@ -265,10 +267,12 @@ export class UserSession {
         } catch (err) {
             console.error(err);
             addFeedFail();
+            setLoading(false);
             return null;
         }
         if (feed == null) {
             addFeedFail();
+            setLoading(false);
             return null;
         }
 
@@ -286,10 +290,12 @@ export class UserSession {
                     Permission.delete(Role.user(this.uid)),
                 ]
             );
+            setLoading(false);
             return { ...feed, id: id };
         } catch (err) {
             console.error(err);
         }
+        setLoading(false);
     }
 
     /**
@@ -647,9 +653,11 @@ export class UserSession {
         }
     }
 
-    async createPodcast(url, addPodcastFail) {
+    async createPodcast(url, addPodcastFail, setLoading) {
+        setLoading(true);
         if (!url) {
             addPodcastFail(`Failed to add podcast from ${url}`);
+            setLoading(false);
             return null;
         }
         if (this.uid === null) {
@@ -686,10 +694,12 @@ export class UserSession {
         } catch (err) {
             console.error(err);
             addPodcastFail(`Failed to add podcast from ${url}`);
+            setLoading(false);
             return null;
         }
         if (feed == null) {
             addPodcastFail(`Failed to add podcast from ${url}`);
+            setLoading(false);
             return null;
         }
 
@@ -707,10 +717,12 @@ export class UserSession {
                     Permission.delete(Role.user(this.uid)),
                 ]
             );
+            setLoading(false);
             return { ...feed, id: id };
         } catch (err) {
             console.error(err);
         }
+        setLoading(false);
     }
 
     /**
