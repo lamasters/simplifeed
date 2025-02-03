@@ -29,3 +29,19 @@ deploy_record_listen_time:
 	--commands='pip install -r requirements.txt' \
 	--code="./functions/record_listen_time" \
 	--activate=true
+
+deploy_index_news_feed:
+	appwrite functions create-deployment \
+	--function-id=679fc996043c9a90e2df \
+	--entrypoint='index_news_feed.py' \
+	--commands='pip install -r requirements.txt' \
+	--code="./functions/index_news_feed" \
+	--activate=true
+
+deploy_index_podcast_feed:
+	appwrite functions create-deployment \
+	--function-id=679fe0e256c67950d62e \
+	--entrypoint='index_podcast_feed.py' \
+	--commands='pip install -r requirements.txt' \
+	--code="./functions/index_podcast_feed" \
+	--activate=true
