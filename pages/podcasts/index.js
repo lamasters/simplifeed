@@ -25,6 +25,8 @@ export default function Podcasts() {
     const [showTutorial, setShowTutorial] = useState(true);
     const [listenTime, setListenTime] = useState(0);
     const [listenTimes, setListenTimes] = useState(new Map());
+    const [limit, setLimit] = useState(100);
+    const [offset, setOffset] = useState(0);
 
     const errorToast = (message) =>
         toast.error(message, {
@@ -63,10 +65,11 @@ export default function Podcasts() {
             setLoadedData: setLoadedData,
             setShowTutorial: setShowTutorial,
             setListenTime: setListenTime,
-            setListenTimes,
-            setListenTimes,
+            setListenTimes: setListenTimes,
             setCollapse: setCollapse,
             errorToast: errorToast,
+            setLimit: setLimit,
+            setOffset: setOffset,
             router: router,
             session: new UserSession(),
         };
@@ -124,6 +127,8 @@ export default function Podcasts() {
                     showTutorial={showTutorial}
                     listenTimes={listenTimes}
                     collapse={collapse}
+                    limit={limit}
+                    offset={offset}
                 />
             </div>
             {playing && (

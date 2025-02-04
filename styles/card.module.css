@@ -43,6 +43,7 @@
     overflow: hidden;
     min-height: 100px;
     min-width: 300px;
+    border-radius: 5px;
 }
 
 .item:hover {

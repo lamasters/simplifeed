@@ -29,6 +29,9 @@ export default function Home() {
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rawText, setRawText] = useState('');
+    const [limit, setLimit] = useState(100);
+    const [offset, setOffset] = useState(0);
+
     const fetchProcess = useRef();
     const addFeedFail = () =>
         toast.error('Failed to subscribe to feed', {
@@ -80,6 +83,8 @@ export default function Home() {
             setRawText: setRawText,
             setShowTutorial: setShowTutorial,
             setCollapse: setCollapse,
+            setLimit: setLimit,
+            setOffset: setOffset,
             router: router,
             session: new UserSession(),
         };
@@ -128,6 +133,8 @@ export default function Home() {
                     showTutorial={showTutorial}
                     state={state}
                     collapse={collapse}
+                    limit={limit}
+                    offset={offset}
                 />
             </div>
             {loading && <Loader />}

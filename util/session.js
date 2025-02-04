@@ -322,14 +322,14 @@ export class UserSession {
      * Retrieves articles from the user's subscribed news feeds.
      * @returns {Array<Object>|null} An array of all articles, or null if an error occurs.
      */
-    async getNewsArticles() {
+    async getNewsArticles(limit = 100, offset = 0) {
         if (!this.newsSubscriptions) await this.getSubscriptions();
         const subscription_queries = this.newsSubscriptions.map((source) =>
             Query.equal('newsFeeds', source.$id)
         );
         const queries = [
-            Query.limit(100),
-            Query.offset(0),
+            Query.limit(limit),
+            Query.offset(offset),
             Query.orderDesc('pub_date'),
         ];
         if (subscription_queries.length === 1) {
@@ -526,14 +526,14 @@ export class UserSession {
      * Retrieves the user's podcasts.
      * @returns {Array<Object>|null} The user's podcast episodes, or null if an error occurs.
      */
-    async getPodcastEpisodes() {
+    async getPodcastEpisodes(limit = 100, offset = 0) {
         if (!this.podcastSubscriptions) await this.getSubscriptions();
         const subscription_queries = this.podcastSubscriptions.map((source) =>
             Query.equal('podcastFeeds', source.$id)
         );
         const queries = [
-            Query.limit(100),
-            Query.offset(0),
+            Query.limit(limit),
+            Query.offset(offset),
             Query.orderDesc('pub_date'),
         ];
         if (subscription_queries.length === 1) {
