@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import Episode from './episode';
+import { loadMorePodcastData } from '../util/feed-api';
 import styles from '../styles/feed.module.css';
+
+const PAGE_SIZE = 100;
 
 export default function PodcastFeed(props) {
     const state = props.state;
@@ -16,7 +19,7 @@ export default function PodcastFeed(props) {
             } else {
                 setEpisodes(
                     props.podcastData.filter(
-                        (item) => item.podcastFeeds.$id == props.filter
+                        (item) => item.podcastFeeds.$id === props.filter
                     )
                 );
             }
@@ -54,6 +57,20 @@ export default function PodcastFeed(props) {
                                 ></div>
                             </>
                         ))}
+                        <li
+                            id={styles.load_more_card}
+                            onClick={async () => {
+                                await loadMorePodcastData(
+                                    props.state,
+                                    props.podcastData,
+                                    props.limit,
+                                    props.offset + PAGE_SIZE
+                                );
+                                props.state.setOffset(props.offset + PAGE_SIZE);
+                            }}
+                        >
+                            Load More
+                        </li>
                     </ul>
                 </div>
             </div>

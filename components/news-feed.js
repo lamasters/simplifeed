@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 import Card from './card';
+import { loadMoreNewsData } from '../util/feed-api';
 import styles from '../styles/feed.module.css';
+
+const PAGE_SIZE = 100;
 
 /**
  * Compares two feed objects and checks if their articles are equal.
@@ -25,7 +28,7 @@ function feedsEqual(a, b) {
 function createArticleList(feedData, setArticleList, filter) {
     let articles = feedData.copyWithin();
     if (filter) {
-        articles = articles.filter((item) => item.newsFeeds.$id == filter);
+        articles = articles.filter((item) => item.newsFeeds.$id === filter);
     }
     setArticleList(articles);
 }
@@ -94,14 +97,28 @@ export default function NewsFeed(props) {
                         )}
                     <ul style={{ width: '100%' }}>
                         {articleList.map((article) => (
-                            <div key={article.title + '_container'}>
+                            <>
                                 <Card article={article} state={props.state} />
                                 <div
                                     className={styles.divider}
                                     key={article.title + '_divider'}
                                 ></div>
-                            </div>
+                            </>
                         ))}
+                        <li
+                            id={styles.load_more_card}
+                            onClick={async () => {
+                                await loadMoreNewsData(
+                                    props.state,
+                                    props.feedData,
+                                    props.limit,
+                                    props.offset + PAGE_SIZE
+                                );
+                                props.state.setOffset(props.offset + PAGE_SIZE);
+                            }}
+                        >
+                            Load More
+                        </li>
                     </ul>
                 </div>
             </div>

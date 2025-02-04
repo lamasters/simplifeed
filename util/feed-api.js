@@ -26,6 +26,15 @@ export async function fetchNewsData(state, fetchFeedsFail) {
     state.setLoading(false);
 }
 
+export async function loadMoreNewsData(state, feedData, limit, offset) {
+    state.setLoading(true);
+    let articles = await state.session.getNewsArticles(limit, offset);
+    if (articles === null) return;
+    state.setFeedData([...feedData, ...articles]);
+    state.setLoadedData([...feedData, ...articles]);
+    state.setLoading(false);
+}
+
 /**
  * Fetch podcast data and update the state.
  * @param {state} state
@@ -54,6 +63,14 @@ export async function fetchPodcastData(state) {
         ]);
     });
     state.setListenTimes(episodeNamesToListenTimes);
+    state.setLoading(false);
+}
+
+export async function loadMorePodcastData(state, podcastData, limit, offset) {
+    state.setLoading(true);
+    let episodes = await state.session.getPodcastEpisodes(limit, offset);
+    if (episodes === null) return;
+    state.setPodcastData([...podcastData, ...episodes]);
     state.setLoading(false);
 }
 
