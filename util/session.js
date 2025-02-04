@@ -388,20 +388,6 @@ export class UserSession {
                 window.innerWidth > window.innerHeight ? 'row' : 'column';
             let width = Math.min(screen.width, window.innerWidth);
             let content = [
-                <a
-                    href={url}
-                    target="_blank"
-                    style={{
-                        color: 'blue',
-                        textDecoration: 'underline',
-                        display: 'block',
-                        width: '90%',
-                        margin: 'auto',
-                    }}
-                >
-                    View original article
-                </a>,
-                <br />,
                 <div
                     style={{
                         display: 'flex',
@@ -415,6 +401,17 @@ export class UserSession {
                         minWidth: `${Math.max(width * 0.8, 275)}px`,
                     }}
                 >
+                    <a
+                        href={url}
+                        target="_blank"
+                        style={{
+                            color: 'blue',
+                            textDecoration: 'underline',
+                        }}
+                    >
+                        View original article
+                    </a>
+                    <br />
                     <img
                         src={`https://www.google.com/s2/favicons?sz=64&domain=${url_origin}`}
                         width="48px"
