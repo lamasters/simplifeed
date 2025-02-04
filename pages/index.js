@@ -12,6 +12,7 @@ import NewsFeed from '../components/news-feed';
 import NewsSidebar from '../components/news-sidebar';
 import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
+import { useParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 
 /**
@@ -138,7 +139,7 @@ export default function Home() {
                 />
             </div>
             {loading && <Loader />}
-            {articleOpen && (
+            {router.asPath.includes('article') && (
                 <Modal
                     articleContent={articleContent}
                     rawText={rawText}
