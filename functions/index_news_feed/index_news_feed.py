@@ -74,7 +74,7 @@ def parse_news_article(
             article.model_dump(exclude_none=True),
         )
     except:
-        return http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return http.HTTPStatus.CONFLICT
     return http.HTTPStatus.OK
 
 
@@ -106,6 +106,8 @@ def fetch_article_source(
         return http.HTTPStatus.INTERNAL_SERVER_ERROR
     elif any(res == http.HTTPStatus.INTERNAL_SERVER_ERROR for res in article_responses):
         return http.HTTPStatus.PARTIAL_CONTENT
+    elif all(res == http.HTTPStatus.CONFLICT for res in article_responses):
+        return http.HTTPStatus.CONFLICT
     return http.HTTPStatus.OK
 
 
