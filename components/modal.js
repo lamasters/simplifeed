@@ -15,6 +15,10 @@ export default function Modal(props) {
     const [summary, setSummary] = useState('');
     return (
         <div>
+            <div
+                onClick={() => props.state.setArticleOpen(false)}
+                id={styles.backdrop}
+            ></div>
             <div id={styles.article}>
                 {props.rawText && (
                     <div
@@ -38,13 +42,16 @@ export default function Modal(props) {
                 )}
                 <div id={styles.articlecontent}>{props.articleContent}</div>
             </div>
-            <div onClick={() => props.state.router.back()} id={styles.back}>
+            <div
+                onClick={() => props.state.setArticleOpen(false)}
+                id={styles.close}
+            >
                 <img
-                    id={styles.back_icon}
-                    src="/chevron-left-solid.svg"
-                    alt="Back"
-                    height="36px"
-                    width="36px"
+                    id={styles.close_icon}
+                    src="/close.svg"
+                    alt="Close"
+                    height="24px"
+                    width="24px"
                 />
             </div>
         </div>

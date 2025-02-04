@@ -138,7 +138,7 @@ export default function Home() {
                 />
             </div>
             {loading && <Loader />}
-            {router.asPath.includes('article') && (
+            {articleOpen && (
                 <Modal
                     articleContent={articleContent}
                     rawText={rawText}
