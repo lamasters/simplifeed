@@ -97,6 +97,7 @@ export async function selectArticle(article, state) {
     state.setLoading(true);
     state.setArticleOpen(true);
     state.setArticleContent(null);
+    state.router.push('#article');
     const articleContent = await state.session.getArticle(
         article.article_url,
         article.title,
