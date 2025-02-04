@@ -424,7 +424,6 @@ export class UserSession {
                         minWidth: `${Math.max(width * 0.8, 275)}px`,
                     }}
                 >
-                    {' '}
                     <img
                         src={`https://www.google.com/s2/favicons?sz=64&domain=${url_origin}`}
                         width="48px"
