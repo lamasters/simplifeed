@@ -135,7 +135,7 @@ export default function Podcasts() {
                 <>
                     <div className={styles.episode_info}>
                         <h2 className={styles.episode_title}>
-                            {podcast.source} - {podcast.title}
+                            {podcast.podcastFeeds.feed_title} - {podcast.title}
                         </h2>
                     </div>
                     <AudioPlayer
@@ -147,7 +147,7 @@ export default function Podcasts() {
                         loop={false}
                         autoPlay={true}
                         autoPlayAfterSrcChange={true}
-                        src={podcast.audio}
+                        src={podcast.audio_url}
                         style={{
                             position: 'fixed',
                             width: '100%',
