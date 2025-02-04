@@ -20,10 +20,10 @@
 
 #back {
     position: fixed;
-    top: calc(3vh + 15px);
-    left: calc(3vh + 15px);
-    height: 30px;
-    width: 30px;
+    top: 10px;
+    left: 10px;
+    height: 24px;
+    width: 24px;
     filter: brightness(0) saturate(100%) invert(52%) sepia(25%) saturate(7164%) hue-rotate(202deg) brightness(101%) contrast(104%);
 }
 
