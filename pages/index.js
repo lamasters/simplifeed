@@ -88,7 +88,7 @@ export default function Home() {
             router: router,
             session: new UserSession(),
         };
-    }, [router]);
+    }, []);
 
     useEffect(() => {
         clearInterval(fetchProcess.current);
@@ -138,7 +138,7 @@ export default function Home() {
                 />
             </div>
             {loading && <Loader />}
-            {articleOpen && (
+            {router.asPath.includes('article') && (
                 <Modal
                     articleContent={articleContent}
                     rawText={rawText}
