@@ -389,27 +389,19 @@ export class UserSession {
             let width = Math.min(screen.width, window.innerWidth);
             let content = [
                 <span
-                    style={{
-                        display: 'flex',
-                        flexDirection: flex_dir,
-                        justifyItems: 'center',
-                        alignItems: 'center',
-                        margin: 'auto',
-                        textAlign: 'center',
-                    }}
-                >
-                    <a
-                        href={url}
-                        target="_blank"
-                        style={{
-                            color: 'blue',
-                            textDecoration: 'underline',
-                            margin: 'auto',
-                        }}
-                    >
-                        View original article
-                    </a>
-                </span>,
+                  <a
+                      href={url}
+                      target="_blank"
+                      style={{
+                          color: 'blue',
+                          textDecoration: 'underline',
+                          display: 'block',
+                          width: '90%',
+                          margin: 'auto',
+                      }}
+                  >
+                    View original article
+                  </a>,
                 <br />,
                 <div
                     style={{
