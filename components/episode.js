@@ -1,5 +1,5 @@
-import { timeSince } from './card';
 import styles from '../styles/episode.module.css';
+import { timeSince } from './card';
 
 export default function Episode(props) {
     let description = props.episode.description;
@@ -7,7 +7,7 @@ export default function Episode(props) {
         description = description.substring(0, 250) + '...';
     }
     const listenData = props.listenTimes.get(
-        `${props.episode.source} - ${props.episode.title}`
+        `${props.episode.podcastFeeds.feed_title} - ${props.episode.title}`
     ) || [0, false];
     const listenTime = listenData[0];
     const finished = listenData[1];
@@ -41,7 +41,7 @@ export default function Episode(props) {
                 props.state.setPodcast(props.episode);
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: props.episode.title,
-                    artist: props.episode.source,
+                    artist: props.episode.podcastFeeds.feed_title,
                     artwork: [{ src: props.episode.image_url }],
                 });
             }}
@@ -60,7 +60,9 @@ export default function Episode(props) {
                         className={styles.cover}
                         src={props.episode.image_url}
                     />
-                    <h3 className={styles.source}>{props.episode.source}</h3>
+                    <h3 className={styles.source}>
+                        {props.episode.podcastFeeds.feed_title}
+                    </h3>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <h5>{timeSince(props.episode.pub_date)}</h5>
                         {listenText && (

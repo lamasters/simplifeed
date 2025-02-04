@@ -1,9 +1,10 @@
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
-import { backgroundFetch, fetchData } from '../util/feed-api';
+import { backgroundFetch, fetchNewsData } from '../util/feed-api';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { FETCH_INTERVAL } from '../util/constants';
 import Head from 'next/head';
 import Loader from '../components/loader';
 import Modal from '../components/modal';
@@ -12,7 +13,6 @@ import NewsSidebar from '../components/news-sidebar';
 import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
-import { FETCH_INTERVAL } from '../util/constants';
 
 /**
  * Renders the Home page component.
@@ -28,7 +28,6 @@ export default function Home() {
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [proUser, setProUser] = useState(false);
     const [rawText, setRawText] = useState('');
     const fetchProcess = useRef();
     const addFeedFail = () =>
@@ -78,7 +77,6 @@ export default function Home() {
             setFilter: setFilter,
             setLoadedData: setLoadedData,
             setLoading: setLoading,
-            setProUser: setProUser,
             setRawText: setRawText,
             setShowTutorial: setShowTutorial,
             setCollapse: setCollapse,
@@ -92,7 +90,7 @@ export default function Home() {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
-        fetchData(state, fetchFeedsFail);
+        fetchNewsData(state, fetchFeedsFail);
         fetchProcess.current = setInterval(
             () => backgroundFetch(state),
             FETCH_INTERVAL
@@ -114,9 +112,9 @@ export default function Home() {
             <div className={styles.main_container}>
                 {!collapse && (
                     <NewsSidebar
-                        state={state}
                         feedData={feedData}
                         loadedData={loadedData}
+                        state={state}
                         filter={filter}
                         addFeedFail={addFeedFail}
                         logoutFail={logoutFail}
@@ -136,7 +134,6 @@ export default function Home() {
             {articleOpen && (
                 <Modal
                     articleContent={articleContent}
-                    proUser={proUser}
                     rawText={rawText}
                     state={state}
                 />

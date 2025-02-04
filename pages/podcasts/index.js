@@ -3,16 +3,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import AudioPlayer from 'react-h5-audio-player';
 import Head from 'next/head';
 import Loader from '../../components/loader';
 import PodcastFeed from '../../components/podcast-feed';
+import PodcastSidebar from '../../components/podcast-sidebar';
 import { UserSession } from '../../util/session';
 import base_styles from '../../styles/Home.module.css';
-import { fetchPodcasts } from '../../util/feed-api';
+import { fetchPodcastData } from '../../util/feed-api';
 import styles from '../../styles/podcasts.module.css';
 import { useRouter } from 'next/router';
-import AudioPlayer from 'react-h5-audio-player';
-import PodcastSidebar from '../../components/podcast-sidebar';
 
 export default function Podcasts() {
     const [collapse, setCollapse] = useState(false);
@@ -30,6 +30,18 @@ export default function Podcasts() {
         toast.error(message, {
             position: 'bottom-center',
             autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    const addPodcastToast = (message) =>
+        toast.info('Adding podcast feed... This may take a few minutes', {
+            position: 'bottom-center',
+            autoClose: 3000,
             hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
@@ -63,10 +75,15 @@ export default function Podcasts() {
     const onPodcastEnd = () => {
         setPlaying(false);
         state.session
-            .setPodcastFinished(`${podcast.source} - ${podcast.title}`)
+            .setPodcastFinished(
+                `${podcast.podcastFeeds.feed_title} - ${podcast.title}`
+            )
             .then();
         const newListenTimes = new Map(listenTimes);
-        newListenTimes.set(`${podcast.source} - ${podcast.title}`, [0, true]);
+        newListenTimes.set(
+            `${podcast.podcastFeeds.feed_title} - ${podcast.title}`,
+            [0, true]
+        );
         setListenTimes(newListenTimes);
     };
 
@@ -74,7 +91,7 @@ export default function Podcasts() {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
-        fetchPodcasts(state);
+        fetchPodcastData(state);
     }, []);
     return (
         <main>
@@ -96,6 +113,7 @@ export default function Podcasts() {
                         loadedData={loadedData}
                         filter={filter}
                         addPodcastFail={errorToast}
+                        addPodcastToast={addPodcastToast}
                     />
                 )}
                 <PodcastFeed
@@ -143,7 +161,7 @@ export default function Podcasts() {
                         onListen={() => {
                             state.session
                                 .setPodcastListenTime(
-                                    `${podcast.source} - ${podcast.title}`,
+                                    `${podcast.podcastFeeds.feed_title} - ${podcast.title}`,
                                     audioPlayer.current.audio.current
                                         .currentTime
                                 )

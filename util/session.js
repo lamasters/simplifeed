@@ -33,6 +33,9 @@ export class UserSession {
 
         this.uid = null;
         this.sessionInfo = null;
+        this.newsSubscriptions = [];
+        this.podcastSubscriptions = [];
+        this.subscriptions_id = null;
     }
 
     /**
@@ -207,37 +210,52 @@ export class UserSession {
                 this.account.createVerification(`${redirectUrl}/verify`);
             }
         }
+        await this.getSubscriptions();
         return { ...userSession, verified: verified };
     }
 
     /**
      * Retrieves the feeds for the current user.
-     * @returns {Array<Object>|null} The array of feed documents, or null if
-     * an error occurs.
      */
-    async getFeeds() {
+    async getSubscriptions() {
         try {
-            let feeds = await this.database.listDocuments(
+            const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.NEWS,
-                [Query.equal('user_id', this.uid)]
+                APPWRITE_CONFIG.SUBSCRIPTIONS
             );
+            if (res.documents.length === 0) {
+                await this.database.createDocument(
+                    APPWRITE_CONFIG.FEEDS_DB,
+                    APPWRITE_CONFIG.SUBSCRIPTIONS,
+                    ID.unique(),
+                    {},
+                    [
+                        Permission.read(Role.user(this.uid)),
+                        Permission.update(Role.user(this.uid)),
+                    ]
+                );
+                this.newsSubscriptions = [];
+                this.podcastSubscriptions = [];
+            } else {
+                this.subscriptions_id = res.documents[0].$id;
+                const subscriptions = res.documents[0];
 
-            return feeds.documents;
+                if (subscriptions) {
+                    this.newsSubscriptions = subscriptions.newsFeeds;
+                    this.podcastSubscriptions = subscriptions.podcastFeeds;
+                }
+            }
         } catch (err) {
             console.error(err);
-            return null;
         }
     }
 
     /**
-     * Creates a feed from the given URL.
+     * Subscribes to a news rss feed.
      *
      * @param {string} url - The URL of the feed source.
-     * @returns {Object|null} - The created feed object, or null if the feed
-     * could not be created.
      */
-    async createFeed(url, addFeedFail, setLoading) {
+    async createNewsSubscription(url, addFeedFail, setLoading) {
         setLoading(true);
         if (!url) {
             addFeedFail();
@@ -247,67 +265,53 @@ export class UserSession {
         if (this.uid === null) {
             await this.getSession();
         }
+        if (this.subscriptions_id === null) await this.getSubscriptions();
 
-        let feed = null;
         try {
-            // Ensure that the feed can be properly parsed
             let res = await this.functions.createExecution(
-                APPWRITE_CONFIG.FETCH_ARTICLES,
-                JSON.stringify({ type: 'source', urls: [url] }),
-                false,
+                APPWRITE_CONFIG.CREATE_NEWS_FEED_FN,
+                JSON.stringify({
+                    subscriptions_id: this.subscriptions_id,
+                    url: url,
+                }),
+                true,
                 '/',
                 'GET'
             );
-            let articleSource = JSON.parse(res.responseBody);
-            articleSource = articleSource.data[0];
-            feed = {
-                title: articleSource.data.title,
-                items: articleSource.data.articles,
-            };
+            let execution_id = res.$id;
+            while (res.status !== 'completed' && res.status !== 'failed') {
+                res = await this.functions.getExecution(
+                    APPWRITE_CONFIG.CREATE_NEWS_FEED_FN,
+                    execution_id
+                );
+            }
+            await this.getSubscriptions();
+            const articles = await this.getNewsArticles();
+            setLoading(false);
+            return articles;
         } catch (err) {
             console.error(err);
             addFeedFail();
             setLoading(false);
             return null;
         }
-        if (feed == null) {
-            addFeedFail();
-            setLoading(false);
-            return null;
-        }
-
-        try {
-            let id = ID.unique();
-            await this.database.createDocument(
-                APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.NEWS,
-                id,
-                { url: url, user_id: this.uid },
-                [
-                    Permission.read(Role.user(this.uid)),
-                    Permission.write(Role.user(this.uid)),
-                    Permission.update(Role.user(this.uid)),
-                    Permission.delete(Role.user(this.uid)),
-                ]
-            );
-            setLoading(false);
-            return { ...feed, id: id };
-        } catch (err) {
-            console.error(err);
-        }
-        setLoading(false);
     }
 
     /**
      * Deletes a feed from the database.
      * @param {string} id - The ID of the feed to delete.
      */
-    async deleteFeed(id) {
+    async deleteNewsSubscription(id) {
         try {
-            await this.database.deleteDocument(
+            await this.database.updateDocument(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.NEWS,
-                id
+                APPWRITE_CONFIG.SUBSCRIPTIONS,
+                this.subscriptions_id,
+                {
+                    newsFeeds: this.newsSubscriptions.filter(
+                        (source) => source.$id !== id
+                    ),
+                }
             );
         } catch (err) {
             console.error(err);
@@ -315,55 +319,31 @@ export class UserSession {
     }
 
     /**
-     * Retrieves the article sources by fetching feeds and creating an execution.
-     * @returns {Array<Object>|null} An array of feeds containing the id,
-     * title, and items of each source, or null if an error occurs.
+     * Retrieves articles from the user's subscribed news feeds.
+     * @returns {Array<Object>|null} An array of all articles, or null if an error occurs.
      */
-    async getArticleSources(fetchFeedsFail) {
-        const sources = await this.getFeeds();
-        const ids = new Map();
-        sources.forEach((source) => {
-            if (source?.url && source?.$id) ids.set(source.url, source.$id);
-        });
-        const urls = sources.map((source) => source.url);
-        if (urls == null) {
-            return;
+    async getNewsArticles() {
+        if (!this.newsSubscriptions) await this.getSubscriptions();
+        const subscription_queries = this.newsSubscriptions.map((source) =>
+            Query.equal('newsFeeds', source.$id)
+        );
+        const queries = [
+            Query.limit(100),
+            Query.offset(0),
+            Query.orderDesc('pub_date'),
+        ];
+        if (subscription_queries.length === 1) {
+            queries.push(subscription_queries[0]);
+        } else if (subscription_queries.length > 1) {
+            queries.push(Query.or(subscription_queries));
         }
-
         try {
-            let res = await this.functions.createExecution(
-                APPWRITE_CONFIG.FETCH_ARTICLES,
-                JSON.stringify({ type: 'source', urls: urls }),
-                false,
-                '/',
-                'GET'
+            const articles = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.NEWS_ARTICLES,
+                queries
             );
-            const articleSources = JSON.parse(res.responseBody).data;
-            const feeds = [];
-            const failedFeeds = [];
-            for (const source of articleSources) {
-                if (source?.status != 200 && source?.data?.url) {
-                    console.error(source.message);
-                    failedFeeds.push(source.data.url);
-                    continue;
-                }
-                if (
-                    source?.data?.url &&
-                    source?.data?.title &&
-                    source?.data?.articles
-                ) {
-                    feeds.push({
-                        id: ids.get(source.data.url),
-                        title: source.data.title,
-                        url: source.data.url,
-                        items: source.data.articles,
-                    });
-                }
-            }
-            if (fetchFeedsFail && failedFeeds.length > 0) {
-                fetchFeedsFail(failedFeeds.join('\n'));
-            }
-            return feeds;
+            return articles.documents;
         } catch (err) {
             console.error(err);
             return null;
@@ -380,14 +360,14 @@ export class UserSession {
     async getArticle(url, title, author, pubDate, setRawText) {
         try {
             let res = await this.functions.createExecution(
-                APPWRITE_CONFIG.FETCH_ARTICLES,
-                JSON.stringify({ type: 'article', urls: [url] }),
+                APPWRITE_CONFIG.GET_ARTICLE_FN,
+                JSON.stringify({ url: url }),
                 false,
                 '/',
                 'GET'
             );
-            let articles_res = JSON.parse(res.responseBody).data[0];
-            if (articles_res.status != 200)
+            const article = JSON.parse(res.responseBody).data;
+            if (res.responseStatusCode != 200)
                 return (
                     <div>
                         Couldn't parse article.{' '}
@@ -403,7 +383,6 @@ export class UserSession {
                         </a>
                     </div>
                 );
-            let article = articles_res.data;
             let url_origin = new URL(url).origin;
             let flex_dir =
                 window.innerWidth > window.innerHeight ? 'row' : 'column';
@@ -463,6 +442,7 @@ export class UserSession {
                 <br />,
             ];
             let rawText = '';
+            let tagCount = 0;
             for (let tag of article.tags) {
                 rawText += tag + '\n';
                 content.push(
@@ -472,14 +452,17 @@ export class UserSession {
                             minWidth: `${Math.max(width * 0.7, 275)}px`,
                             margin: 'auto',
                         }}
+                        key={tagCount}
                     >
                         {tag}
                     </p>
                 );
-                content.push(<br />);
+                tagCount++;
+                content.push(<br key={tagCount} />);
+                tagCount++;
             }
             for (let i = 0; i < 15; i++) {
-                content.push(<br />);
+                content.push(<br key={tagCount + i + 1} />);
             }
             setRawText(rawText);
 
@@ -491,35 +474,13 @@ export class UserSession {
     }
 
     /**
-     * Checks if the user has access to AI features.
-     * @param {function} setProUser - The hook to set the pro user status.
-     */
-    async checkProUser(setProUser) {
-        try {
-            let res = await this.database.listDocuments(
-                APPWRITE_CONFIG.USERS_DB,
-                APPWRITE_CONFIG.PRO_USERS,
-                [Query.equal('user_id', this.uid)]
-            );
-            if (res.documents.length > 0) {
-                setProUser(true);
-            } else {
-                setProUser(false);
-            }
-        } catch (e) {
-            setProUser(false);
-            console.error(e);
-        }
-    }
-
-    /**
      * Retrieves the AI summary of an article.
      * @param {string} article - The article to retrieve the summary for.
      */
     async getSummary(article) {
         try {
             let res = await this.functions.createExecution(
-                APPWRITE_CONFIG.SUMMARIZE_ARTICLE,
+                APPWRITE_CONFIG.SUMMARIZE_ARTICLE_FN,
                 JSON.stringify({ user_id: this.uid, article: article }),
                 false,
                 '/',
@@ -533,127 +494,67 @@ export class UserSession {
         return '';
     }
 
-    async searchFeeds(query) {
+    async searchNewsFeeds(query) {
         let feeds = [];
         try {
             let res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.NEWS,
-                [Query.contains('url', query), Query.limit(100)]
+                APPWRITE_CONFIG.NEWS_FEEDS,
+                [
+                    Query.or([
+                        Query.contains('feed_title', query),
+                        Query.contains('rss_url', query),
+                    ]),
+                    Query.limit(100),
+                ]
             );
             for (let feed of res.documents) {
-                let feed_url = new URL(feed.url);
-                if (!feeds.includes(feed_url.hostname + feed_url.pathname)) {
-                    feeds.push(feed_url.hostname + feed_url.pathname);
+                if (!feeds.includes(feed.feed_title)) {
+                    feeds.push({ title: feed.feed_title, url: feed.rss_url });
                 }
             }
         } catch (err) {
             console.error(err);
         }
-        feeds.sort();
+        feeds.sort((a, b) => {
+            a.title < b.title ? -1 : 1;
+        });
         return feeds;
     }
 
-    async recordArticleRead(article, id) {
-        let rankingUser = false;
-        try {
-            let res = await this.database.listDocuments(
-                APPWRITE_CONFIG.USERS_DB,
-                APPWRITE_CONFIG.RANKING_USERS,
-                [Query.equal('user_id', this.uid)]
-            );
-            rankingUser = res.documents.length > 0;
-        } catch {
-            rankingUser = false;
-        }
-        if (rankingUser) {
-            try {
-                await this.database.createDocument(
-                    APPWRITE_CONFIG.FEEDS_DB,
-                    APPWRITE_CONFIG.READ_ARTICLES,
-                    ID.unique(),
-                    {
-                        user_id: this.uid,
-                        title: article.title,
-                        url: article.link,
-                    }
-                );
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    }
     /**
      * Retrieves the user's podcasts.
-     * @returns {Array<Object>|null} The user's podcasts, or null if an error occurs.
+     * @returns {Array<Object>|null} The user's podcast episodes, or null if an error occurs.
      */
-    async getPodcasts(errorToast) {
-        let podcasts = [];
-        try {
-            const res = await this.database.listDocuments(
-                APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.PODCASTS,
-                [Query.equal('user_id', this.uid)]
-            );
-            podcasts = res.documents;
-        } catch (err) {
-            console.error(err);
-            return null;
+    async getPodcastEpisodes() {
+        if (!this.podcastSubscriptions) await this.getSubscriptions();
+        const subscription_queries = this.podcastSubscriptions.map((source) =>
+            Query.equal('podcastFeeds', source.$id)
+        );
+        const queries = [
+            Query.limit(100),
+            Query.offset(0),
+            Query.orderDesc('pub_date'),
+        ];
+        if (subscription_queries.length === 1) {
+            queries.push(subscription_queries[0]);
+        } else if (subscription_queries.length > 1) {
+            queries.push(Query.or(subscription_queries));
         }
-
-        const ids = new Map();
-        podcasts.forEach((source) => {
-            ids.set(source.url, source.$id);
-        });
-        let urls = podcasts.map((source) => source.url);
-
         try {
-            const feeds = [];
-            let podcastSources;
-            let failedPodcasts = [];
-            let res;
-            for (let i = 0; i < 2; i++) {
-                res = await this.functions.createExecution(
-                    APPWRITE_CONFIG.FETCH_ARTICLES,
-                    JSON.stringify({ type: 'podcast', urls: urls }),
-                    false,
-                    '/',
-                    'GET'
-                );
-                podcastSources = JSON.parse(res.responseBody).data;
-                failedPodcasts = [];
-                for (const source of podcastSources) {
-                    if (source.status != 200) {
-                        console.error(source);
-                        failedPodcasts.push(source.data.url);
-                        continue;
-                    }
-                    feeds.push({
-                        id: ids.get(source.data.url),
-                        title: source.data.title,
-                        episodes: source.data.episodes,
-                    });
-                }
-                if (failedPodcasts.length == 0) {
-                    break;
-                } else if (i == 0) {
-                    errorToast('Failed to fetch some podcasts... Retrying');
-                }
-                urls = failedPodcasts.copyWithin();
-            }
-            if (errorToast && failedPodcasts.length > 0) {
-                errorToast(
-                    `Failed to fetch podcasts:\n${failedPodcasts.join('\n')}`
-                );
-            }
-            return feeds;
+            const episodes = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.PODCAST_EPISODES,
+                queries
+            );
+            return episodes.documents;
         } catch (err) {
             console.error(err);
             return null;
         }
     }
 
-    async createPodcast(url, addPodcastFail, setLoading) {
+    async createPodcastSubscription(url, addPodcastFail, setLoading) {
         setLoading(true);
         if (!url) {
             addPodcastFail(`Failed to add podcast from ${url}`);
@@ -663,113 +564,94 @@ export class UserSession {
         if (this.uid === null) {
             await this.getSession();
         }
+        if (this.subscriptions_id === null) await this.getSubscriptions();
 
-        let feed = null;
         try {
-            // Ensure that the feed can be properly parsed
             let res = await this.functions.createExecution(
-                APPWRITE_CONFIG.FETCH_ARTICLES,
-                JSON.stringify({ type: 'podcast', urls: [url] }),
-                false,
+                APPWRITE_CONFIG.CREATE_PODCAST_FEED_FN,
+                JSON.stringify({
+                    subscriptions_id: this.subscriptions_id,
+                    url: url,
+                }),
+                true,
                 '/',
                 'GET'
             );
-            let podcastSource = JSON.parse(res.responseBody);
-            podcastSource = podcastSource.data[0];
-            let episodes = [];
-            if (
-                podcastSource.data.episodes &&
-                Array.isArray(podcastSource.data.episodes[0])
-            ) {
-                for (let episodeList of podcastSource.data.episodes) {
-                    episodes = episodes.concat(episodeList);
-                }
-            } else {
-                episodes = podcastSource.data.episodes;
+            let execution_id = res.$id;
+            while (res.status !== 'completed' && res.status !== 'failed') {
+                res = await this.functions.getExecution(
+                    APPWRITE_CONFIG.CREATE_PODCAST_FEED_FN,
+                    execution_id
+                );
             }
-            feed = {
-                title: podcastSource.data.title,
-                episodes: episodes,
-            };
+            await this.getSubscriptions();
+            const episodes = await this.getPodcastEpisodes();
+            setLoading(false);
+            return episodes;
         } catch (err) {
             console.error(err);
             addPodcastFail(`Failed to add podcast from ${url}`);
             setLoading(false);
             return null;
         }
-        if (feed == null) {
-            addPodcastFail(`Failed to add podcast from ${url}`);
-            setLoading(false);
-            return null;
-        }
-
-        try {
-            let id = ID.unique();
-            await this.database.createDocument(
-                APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.PODCASTS,
-                id,
-                { url: url, user_id: this.uid },
-                [
-                    Permission.read(Role.user(this.uid)),
-                    Permission.write(Role.user(this.uid)),
-                    Permission.update(Role.user(this.uid)),
-                    Permission.delete(Role.user(this.uid)),
-                ]
-            );
-            setLoading(false);
-            return { ...feed, id: id };
-        } catch (err) {
-            console.error(err);
-        }
-        setLoading(false);
     }
 
     /**
      * Deletes a podcast from the database.
      * @param {string} id - The ID of the podcast to delete.
      */
-    async deletePodcast(id) {
+    async deletePodcastSubscription(id) {
         try {
-            await this.database.deleteDocument(
+            await this.database.updateDocument(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.PODCASTS,
-                id
+                APPWRITE_CONFIG.SUBSCRIPTIONS,
+                this.subscriptions_id,
+                {
+                    podcastFeeds: this.podcastSubscriptions.filter(
+                        (source) => source.$id !== id
+                    ),
+                }
             );
         } catch (err) {
             console.error(err);
         }
     }
 
-    async searchPodcasts(query) {
+    async searchPodcastFeeds(query) {
         let podcasts = [];
         try {
             let res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.PODCASTS,
-                [Query.contains('url', query), Query.limit(100)]
+                APPWRITE_CONFIG.PODCAST_FEEDS,
+                [
+                    Query.or([
+                        Query.contains('feed_title', query),
+                        Query.contains('rss_url', query),
+                    ]),
+                    Query.limit(100),
+                ]
             );
             for (let podcast of res.documents) {
-                let podcast_url = new URL(podcast.url);
-                if (
-                    !podcasts.includes(
-                        podcast_url.hostname + podcast_url.pathname
-                    )
-                ) {
-                    podcasts.push(podcast_url.hostname + podcast_url.pathname);
+                if (!podcasts.includes(podcast.feed_title)) {
+                    podcasts.push({
+                        title: podcast.feed_title,
+                        url: podcast.rss_url,
+                    });
                 }
             }
         } catch (err) {
             console.error(err);
         }
-        podcasts.sort();
+        podcasts.sort((a, b) => {
+            a.title < b.title ? -1 : 1;
+        });
         return podcasts;
     }
 
     async setPodcastListenTime(title, time) {
         try {
             await this.functions.createExecution(
-                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME,
+                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
                 JSON.stringify({
                     title: title,
                     time: time,
@@ -788,7 +670,7 @@ export class UserSession {
     async setPodcastFinished(title) {
         try {
             await this.functions.createExecution(
-                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME,
+                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
                 JSON.stringify({
                     title: title,
                     user_id: this.uid,

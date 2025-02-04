@@ -56,34 +56,7 @@ export function timeSince(datetime) {
  * @returns {JSX.Element} The rendered card component.
  */
 export default function Card(props) {
-    let icon = '';
-    if (!props.article.image) {
-        let url = new URL(props.article.link);
-        icon = (
-            <img
-                src={`https://www.google.com/s2/favicons?sz=64&domain=${url.origin}`}
-                width={36}
-                height={36}
-                style={{
-                    marginLeft: '10px',
-                    marginRight: '10px',
-                }}
-            />
-        );
-    } else {
-        icon = (
-            <img
-                src={props.article.image_url}
-                width="24px"
-                height="24px"
-                style={{
-                    borderRadius: '100%',
-                    marginLeft: '10px',
-                    marginRight: '10px',
-                }}
-            />
-        );
-    }
+    const url = new URL(props.article.article_url);
     return (
         <li
             onClick={() => {
@@ -93,9 +66,17 @@ export default function Card(props) {
             key={props.article.title}
         >
             <div className={styles.itemHeader}>
-                {icon}
+                <img
+                    src={`https://www.google.com/s2/favicons?sz=64&domain=${url.origin}`}
+                    width={36}
+                    height={36}
+                    style={{
+                        marginLeft: '10px',
+                        marginRight: '10px',
+                    }}
+                />
                 <div className={styles.itemTitle}>
-                    <b>{props.article.source}</b>
+                    <b>{props.article.newsFeeds.feed_title}</b>
                 </div>
                 <div className={styles.date}>
                     {timeSince(props.article.pub_date)}

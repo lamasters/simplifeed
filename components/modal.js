@@ -7,7 +7,6 @@ import { useState } from 'react';
  *
  * @param {Object} props - The props for the modal component.
  * @param {string} props.articleContent - The content of the article.
- * @param {boolean} props.proUser - Whether the user is a pro user.
  * @param {string} props.rawText - The raw text of the article.
  * @param {Object} props.state - Hooks to set application state.
  * @returns {JSX.Element} The rendered modal component.
@@ -21,7 +20,7 @@ export default function Modal(props) {
                 id={styles.backdrop}
             ></div>
             <div id={styles.article}>
-                {props.rawText && props.proUser ? (
+                {props.rawText && (
                     <div
                         className={styles.summarize}
                         onClick={() => {
@@ -34,13 +33,13 @@ export default function Modal(props) {
                     >
                         <div className={styles.summary_text}>✨ Summarize</div>
                     </div>
-                ) : null}
-                {summary ? (
+                )}
+                {summary && (
                     <>
                         <h2 className={styles.ai_header}>AI Summary</h2>
                         <div className={styles.summary}>{summary}</div>
                     </>
-                ) : null}
+                )}
                 <div id={styles.articlecontent}>{props.articleContent}</div>
             </div>
             <div
