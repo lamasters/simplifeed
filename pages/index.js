@@ -88,7 +88,7 @@ export default function Home() {
             router: router,
             session: new UserSession(),
         };
-    }, [router]);
+    }, []);
 
     useEffect(() => {
         clearInterval(fetchProcess.current);
