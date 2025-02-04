@@ -97,6 +97,10 @@ def main(context):
                 f"Skipping podcast feed {feed['$id']} {feed['feed_title']} as it was updated recently"
             )
 
+    return context.res.json(
+        {"message": "Scheduled feed updates"}, statusCode=http.HTTPStatus.ACCEPTED
+    )
+
     news_feed_id_to_execution_result = {}
     for feed_id, execution_id in news_feed_id_to_execution_id.items():
         execution = wait_for_execution(

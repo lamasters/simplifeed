@@ -1,7 +1,7 @@
 import datetime
 import http
 import json
-from typing import Optional
+from typing import Callable, Optional
 
 import requests
 from bs4 import BeautifulSoup
@@ -55,7 +55,7 @@ def main(context):
 
     log("Fetching article source...")
     try:
-        res_data = fetch_article_content(req_data.url, log)
+        res_data = fetch_article_content(req_data.url)
     except Exception as e:  # pylint: disable=broad-except
         log("Exception occurred fetching data")
         return context.res.json(
@@ -63,13 +63,13 @@ def main(context):
         )
     log("Finished fetching data")
 
-    if res_data.data:
+    if not res_data.data:
         log("No data fetched")
         return context.res.json(
             {"message": "No article content found"},
             statusCode=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
-    json_data = [jsonable_encoder(res) for res in res_data]
+    json_data = jsonable_encoder(res_data.data)
     log("Returning json data")
     return context.res.json({"data": json_data}, statusCode=http.HTTPStatus.OK)

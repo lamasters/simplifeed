@@ -103,8 +103,7 @@ def parse_podcast_episode(
             episode.model_dump(exclude_none=True),
         )
     except:
-        pass
-
+        return http.HTTPStatus.INTERNAL_SERVER_ERROR
     return http.HTTPStatus.OK
 
 
@@ -121,9 +120,10 @@ def fetch_podcast_source(
         log(f"No entries found in RSS feed {rss_url}")
         return http.HTTPStatus.INTERNAL_SERVER_ERROR
 
-    image_url = ""
+    log(f"Found {len(feed['entries'])} entries in RSS feed {rss_url}")
+    image_url = None
     if image := feed["feed"].get("image"):
-        image_url = image.get("href", "")
+        image_url = image.get("href")
 
     episode_responses = []
     for entry in feed["entries"]:

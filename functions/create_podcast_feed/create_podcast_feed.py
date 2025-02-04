@@ -17,12 +17,14 @@ FEEDS_DATABASE_ID = "6466af38420c3ca601c1"
 PODCAST_FEEDS_COLLECTION_ID = "6797ac11003778ff768a"
 PODCAST_EPISODES_COLLECTION_ID = "6797ac2700062e762fdd"
 INDEX_PODCAST_FUNCTION_ID = "679fe0e256c67950d62e"
+SUBSCRIPTIONS_COLLECTION_ID = "6797b43c001f4e9c95a0"
 
 
 class ServerRequest(BaseModel):
     """Model for client request to serverless function"""
 
     url: str = Field(...)
+    subscriptions_id: Optional[str] = Field(default=None)
 
 
 class PodcastFeed(BaseModel):
@@ -67,6 +69,21 @@ def fetch_podcast_source(rss_url: str, log: Callable) -> PodcastFeedRes:
     )
 
 
+def add_feed_to_subscriptions(databases: Databases, subscription_id: str, feed_id: str):
+    """Add feed to user subscriptions"""
+    user_subscriptions = databases.get_document(
+        FEEDS_DATABASE_ID, SUBSCRIPTIONS_COLLECTION_ID, subscription_id
+    )
+    if subscription_id not in user_subscriptions["podcastFeeds"]:
+        user_subscriptions["podcastFeeds"].append(feed_id)
+        databases.update_document(
+            FEEDS_DATABASE_ID,
+            SUBSCRIPTIONS_COLLECTION_ID,
+            subscription_id,
+            {"podcastFeeds": user_subscriptions["podcastFeeds"]},
+        )
+
+
 def main(context):
     """Main entry point for the serveless function to create an rss feed subscription"""
 
@@ -102,6 +119,10 @@ def main(context):
             feed_res.data.model_dump(exclude_none=True),
         )
     except:
+        log(f"Feed {feed_res.data.feed_title} already exists")
+        if req_data.subscriptions_id:
+            log(f"Adding feed to subscriptions {req_data.subscriptions_id}")
+            add_feed_to_subscriptions(databases, req_data.subscriptions_id, document_id)
         return context.res.json({}, statusCode=http.HTTPStatus.CONFLICT)
     log(f"Attempting to parse feed {feed_res.data.feed_title}")
     execution = functions.create_execution(
@@ -135,5 +156,8 @@ def main(context):
             {},
             statusCode=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
+    if req_data.subscriptions_id:
+        log(f"Adding feed to subscriptions {req_data.subscriptions_id}")
+        add_feed_to_subscriptions(databases, req_data.subscriptions_id, document_id)
     log(f"Successfully parsed feed {feed_res.data.feed_title}")
     return context.res.json({}, statusCode=http.HTTPStatus.OK)

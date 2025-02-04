@@ -45,7 +45,7 @@ def test_parse_article():
 
 
 def test_create_news_feed():
-    execution_context = context_mock({"url": "https://9to5google.com/feed/"})
+    execution_context = context_mock({"url": "https://ici.radio-canada.ca/rss/4159"})
     create_news_feed_main(execution_context)
 
 
@@ -59,5 +59,14 @@ def test_scheduler():
     scheduler_main(execution_context)
 
 
+def test_get_article():
+    execution_context = context_mock(
+        {
+            "url": "https://www.npr.org/2025/02/03/nx-s1-5285414/tufts-lacrosse-workout-rhabdomyolysis-report"
+        }
+    )
+    get_article_main(execution_context)
+
+
 if __name__ == "__main__":
-    test_scheduler()
+    test_create_news_feed()

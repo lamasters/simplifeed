@@ -4,62 +4,14 @@ import Card from './card';
 import styles from '../styles/feed.module.css';
 
 /**
- * Returns the timestamp of the given publication date.
- * @param {string} pub_date - The publication date in string format.
- * @returns {number} - The timestamp of the publication date.
- */
-function getDate(pub_date) {
-    let date = new Date(pub_date);
-    return date.getTime();
-}
-
-/**
- * Sorts an array of feed items based on their publication date.
- * @param {Array} articles - The array of feed items to be sorted.
- */
-export function sortFeedItems(articles) {
-    articles.sort((a, b) => {
-        let dateA = getDate(a.pub_date);
-        let dateB = getDate(b.pub_date);
-
-        if (dateA > dateB) {
-            return -1;
-        }
-        if (dateA < dateB) {
-            return 1;
-        }
-        return 0;
-    });
-}
-
-/**
- * Concatenates the items from multiple sources into a single array.
- *
- * @param {Array} sources - An array of sources, each containing an 'items' property.
- * @returns {Array} - An array containing all the items from the sources.
- */
-function concatSources(sources) {
-    let articles = [];
-    for (let source of sources) {
-        articles = articles.concat(source.items);
-    }
-    return articles;
-}
-
-/**
  * Compares two feed objects and checks if their articles are equal.
  * @param {Object} a - The first feed object.
  * @param {Object} b - The second feed object.
  * @returns {boolean} - Returns true if the articles in the feeds are equal, otherwise returns false.
  */
 function feedsEqual(a, b) {
-    let articlesA = concatSources(a);
-    let articlesB = concatSources(b);
-    sortFeedItems(articlesA);
-    sortFeedItems(articlesB);
-    if (articlesA.length !== articlesB.length) return false;
-    for (let i = 0; i < articlesA.length; i++) {
-        if (articlesA[i].title !== articlesB[i].title) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i].title !== b[i].title) return false;
     }
     return true;
 }
@@ -71,11 +23,10 @@ function feedsEqual(a, b) {
  * @param {string} [filter] - Optional filter to only include articles from a specific source.
  */
 function createArticleList(feedData, setArticleList, filter) {
-    let articles = concatSources(feedData);
+    let articles = feedData.copyWithin();
     if (filter) {
-        articles = articles.filter((item) => item.source == filter);
+        articles = articles.filter((item) => item.newsFeeds.$id == filter);
     }
-    sortFeedItems(articles);
     setArticleList(articles);
 }
 
@@ -130,11 +81,6 @@ export default function NewsFeed(props) {
                             <div
                                 className={`${styles.update} ${styles.slide_bottom}`}
                                 onClick={() => {
-                                    // Update the feed data in the state and local storage
-                                    localStorage.setItem(
-                                        'feedData',
-                                        JSON.stringify(props.loadedData)
-                                    );
                                     props.state.setFeedData(props.loadedData);
                                     feedRef.current.scrollTo({
                                         top: 0,
@@ -148,13 +94,13 @@ export default function NewsFeed(props) {
                         )}
                     <ul style={{ width: '100%' }}>
                         {articleList.map((article) => (
-                            <>
+                            <div key={article.title + '_container'}>
                                 <Card article={article} state={props.state} />
                                 <div
                                     className={styles.divider}
                                     key={article.title + '_divider'}
                                 ></div>
-                            </>
+                            </div>
                         ))}
                     </ul>
                 </div>

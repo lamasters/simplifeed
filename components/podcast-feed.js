@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import Episode from './episode';
-import { sortFeedItems } from './news-feed';
 import styles from '../styles/feed.module.css';
-
-function concatShows(sources) {
-    let episodes = [];
-    for (let source of sources) {
-        episodes = episodes.concat(source.episodes);
-    }
-    return episodes;
-}
 
 export default function PodcastFeed(props) {
     const state = props.state;
@@ -20,12 +11,14 @@ export default function PodcastFeed(props) {
     useEffect(() => {
         if (props.podcastData.length > 0) {
             state.setShowTutorial(false);
-            let list = concatShows(props.podcastData);
-            sortFeedItems(list);
             if (props.filter == null) {
-                setEpisodes(list);
+                setEpisodes(props.podcastData);
             } else {
-                setEpisodes(list.filter((item) => item.source == props.filter));
+                setEpisodes(
+                    props.podcastData.filter(
+                        (item) => item.podcastFeeds.$id == props.filter
+                    )
+                );
             }
         }
     }, [props.podcastData, props.filter]);

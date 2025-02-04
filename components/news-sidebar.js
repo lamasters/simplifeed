@@ -1,33 +1,14 @@
-import { addFeed, searchFeeds } from '../util/feed-api';
+import { searchNewsFeeds, subscribeToNewsFeed } from '../util/feed-api';
+import { useEffect, useState } from 'react';
 
 import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
-import { useState } from 'react';
-
-/**
- * Deletes a feed from the feedData and loadedData arrays, updates the filter state, and saves the updated feedData to localStorage.
- * @param {Array} feedData - The array of feed data.
- * @param {Array} loadedData - The array of loaded feed data.
- * @param {string} filter - The current filter value.
- * @param {object} state - Hooks to manipulate application state.
- * @param {string} source - The title of the feed to be deleted.
- */
-function deleteFeed(feedData, loadedData, filter, state, source) {
-    const filteredFeed = feedData.filter((feed) => feed.title !== source);
-    state.setFeedData(filteredFeed);
-    const filteredLoaded = loadedData.filter((feed) => feed.title !== source);
-    state.setLoadedData(filteredLoaded);
-    if (filter === source) {
-        state.setFilter(null);
-    }
-    localStorage.setItem('feedData', JSON.stringify(filteredFeed));
-}
 
 function sortedFeeds(feedData) {
-    let feedDataCopy = feedData.slice();
+    let feedDataCopy = feedData.copyWithin();
     feedDataCopy.sort((a, b) => {
-        let a_title = a.title.toLowerCase();
-        let b_title = b.title.toLowerCase();
+        let a_title = a.feed_title.toLowerCase();
+        let b_title = b.feed_title.toLowerCase();
         if (a_title < b_title) {
             return -1;
         }
@@ -39,6 +20,24 @@ function sortedFeeds(feedData) {
     return feedDataCopy;
 }
 
+async function deleteFeed(source, props) {
+    props.state.setLoading(true);
+    await props.state.session.deleteNewsSubscription(source.$id);
+    await props.state.session.getSubscriptions();
+    const newFeedData = props.feedData.filter(
+        (feed) => feed.newsFeeds.$id !== source.$id
+    );
+    const newLoadedData = props.loadedData.filter(
+        (feed) => feed.newsFeeds.$id !== source.$id
+    );
+    props.state.setFeedData(newFeedData);
+    props.state.setLoadedData(newLoadedData);
+    props.state.setLoading(false);
+    if (props.filter === source.$id) {
+        props.state.setFilter(null);
+    }
+}
+
 function getFeedIcon(source, editing, props) {
     if (editing) {
         return (
@@ -48,27 +47,17 @@ function getFeedIcon(source, editing, props) {
                 width="24px"
                 height="24px"
                 onClick={async () => {
-                    await props.state.session.deleteFeed(source.id);
-                    deleteFeed(
-                        props.feedData,
-                        props.loadedData,
-                        props.filter,
-                        props.state,
-                        source?.title
-                    );
+                    await deleteFeed(source, props);
                 }}
             />
         );
     } else {
-        if (!source.url) {
+        if (!source.rss_url) {
             return null;
         }
-        let url = source.url.replace('https://', '').split('/')[0];
+        let url;
         try {
-            url = new URL(source.url).origin;
-            if (source.items.length > 0) {
-                url = new URL(source.items[0]?.link).origin;
-            }
+            url = new URL(source.rss_url).origin;
         } catch {
             console.error('Invalid URL');
         }
@@ -93,6 +82,15 @@ export default function NewsSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
     const [feedOptions, setFeedOptions] = useState([]);
+    const [displayOptions, setDisplayOptions] = useState([]);
+    const [subscriptions, setSubscriptions] = useState(
+        props.state.session.newsSubscriptions
+    );
+
+    useEffect(() => {
+        setSubscriptions(props.state.session.newsSubscriptions);
+    }, [props.state.session.newsSubscriptions]);
+
     return (
         <div id={styles.sidebar}>
             <div id={styles.navbar}>
@@ -110,14 +108,14 @@ export default function NewsSidebar(props) {
                         All Feeds
                     </li>
                 </div>
-                {sortedFeeds(props.feedData).map((source) => (
-                    <div className={styles.source_row} key={source?.title}>
-                        {getFeedIcon(source, editing, props)}
+                {sortedFeeds(subscriptions).map((feed) => (
+                    <div className={styles.source_row} key={feed?.feed_title}>
+                        {getFeedIcon(feed, editing, props)}
                         <li
-                            onClick={() => props.state.setFilter(source?.title)}
+                            onClick={() => props.state.setFilter(feed?.$id)}
                             className={styles.source}
                         >
-                            {source?.title}
+                            {feed?.feed_title}
                         </li>
                     </div>
                 ))}
@@ -132,31 +130,42 @@ export default function NewsSidebar(props) {
                 </button>
                 <label>Search Feeds</label>
                 <Typeahead
-                    options={feedOptions}
+                    options={displayOptions}
                     maxVisible={5}
                     onChange={async (e) => {
                         setURL(e.target.value);
-                        let feeds = await searchFeeds(
+                        let feeds = await searchNewsFeeds(
                             props.state,
                             e.target.value
                         );
                         setFeedOptions(feeds);
+                        setDisplayOptions(feeds.map((feed) => feed.title));
                     }}
-                    onOptionSelected={(url) => {
-                        setURL(url);
+                    onOptionSelected={(title) => {
+                        let feed = feedOptions.find(
+                            (feed) => feed.title === title
+                        );
+                        if (feed) {
+                            subscribeToNewsFeed(
+                                feed.url,
+                                props.state,
+                                props.addFeedFail
+                            );
+                        }
                         setFeedOptions([]);
+                        setDisplayOptions([]);
                     }}
                     customClasses={{
                         results: styles.search_results,
                         listItem: styles.search_item,
                     }}
+                    placeholder={'News feed name or RSS URL'}
                 />
                 <button
                     onClick={() => {
-                        addFeed(
+                        subscribeToNewsFeed(
                             url,
                             props.state,
-                            props.feedData,
                             props.addFeedFail
                         );
                     }}

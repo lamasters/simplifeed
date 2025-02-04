@@ -74,7 +74,7 @@ def parse_news_article(
             article.model_dump(exclude_none=True),
         )
     except:
-        pass
+        return http.HTTPStatus.INTERNAL_SERVER_ERROR
     return http.HTTPStatus.OK
 
 
@@ -82,6 +82,7 @@ def fetch_article_source(
     rss_url: str, databases: Databases, feed_id: str, log: Callable
 ) -> http.HTTPStatus:
     """Download RSS feed and parse into ArticleSource"""
+    log(f"Fetching RSS feed {rss_url}")
     try:
         feed = feedparser.parse(rss_url)
     except Exception:
@@ -91,9 +92,10 @@ def fetch_article_source(
         log(f"No entries found in RSS feed {rss_url}")
         return http.HTTPStatus.INTERNAL_SERVER_ERROR
 
-    image_url = ""
+    log(f"Found {len(feed['entries'])} entries in RSS feed {rss_url}")
+    image_url = None
     if image := feed["feed"].get("image"):
-        image_url = image.get("url", "")
+        image_url = image.get("url")
 
     article_responses = []
     for entry in feed["entries"]:
@@ -140,7 +142,7 @@ def main(context):
             feed_res["rss_url"], databases, req_data.feed_id, log
         )
     except Exception as e:  # pylint: disable=broad-except
-        log("Exception occurred fetching data")
+        log(f"Exception occurred fetching data {e}")
         return context.res.json(
             {"message": str(e)},
             statusCode=http.HTTPStatus.INTERNAL_SERVER_ERROR,
