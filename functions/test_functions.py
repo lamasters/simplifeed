@@ -31,7 +31,7 @@ def test_index_articles():
 
 
 def test_index_podcasts():
-    execution_context = context_mock({"feed_id": "679d9d9c001145ab505a"})
+    execution_context = context_mock({"feed_id": "c35326904cd87224f69358f4a6a57d35"})
     get_podcasts_main(execution_context)
 
 
@@ -69,4 +69,4 @@ def test_get_article():
 
 
 if __name__ == "__main__":
-    test_create_news_feed()
+    test_index_podcasts()
