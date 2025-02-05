@@ -65,7 +65,7 @@ def parse_news_article(
         image_url=image_url,
         author=author,
     )
-    document_id = md5(f"{title}{article_url}".encode()).hexdigest()
+    document_id = md5(article_url.encode()).hexdigest()
     try:
         databases.create_document(
             FEEDS_DATABASE_ID,
