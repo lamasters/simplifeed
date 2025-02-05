@@ -126,9 +126,16 @@ def fetch_podcast_source(
         image_url = image.get("href")
 
     episode_responses = []
+    last_3_responses = []
     for entry in feed["entries"]:
         res = parse_podcast_episode(entry, databases, feed_id, image_url)
+        last_3_responses.append(res)
         episode_responses.append(res)
+        if len(last_3_responses) > 3:
+            last_3_responses.pop(0)
+        if all(res == http.HTTPStatus.CONFLICT for res in last_3_responses):
+            log(f"Encountered existing episodes, exiting early")
+            break
 
     if all(res == http.HTTPStatus.INTERNAL_SERVER_ERROR for res in episode_responses):
         return http.HTTPStatus.INTERNAL_SERVER_ERROR
