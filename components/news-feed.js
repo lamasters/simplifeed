@@ -13,8 +13,8 @@ const PAGE_SIZE = 100;
  * @returns {boolean} - Returns true if the articles in the feeds are equal, otherwise returns false.
  */
 function feedsEqual(a, b) {
-    for (let i = 0; i < a.length; i++) {
-        if (a[i].title !== b[i].title) return false;
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        if (a[i].article_url !== b[i].article_url) return false;
     }
     return true;
 }

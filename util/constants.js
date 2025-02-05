@@ -15,4 +15,4 @@ export const APPWRITE_CONFIG = {
     RECORD_PODCAST_LISTEN_TIME_FN: '674661f2001479869775',
 };
 
-export const FETCH_INTERVAL = 1000 * 60 * 1; // 5 minutes
+export const FETCH_INTERVAL = 1000 * 60 * 1; // 1 minute
