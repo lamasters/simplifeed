@@ -214,6 +214,26 @@ export class UserSession {
         return { ...userSession, verified: verified };
     }
 
+    async getSubscribedFeeds(feed_ids, collection_id) {
+        const feed_queries = feed_ids.map((id) => Query.equal('$id', id));
+        const queries = [];
+        if (feed_queries.length === 1) {
+            queries.push(feed_queries[0]);
+        } else if (feed_queries.length > 1) {
+            queries.push(Query.or(feed_queries));
+        }
+        const res = await this.database.listDocuments(
+            APPWRITE_CONFIG.FEEDS_DB,
+            collection_id,
+            [
+                Query.limit(100),
+                ...queries,
+                Query.select(['feed_title', 'rss_url', 'image_url', '$id']),
+            ]
+        );
+        return res.documents;
+    }
+
     /**
      * Retrieves the feeds for the current user.
      */
@@ -221,7 +241,8 @@ export class UserSession {
         try {
             const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
-                APPWRITE_CONFIG.SUBSCRIPTIONS
+                APPWRITE_CONFIG.SUBSCRIPTIONS,
+                [Query.select(['$id', 'news_feed_ids', 'podcast_feed_ids'])]
             );
             if (res.documents.length === 0) {
                 await this.database.createDocument(
@@ -241,8 +262,18 @@ export class UserSession {
                 const subscriptions = res.documents[0];
 
                 if (subscriptions) {
-                    this.newsSubscriptions = subscriptions.newsFeeds;
-                    this.podcastSubscriptions = subscriptions.podcastFeeds;
+                    this.newsSubscriptions = subscriptions.news_feed_ids
+                        ? await this.getSubscribedFeeds(
+                              subscriptions.news_feed_ids,
+                              APPWRITE_CONFIG.NEWS_FEEDS
+                          )
+                        : [];
+                    this.podcastSubscriptions = subscriptions.podcast_feed_ids
+                        ? await this.getSubscribedFeeds(
+                              subscriptions.podcast_feed_ids,
+                              APPWRITE_CONFIG.PODCAST_FEEDS
+                          )
+                        : [];
                 }
             }
         } catch (err) {
@@ -308,9 +339,9 @@ export class UserSession {
                 APPWRITE_CONFIG.SUBSCRIPTIONS,
                 this.subscriptions_id,
                 {
-                    newsFeeds: this.newsSubscriptions.filter(
-                        (source) => source.$id !== id
-                    ),
+                    news_feed_ids: this.newsSubscriptions
+                        .filter((source) => source.$id !== id)
+                        .map((source) => source.$id),
                 }
             );
         } catch (err) {
@@ -617,9 +648,9 @@ export class UserSession {
                 APPWRITE_CONFIG.SUBSCRIPTIONS,
                 this.subscriptions_id,
                 {
-                    podcastFeeds: this.podcastSubscriptions.filter(
-                        (source) => source.$id !== id
-                    ),
+                    podcast_feed_ids: this.podcastSubscriptions
+                        .filter((source) => source.$id !== id)
+                        .map((source) => source.$id),
                 }
             );
         } catch (err) {

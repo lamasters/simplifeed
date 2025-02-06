@@ -73,13 +73,13 @@ def add_feed_to_subscriptions(databases: Databases, subscription_id: str, feed_i
     user_subscriptions = databases.get_document(
         FEEDS_DATABASE_ID, SUBSCRIPTIONS_COLLECTION_ID, subscription_id
     )
-    if subscription_id not in user_subscriptions["newsFeeds"]:
-        user_subscriptions["newsFeeds"].append(feed_id)
+    if subscription_id not in user_subscriptions["news_feed_ids"]:
+        user_subscriptions["news_feed_ids"].append(feed_id)
         databases.update_document(
             FEEDS_DATABASE_ID,
             SUBSCRIPTIONS_COLLECTION_ID,
             subscription_id,
-            {"newsFeeds": user_subscriptions["newsFeeds"]},
+            {"news_feed_ids": user_subscriptions["news_feed_ids"]},
         )
 
 
