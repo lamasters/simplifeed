@@ -262,18 +262,20 @@ export class UserSession {
                 const subscriptions = res.documents[0];
 
                 if (subscriptions) {
-                    this.newsSubscriptions = subscriptions.news_feed_ids
-                        ? await this.getSubscribedFeeds(
-                              subscriptions.news_feed_ids,
-                              APPWRITE_CONFIG.NEWS_FEEDS
-                          )
-                        : [];
-                    this.podcastSubscriptions = subscriptions.podcast_feed_ids
-                        ? await this.getSubscribedFeeds(
-                              subscriptions.podcast_feed_ids,
-                              APPWRITE_CONFIG.PODCAST_FEEDS
-                          )
-                        : [];
+                    const promises = [
+                        this.getSubscribedFeeds(
+                            subscriptions.news_feed_ids,
+                            APPWRITE_CONFIG.NEWS_FEEDS
+                        ),
+                        this.getSubscribedFeeds(
+                            subscriptions.podcast_feed_ids,
+                            APPWRITE_CONFIG.PODCAST_FEEDS
+                        ),
+                    ];
+                    const [newsFeeds, podcastFeeds] =
+                        await Promise.allSettled(promises);
+                    this.newsSubscriptions = newsFeeds.value;
+                    this.podcastSubscriptions = podcastFeeds.value;
                 }
             }
         } catch (err) {
