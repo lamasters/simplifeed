@@ -70,7 +70,9 @@ export default function NewsFeed(props) {
                 <div id={styles.feed_content}>
                     {props.showTutorial &&
                         (seenTutorial ? (
-                            <div id={styles.tutorial}>Loading articles...</div>
+                            <div id={styles.tutorial}>
+                                There's nothing here...
+                            </div>
                         ) : (
                             <div id={styles.tutorial}>
                                 Add feeds to start seeing articles!
@@ -105,20 +107,24 @@ export default function NewsFeed(props) {
                                 ></div>
                             </>
                         ))}
-                        <li
-                            id={styles.load_more_card}
-                            onClick={async () => {
-                                await loadMoreNewsData(
-                                    props.state,
-                                    props.feedData,
-                                    props.limit,
-                                    props.offset + PAGE_SIZE
-                                );
-                                props.state.setOffset(props.offset + PAGE_SIZE);
-                            }}
-                        >
-                            Load More
-                        </li>
+                        {props.feedData.length > 0 && (
+                            <li
+                                id={styles.load_more_card}
+                                onClick={async () => {
+                                    await loadMoreNewsData(
+                                        props.state,
+                                        props.feedData,
+                                        props.limit,
+                                        props.offset + PAGE_SIZE
+                                    );
+                                    props.state.setOffset(
+                                        props.offset + PAGE_SIZE
+                                    );
+                                }}
+                            >
+                                Load More
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>

@@ -215,6 +215,7 @@ export class UserSession {
     }
 
     async getSubscribedFeeds(feed_ids, collection_id) {
+        if (feed_ids.length === 0) return [];
         const feed_queries = feed_ids.map((id) => Query.equal('$id', id));
         const queries = [];
         if (feed_queries.length === 1) {
@@ -245,11 +246,12 @@ export class UserSession {
                 [Query.select(['$id', 'news_feed_ids', 'podcast_feed_ids'])]
             );
             if (res.documents.length === 0) {
+                this.subscriptions_id = ID.unique();
                 await this.database.createDocument(
                     APPWRITE_CONFIG.FEEDS_DB,
                     APPWRITE_CONFIG.SUBSCRIPTIONS,
-                    ID.unique(),
-                    {},
+                    this.subscriptions_id,
+                    { news_feed_ids: [], podcast_feed_ids: [] },
                     [
                         Permission.read(Role.user(this.uid)),
                         Permission.update(Role.user(this.uid)),
@@ -357,6 +359,7 @@ export class UserSession {
      */
     async getNewsArticles(limit = 100, offset = 0) {
         if (!this.newsSubscriptions) await this.getSubscriptions();
+        if (this.newsSubscriptions.length === 0) return [];
         const subscription_queries = this.newsSubscriptions.map((source) =>
             Query.equal('newsFeeds', source.$id)
         );
@@ -571,6 +574,7 @@ export class UserSession {
      */
     async getPodcastEpisodes(limit = 100, offset = 0) {
         if (!this.podcastSubscriptions) await this.getSubscriptions();
+        if (this.podcastSubscriptions.length === 0) return [];
         const subscription_queries = this.podcastSubscriptions.map((source) =>
             Query.equal('podcastFeeds', source.$id)
         );

@@ -57,20 +57,24 @@ export default function PodcastFeed(props) {
                                 ></div>
                             </>
                         ))}
-                        <li
-                            id={styles.load_more_card}
-                            onClick={async () => {
-                                await loadMorePodcastData(
-                                    props.state,
-                                    props.podcastData,
-                                    props.limit,
-                                    props.offset + PAGE_SIZE
-                                );
-                                props.state.setOffset(props.offset + PAGE_SIZE);
-                            }}
-                        >
-                            Load More
-                        </li>
+                        {props.podcastData.length > 0 && (
+                            <li
+                                id={styles.load_more_card}
+                                onClick={async () => {
+                                    await loadMorePodcastData(
+                                        props.state,
+                                        props.podcastData,
+                                        props.limit,
+                                        props.offset + PAGE_SIZE
+                                    );
+                                    props.state.setOffset(
+                                        props.offset + PAGE_SIZE
+                                    );
+                                }}
+                            >
+                                Load More
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>
