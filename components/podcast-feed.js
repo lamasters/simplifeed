@@ -6,6 +6,26 @@ import styles from '../styles/feed.module.css';
 
 const PAGE_SIZE = 100;
 
+function filterPodcasts(podcastData, listenTimes, filter) {
+    if (filter === 'unlistened') {
+        return podcastData.filter((item) => {
+            const listenTime = listenTimes.get(
+                `${item.podcastFeeds.feed_title} - ${item.title}`
+            );
+            return !listenTime || !listenTime[1];
+        });
+    }
+    if (filter === 'continue') {
+        return podcastData.filter((item) => {
+            const listenTime = listenTimes.get(
+                `${item.podcastFeeds.feed_title} - ${item.title}`
+            );
+            return listenTime && listenTime[0] > 0;
+        });
+    }
+    return podcastData.filter((item) => item.podcastFeeds.$id === filter);
+}
+
 export default function PodcastFeed(props) {
     const state = props.state;
 
@@ -18,8 +38,10 @@ export default function PodcastFeed(props) {
                 setEpisodes(props.podcastData);
             } else {
                 setEpisodes(
-                    props.podcastData.filter(
-                        (item) => item.podcastFeeds.$id === props.filter
+                    filterPodcasts(
+                        props.podcastData,
+                        props.listenTimes,
+                        props.filter
                     )
                 );
             }
