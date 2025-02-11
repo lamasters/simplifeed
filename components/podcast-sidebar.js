@@ -51,6 +51,8 @@ function getPodcastIcon(source, editing, props) {
                 }}
             />
         );
+    } else if (source.image_url) {
+        return <img src={source.image_url} width="28px" height="28px" />;
     } else {
         return null;
     }
@@ -90,6 +92,26 @@ export default function PodcastSidebar(props) {
                         key={0}
                     >
                         All Podcasts
+                    </li>
+                </div>
+                <div className={styles.source_row}>
+                    <li
+                        onClick={() => props.state.setFilter('continue')}
+                        className={styles.source}
+                        style={{ width: '100%' }}
+                        key={1}
+                    >
+                        Continue Listening
+                    </li>
+                </div>
+                <div className={styles.source_row}>
+                    <li
+                        onClick={() => props.state.setFilter('unlistened')}
+                        className={styles.source}
+                        style={{ width: '100%' }}
+                        key={2}
+                    >
+                        New Episodes
                     </li>
                 </div>
                 {sortedPodcasts(subscriptions).map((feed) => (
