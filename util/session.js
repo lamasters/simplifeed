@@ -755,7 +755,11 @@ export class UserSession {
             const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
                 APPWRITE_CONFIG.LISTEN_TIME,
-                [Query.equal('user_id', this.uid)]
+                [
+                    Query.equal('user_id', this.uid),
+                    Query.limit(500),
+                    Query.orderDesc('$createdAt'),
+                ]
             );
             return res.documents;
         } catch (err) {

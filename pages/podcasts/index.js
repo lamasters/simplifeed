@@ -5,9 +5,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import AudioPlayer from 'react-h5-audio-player';
 import Head from 'next/head';
-import Loader from '../../components/loader';
 import PodcastFeed from '../../components/podcast-feed';
 import PodcastSidebar from '../../components/podcast-sidebar';
+import TopLoader from '../../components/top-loader';
 import { UserSession } from '../../util/session';
 import base_styles from '../../styles/Home.module.css';
 import { fetchPodcastData } from '../../util/feed-api';
@@ -175,7 +175,7 @@ export default function Podcasts() {
                     />
                 </>
             )}
-            {loading && <Loader />}
+            {loading && <TopLoader />}
             <ToastContainer />
         </main>
     );
