@@ -6,10 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { FETCH_INTERVAL } from '../util/constants';
 import Head from 'next/head';
-import Loader from '../components/loader';
 import Modal from '../components/modal';
 import NewsFeed from '../components/news-feed';
 import NewsSidebar from '../components/news-sidebar';
+import TopLoader from '../components/top-loader';
 import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
@@ -137,7 +137,7 @@ export default function Home() {
                     offset={offset}
                 />
             </div>
-            {loading && <Loader />}
+            {loading && <TopLoader />}
             {router.asPath.includes('article') && (
                 <Modal
                     articleContent={articleContent}
