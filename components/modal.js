@@ -8,32 +8,33 @@ import { useState } from 'react';
  * @param {Object} props - The props for the modal component.
  * @param {string} props.articleContent - The content of the article.
  * @param {string} props.rawText - The raw text of the article.
+ * @param {string} props.articleId - The ID of the article
  * @param {Object} props.state - Hooks to set application state.
+ * @param {string} props.summary - The summary of the article.
  * @returns {JSX.Element} The rendered modal component.
  */
 export default function Modal(props) {
-    const [summary, setSummary] = useState('');
     return (
         <div>
             <div id={styles.article}>
-                {props.rawText && (
+                {props.rawText && !props.summary && (
                     <div
                         className={styles.summarize}
                         onClick={() => {
                             getArticleSummary(
                                 props.state,
                                 props.rawText,
-                                setSummary
+                                props.articleId
                             );
                         }}
                     >
                         <div className={styles.summary_text}>✨ Summarize</div>
                     </div>
                 )}
-                {summary && (
+                {props.summary && (
                     <>
                         <h2 className={styles.ai_header}>AI Summary</h2>
-                        <div className={styles.summary}>{summary}</div>
+                        <div className={styles.summary}>{props.summary}</div>
                     </>
                 )}
                 <div id={styles.articlecontent}>{props.articleContent}</div>

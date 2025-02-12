@@ -98,6 +98,11 @@ export async function selectArticle(article, state) {
     state.setArticleOpen(true);
     state.setArticleContent(null);
     state.router.push('#article');
+    state.setSummary('');
+    const summary = await state.session.downloadSummary(article.$id);
+    if (summary) {
+        state.setSummary(summary);
+    }
     const articleContent = await state.session.getArticle(
         article.article_url,
         article.title,
@@ -105,6 +110,7 @@ export async function selectArticle(article, state) {
         article.pub_date,
         state.setRawText
     );
+    state.setArticleId(article.$id);
     state.setArticleContent(articleContent);
     state.setLoading(false);
 }
@@ -161,10 +167,10 @@ export async function subscribeToPodcastFeed(
  * @param {Object} article - The article text.
  * @param {Function} setSummary - The function to set the summary.
  */
-export async function getArticleSummary(state, article, setSummary) {
+export async function getArticleSummary(state, article, articleId) {
     state.setLoading(true);
-    let summary = await state.session.getSummary(article);
-    setSummary(summary);
+    const summary = await state.session.getSummary(article, articleId);
+    state.setSummary(summary);
     state.setLoading(false);
 }
 

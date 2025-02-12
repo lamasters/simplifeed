@@ -25,10 +25,12 @@ export default function Home() {
     const [filter, setFilter] = useState(null);
     const [articleOpen, setArticleOpen] = useState(false);
     const [articleContent, setArticleContent] = useState(null);
+    const [articleId, setArticleId] = useState(null);
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rawText, setRawText] = useState('');
+    const [summary, setSummary] = useState('');
     const [limit, setLimit] = useState(100);
     const [offset, setOffset] = useState(0);
 
@@ -85,6 +87,8 @@ export default function Home() {
             setCollapse: setCollapse,
             setLimit: setLimit,
             setOffset: setOffset,
+            setArticleId: setArticleId,
+            setSummary: setSummary,
             router: router,
             session: new UserSession(),
         };
@@ -143,6 +147,8 @@ export default function Home() {
                     articleContent={articleContent}
                     rawText={rawText}
                     state={state}
+                    articleId={articleId}
+                    summary={summary}
                 />
             )}
             <ToastContainer />
