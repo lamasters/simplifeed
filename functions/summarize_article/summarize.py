@@ -3,6 +3,7 @@
 import json
 import os
 from hashlib import md5
+from typing import Optional
 
 from appwrite.client import Client
 from appwrite.input_file import InputFile
@@ -10,39 +11,40 @@ from appwrite.query import Query
 from appwrite.services.databases import Databases
 from appwrite.services.storage import Storage
 from openai import OpenAI
+from pydantic import BaseModel, Field
+
+PROJECT_ID = "65bd6d28cfc23d374173"
+FEEDS_DATABASE_ID = "6466af38420c3ca601c1"
+NEWS_ARTICLES_COLLECTION_ID = "6797ac2e001706792636"
+SUMMARY_BUCKET_ID = "664bcddf002e5c7eba87"
+
+
+class ServerRequest(BaseModel):
+    """Model for client request to serverless function"""
+
+    user_id: str = Field(...)
+    article: str = Field(...)
+    article_id: Optional[str] = Field(None)
 
 
 def main(context):
     """Summarize an article using the configured OpenAI model."""
     context.log("Initializing appwrite client")
     req_body = json.loads(context.req.body)
+    req_data = ServerRequest(**req_body)
 
     appwrite_client = Client()
     appwrite_client.set_key(os.getenv("APPWRITE_API_KEY"))
     appwrite_client.set_endpoint("https://homelab.hippogriff-lime.ts.net/v1")
-    appwrite_client.set_project("65bd6d28cfc23d374173")
+    appwrite_client.set_project(PROJECT_ID)
 
     database = Databases(appwrite_client)
-    context.log("Check that the user has permission for AI summaries")
-    try:
-        records = database.list_documents(
-            "65bed3f5dff3f19853f7",
-            "65bed3fb0512dd5b5d27",
-            queries=[Query().equal("user_id", req_body["user_id"])],
-        )
-    except:
-        return context.res.json({"error": "Failed to check user permissions"})
-
-    if not records:
-        return context.res.json(
-            {"error": "User does not have permission to use AI summaries"}
-        )
 
     context.log("Checking if article has already been summarized")
-    article_hash = md5(req_body["article"].encode()).hexdigest()
+    article_hash = md5(req_data.article.encode()).hexdigest()
     summaries = Storage(appwrite_client)
     try:
-        summary = summaries.get_file_download("664bcddf002e5c7eba87", article_hash)
+        summary = summaries.get_file_download(SUMMARY_BUCKET_ID, article_hash)
         context.log("Summary found in storage, returning")
         return context.res.json(summary)
     except:
@@ -50,8 +52,7 @@ def main(context):
 
     context.log("Getting article summary")
     article = (
-        req_body["article"]
-        .replace("  ", "")
+        req_data.article.replace("  ", "")
         .replace("\n", "")
         .replace("\r", "")
         .replace("\t", "")
@@ -79,7 +80,7 @@ def main(context):
     summary = {"summary": res.choices[0].message.content}
     try:
         summaries.create_file(
-            "664bcddf002e5c7eba87",
+            SUMMARY_BUCKET_ID,
             article_hash,
             InputFile.from_bytes(
                 json.dumps(summary).encode(),
@@ -90,5 +91,18 @@ def main(context):
         context.log("Summary uploaded to storage")
     except:
         context.log("Failed to upload summary to storage")
+
+    if req_data.article_id:
+        context.log("Updating article with summary")
+        try:
+            database.update_document(
+                FEEDS_DATABASE_ID,
+                NEWS_ARTICLES_COLLECTION_ID,
+                req_data.article_id,
+                {"summary_id": article_hash},
+            )
+            context.log("Article updated with summary")
+        except Exception as e:
+            context.log(f"Failed to update article with summary {e}")
     context.log("Returning summary")
     return context.res.json(summary)
