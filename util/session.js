@@ -7,6 +7,7 @@ import {
     Permission,
     Query,
     Role,
+    Storage,
 } from 'appwrite';
 
 import { APPWRITE_CONFIG } from './constants';
@@ -30,6 +31,7 @@ export class UserSession {
         this.account = new Account(this.client);
         this.database = new Databases(this.client);
         this.functions = new Functions(this.client);
+        this.storage = new Storage(this.client);
 
         this.uid = null;
         this.sessionInfo = null;
@@ -519,15 +521,46 @@ export class UserSession {
         }
     }
 
+    async downloadSummary(articleId) {
+        try {
+            const article = await this.database.getDocument(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.NEWS_ARTICLES,
+                articleId
+            );
+            if (article.summary_id) {
+                const summary = await this.storage.getFileView(
+                    APPWRITE_CONFIG.SUMMARY_BUCKET_ID,
+                    article.summary_id
+                );
+                const summaryFile = await fetch(summary.href);
+                const summaryBuffer = await summaryFile.body.getReader().read();
+                const summaryText = new TextDecoder().decode(
+                    summaryBuffer.value
+                );
+                return JSON.parse(summaryText).summary;
+            }
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+
     /**
      * Retrieves the AI summary of an article.
      * @param {string} article - The article to retrieve the summary for.
      */
-    async getSummary(article) {
+    async getSummary(article, articleId) {
+        const download = await this.downloadSummary(articleId);
+        if (download) return download;
         try {
             let res = await this.functions.createExecution(
                 APPWRITE_CONFIG.SUMMARIZE_ARTICLE_FN,
-                JSON.stringify({ user_id: this.uid, article: article }),
+                JSON.stringify({
+                    user_id: this.uid,
+                    article: article,
+                    article_id: articleId,
+                }),
                 false,
                 '/',
                 'GET'
