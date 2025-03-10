@@ -27,7 +27,7 @@ def wait_for_execution(functions, function_id, execution_id):
 def main(context):
     client = Client()
     client.set_key(os.getenv("APPWRITE_API_KEY"))
-    client.set_endpoint("https://homelab.hippogriff-lime.ts.net/v1")
+    client.set_endpoint("https://cloud.appwrite.io/v1")
     client.set_project(PROJECT_ID)
 
     databases = Databases(client)

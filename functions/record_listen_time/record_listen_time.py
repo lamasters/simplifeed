@@ -24,7 +24,7 @@ class ServerRequest(BaseModel):
 def main(context):
     client = Client()
     client.set_key(os.getenv("APPWRITE_API_KEY"))
-    client.set_endpoint("https://homelab.hippogriff-lime.ts.net/v1")
+    client.set_endpoint("https://cloud.appwrite.io/v1")
     client.set_project("65bd6d28cfc23d374173")
 
     databases = Databases(client)
