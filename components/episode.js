@@ -7,7 +7,7 @@ export default function Episode(props) {
         description = description.substring(0, 250) + '...';
     }
     const listenData = props.listenTimes.get(
-        `${props.episode.podcastFeeds.feed_title} - ${props.episode.title}`
+        `${props.episode.podcast_feed.feed_title} - ${props.episode.title}`
     ) || [0, false];
     const listenTime = listenData[0];
     const finished = listenData[1];
@@ -41,7 +41,7 @@ export default function Episode(props) {
                 props.state.setPodcast(props.episode);
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: props.episode.title,
-                    artist: props.episode.podcastFeeds.feed_title,
+                    artist: props.episode.podcast_feed.feed_title,
                     artwork: [{ src: props.episode.image_url }],
                 });
             }}
@@ -61,7 +61,7 @@ export default function Episode(props) {
                         src={props.episode.image_url}
                     />
                     <h3 className={styles.source}>
-                        {props.episode.podcastFeeds.feed_title}
+                        {props.episode.podcast_feed.feed_title}
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <h5>{timeSince(props.episode.pub_date)}</h5>
