@@ -363,7 +363,7 @@ export class UserSession {
         if (!this.newsSubscriptions) await this.getSubscriptions();
         if (this.newsSubscriptions.length === 0) return [];
         const subscription_queries = this.newsSubscriptions.map((source) =>
-            Query.equal('newsFeeds', source.$id)
+            Query.equal('news_feed', source.$id)
         );
         const queries = [
             Query.limit(limit),
@@ -609,7 +609,7 @@ export class UserSession {
         if (!this.podcastSubscriptions) await this.getSubscriptions();
         if (this.podcastSubscriptions.length === 0) return [];
         const subscription_queries = this.podcastSubscriptions.map((source) =>
-            Query.equal('podcastFeeds', source.$id)
+            Query.equal('podcast_feed', source.$id)
         );
         const queries = [
             Query.limit(limit),

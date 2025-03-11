@@ -76,7 +76,7 @@ export default function Card(props) {
                     }}
                 />
                 <div className={styles.itemTitle}>
-                    <b>{props.article.newsFeeds.feed_title}</b>
+                    <b>{props.article.news_feed.feed_title}</b>
                 </div>
                 <div className={styles.date}>
                     {timeSince(props.article.pub_date)}

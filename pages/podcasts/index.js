@@ -79,12 +79,12 @@ export default function Podcasts() {
         setPlaying(false);
         state.session
             .setPodcastFinished(
-                `${podcast.podcastFeeds.feed_title} - ${podcast.title}`
+                `${podcast.podcast_feed.feed_title} - ${podcast.title}`
             )
             .then();
         const newListenTimes = new Map(listenTimes);
         newListenTimes.set(
-            `${podcast.podcastFeeds.feed_title} - ${podcast.title}`,
+            `${podcast.podcast_feed.feed_title} - ${podcast.title}`,
             [0, true]
         );
         setListenTimes(newListenTimes);
@@ -135,7 +135,7 @@ export default function Podcasts() {
                 <>
                     <div className={styles.episode_info}>
                         <h2 className={styles.episode_title}>
-                            {podcast.podcastFeeds.feed_title} - {podcast.title}
+                            {podcast.podcast_feed.feed_title} - {podcast.title}
                         </h2>
                     </div>
                     <AudioPlayer
@@ -166,7 +166,7 @@ export default function Podcasts() {
                         onListen={() => {
                             state.session
                                 .setPodcastListenTime(
-                                    `${podcast.podcastFeeds.feed_title} - ${podcast.title}`,
+                                    `${podcast.podcast_feed.feed_title} - ${podcast.title}`,
                                     audioPlayer.current.audio.current
                                         .currentTime
                                 )

@@ -10,7 +10,7 @@ function filterPodcasts(podcastData, listenTimes, filter) {
     if (filter === 'unlistened') {
         return podcastData.filter((item) => {
             const listenTime = listenTimes.get(
-                `${item.podcastFeeds.feed_title} - ${item.title}`
+                `${item.podcast_feed.feed_title} - ${item.title}`
             );
             return !listenTime || !listenTime[1];
         });
@@ -18,12 +18,12 @@ function filterPodcasts(podcastData, listenTimes, filter) {
     if (filter === 'continue') {
         return podcastData.filter((item) => {
             const listenTime = listenTimes.get(
-                `${item.podcastFeeds.feed_title} - ${item.title}`
+                `${item.podcast_feed.feed_title} - ${item.title}`
             );
             return listenTime && listenTime[0] > 0;
         });
     }
-    return podcastData.filter((item) => item.podcastFeeds.$id === filter);
+    return podcastData.filter((item) => item.podcast_feed.$id === filter);
 }
 
 export default function PodcastFeed(props) {

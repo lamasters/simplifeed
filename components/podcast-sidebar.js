@@ -9,10 +9,10 @@ async function deletePodcast(source, props) {
     await props.state.session.deletePodcastSubscription(source.$id);
     await props.state.session.getSubscriptions();
     const newFeedData = props.podcastData.filter(
-        (podcast) => podcast.podcastFeeds.$id !== source.$id
+        (episode) => episode.podcast_feed.$id !== source.$id
     );
     const newLoadedData = props.loadedData.filter(
-        (podcast) => podcast.podcastFeeds.$id !== source.$id
+        (episode) => episode.podcast_feed.$id !== source.$id
     );
     props.state.setPodcastData(newFeedData);
     props.state.setLoadedData(newLoadedData);
