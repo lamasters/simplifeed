@@ -30,7 +30,6 @@ class Episode(BaseModel):
     title: str = Field(...)
     audio_url: str = Field(...)
     podcast_feed: str = Field(...)
-    podcastFeeds: str = Field(...)
     image_url: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
     pub_date: Optional[str] = Field(default=None)
@@ -62,6 +61,7 @@ def parse_podcast_episode(
     databases: Databases,
     feed_id: str,
     image_url: Optional[str],
+    log: Callable,
 ) -> http.HTTPStatus:
     """Parse a podcast episode in RSS feed into PodcastEpisode"""
     title = item.get("title")
@@ -90,7 +90,6 @@ def parse_podcast_episode(
         title=title,
         audio_url=audio_url,
         podcast_feed=feed_id,
-        podcastFeeds=feed_id,
         image_url=image_url,
         description=description,
         pub_date=pub_date,
@@ -104,7 +103,8 @@ def parse_podcast_episode(
             document_id,
             episode.model_dump(exclude_none=True),
         )
-    except:
+    except Exception as e:
+        log(f"Failed to create document {document_id} {e}")
         return http.HTTPStatus.CONFLICT
     return http.HTTPStatus.OK
 
@@ -130,7 +130,7 @@ def fetch_podcast_source(
     episode_responses = []
     last_3_responses = []
     for entry in feed["entries"]:
-        res = parse_podcast_episode(entry, databases, feed_id, image_url)
+        res = parse_podcast_episode(entry, databases, feed_id, image_url, log)
         last_3_responses.append(res)
         episode_responses.append(res)
         if len(last_3_responses) > 3:
