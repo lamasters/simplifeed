@@ -11,7 +11,7 @@ from appwrite.services.databases import Databases
 from appwrite.services.functions import Functions
 from pydantic import BaseModel, Field
 
-PROJECT_ID = "65bd6d28cfc23d374173"
+PROJECT_ID = "67cccd44002cccfc9ae0"
 FEEDS_DATABASE_ID = "6466af38420c3ca601c1"
 NEWS_FEEDS_COLLECTION_ID = "6797ac1d0029e18b03da"
 NEWS_ARTICLES_COLLECTION_ID = "6797ac2e001706792636"

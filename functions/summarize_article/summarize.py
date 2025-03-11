@@ -13,7 +13,7 @@ from appwrite.services.storage import Storage
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
-PROJECT_ID = "65bd6d28cfc23d374173"
+PROJECT_ID = "67cccd44002cccfc9ae0"
 FEEDS_DATABASE_ID = "6466af38420c3ca601c1"
 NEWS_ARTICLES_COLLECTION_ID = "6797ac2e001706792636"
 SUMMARY_BUCKET_ID = "664bcddf002e5c7eba87"

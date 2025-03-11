@@ -9,7 +9,7 @@ from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.services.functions import Functions
 
-PROJECT_ID = "65bd6d28cfc23d374173"
+PROJECT_ID = "67cccd44002cccfc9ae0"
 FEED_DATABASE_ID = "6466af38420c3ca601c1"
 NEWS_FEEDS_COLLECTION_ID = "6797ac1d0029e18b03da"
 PODCAST_FEEDS_COLLECTION_ID = "6797ac11003778ff768a"

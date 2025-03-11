@@ -1,6 +1,6 @@
 export const APPWRITE_CONFIG = {
     ENDPOINT: 'https://cloud.appwrite.io/v1',
-    PROJECT: '65bd6d28cfc23d374173',
+    PROJECT: '67cccd44002cccfc9ae0',
     FEEDS_DB: '6466af38420c3ca601c1',
     LISTEN_TIME: '674637b9001d90563572',
     NEWS_FEEDS: '6797ac1d0029e18b03da',
