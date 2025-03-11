@@ -32,7 +32,6 @@ class Article(BaseModel):
     title: str = Field(...)
     article_url: str = Field(...)
     news_feed: str = Field(...)
-    newsFeeds: str = Field(...)
     pub_date: Optional[str] = Field(default=None)
     image_url: Optional[str] = Field(default=None)
     author: Optional[str] = Field(default=None)
@@ -43,6 +42,7 @@ def parse_news_article(
     databases: Databases,
     feed_id: str,
     image_url: Optional[str],
+    log: Callable,
 ) -> http.HTTPStatus:
     """Parse an article entry in RSS feed into ArticleMetadata"""
     title = item.get("title")
@@ -62,7 +62,6 @@ def parse_news_article(
         title=title,
         article_url=article_url,
         news_feed=feed_id,
-        newsFeeds=feed_id,
         pub_date=pub_date,
         image_url=image_url,
         author=author,
@@ -75,7 +74,8 @@ def parse_news_article(
             document_id,
             article.model_dump(exclude_none=True),
         )
-    except:
+    except Exception as e:
+        log(f"Failed to create document {document_id} {e}")
         return http.HTTPStatus.CONFLICT
     return http.HTTPStatus.OK
 
@@ -101,7 +101,7 @@ def fetch_article_source(
 
     article_responses = []
     for entry in feed["entries"]:
-        res = parse_news_article(entry, databases, feed_id, image_url)
+        res = parse_news_article(entry, databases, feed_id, image_url, log)
         article_responses.append(res)
 
     if all(res == http.HTTPStatus.INTERNAL_SERVER_ERROR for res in article_responses):
