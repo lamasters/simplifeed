@@ -28,7 +28,7 @@ function feedsEqual(a, b) {
 function createArticleList(feedData, setArticleList, filter) {
     let articles = feedData.copyWithin();
     if (filter) {
-        articles = articles.filter((item) => item.newsFeeds.$id === filter);
+        articles = articles.filter((item) => item.news_feed.$id === filter);
     }
     setArticleList(articles);
 }

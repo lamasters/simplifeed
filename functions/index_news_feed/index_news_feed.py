@@ -31,6 +31,7 @@ class Article(BaseModel):
 
     title: str = Field(...)
     article_url: str = Field(...)
+    news_feed: str = Field(...)
     newsFeeds: str = Field(...)
     pub_date: Optional[str] = Field(default=None)
     image_url: Optional[str] = Field(default=None)
@@ -60,6 +61,7 @@ def parse_news_article(
     article = Article(
         title=title,
         article_url=article_url,
+        news_feed=feed_id,
         newsFeeds=feed_id,
         pub_date=pub_date,
         image_url=image_url,

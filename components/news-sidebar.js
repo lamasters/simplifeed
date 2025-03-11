@@ -25,10 +25,10 @@ async function deleteFeed(source, props) {
     await props.state.session.deleteNewsSubscription(source.$id);
     await props.state.session.getSubscriptions();
     const newFeedData = props.feedData.filter(
-        (feed) => feed.newsFeeds.$id !== source.$id
+        (article) => article.news_feed.$id !== source.$id
     );
     const newLoadedData = props.loadedData.filter(
-        (feed) => feed.newsFeeds.$id !== source.$id
+        (article) => article.news_feed.$id !== source.$id
     );
     props.state.setFeedData(newFeedData);
     props.state.setLoadedData(newLoadedData);
