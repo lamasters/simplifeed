@@ -728,49 +728,64 @@ export class UserSession {
         return podcasts;
     }
 
-    async setPodcastListenTime(title, time) {
-        try {
-            await this.functions.createExecution(
-                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
-                JSON.stringify({
-                    title: title,
-                    time: time,
-                    user_id: this.uid,
-                    finished: false,
-                }),
-                true,
-                '/',
-                'GET'
-            );
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    async setPodcastFinished(title) {
-        try {
-            await this.functions.createExecution(
-                APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
-                JSON.stringify({
-                    title: title,
-                    user_id: this.uid,
-                    finished: true,
-                }),
-                true,
-                '/',
-                'GET'
-            );
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    async getPodcastListenTime(title) {
+    async setPodcastListenTime(episode_id, time) {
         try {
             const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
                 APPWRITE_CONFIG.LISTEN_TIME,
-                [Query.equal('title', title)]
+                [Query.equal('episode_id', episode_id)]
+            );
+            if (res.documents.length) {
+                const listen_record = res.documents[0];
+                await this.database.updateDocument(
+                    APPWRITE_CONFIG.FEEDS_DB,
+                    APPWRITE_CONFIG.LISTEN_TIME,
+                    listen_record.$id,
+                    { time: time, finished: false }
+                );
+            } else {
+                await this.database.createDocument(
+                    APPWRITE_CONFIG.FEEDS_DB,
+                    APPWRITE_CONFIG.LISTEN_TIME,
+                    ID.unique(),
+                    { episode_id: episode_id, time: time, finished: false },
+                    [
+                        Permission.read(Role.user(this.uid)),
+                        Permission.write(Role.user(this.uid)),
+                        Permission.update(Role.user(this.uid)),
+                    ]
+                );
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async setPodcastFinished(episode_id) {
+        try {
+            const res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.LISTEN_TIME,
+                [Query.equal('episode_id', episode_id)]
+            );
+            const listen_record = res.documents[0];
+            await this.database.updateDocument(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.LISTEN_TIME,
+                listen_record.$id,
+                { finished: true }
+            );
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async getPodcastListenTime(episode_id) {
+        try {
+            const res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.LISTEN_TIME,
+                [Query.equal('episode_id', episode_id)]
             );
             if (res.documents.length > 0) {
                 return res.documents[0].time;
@@ -788,11 +803,7 @@ export class UserSession {
             const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
                 APPWRITE_CONFIG.LISTEN_TIME,
-                [
-                    Query.equal('user_id', this.uid),
-                    Query.limit(500),
-                    Query.orderDesc('$createdAt'),
-                ]
+                [Query.limit(500), Query.orderDesc('$createdAt')]
             );
             return res.documents;
         } catch (err) {

@@ -55,14 +55,14 @@ export async function fetchPodcastData(state) {
     state.setPodcastData(podcasts);
     state.setLoadedData(podcasts);
     const listenTimes = await state.session.getPodcastListenTimes();
-    const episodeNamesToListenTimes = new Map();
+    const episodeIdsToListenTimes = new Map();
     listenTimes.forEach((listenTime) => {
-        episodeNamesToListenTimes.set(listenTime.title, [
+        episodeIdsToListenTimes.set(listenTime.episode_id, [
             listenTime.time,
             listenTime.finished,
         ]);
     });
-    state.setListenTimes(episodeNamesToListenTimes);
+    state.setListenTimes(episodeIdsToListenTimes);
     state.setLoading(false);
 }
 
