@@ -6,9 +6,7 @@ export default function Episode(props) {
     if (description.length > 250) {
         description = description.substring(0, 250) + '...';
     }
-    const listenData = props.listenTimes.get(
-        `${props.episode.podcast_feed.feed_title} - ${props.episode.title}`
-    ) || [0, false];
+    const listenData = props.listenTimes.get(props.episode.$id) || [0, false];
     const listenTime = listenData[0];
     const finished = listenData[1];
 
@@ -34,17 +32,6 @@ export default function Episode(props) {
     return (
         <li
             className={styles.episode}
-            onClick={() => {
-                props.state.setPlaying(false);
-                props.state.setListenTime(listenTime || 0);
-                props.state.setPlaying(true);
-                props.state.setPodcast(props.episode);
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: props.episode.title,
-                    artist: props.episode.podcast_feed.feed_title,
-                    artwork: [{ src: props.episode.image_url }],
-                });
-            }}
             style={finished ? { color: 'gray' } : {}}
         >
             <div>
@@ -54,6 +41,7 @@ export default function Episode(props) {
                         flexDirection: 'row',
                         justifyContent: 'left',
                         width: '100%',
+                        flexWrap: 'wrap',
                     }}
                 >
                     <img
@@ -63,13 +51,63 @@ export default function Episode(props) {
                     <h3 className={styles.source}>
                         {props.episode.podcast_feed.feed_title}
                     </h3>
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            marginRight: '20px',
+                        }}
+                    >
                         <h5>{timeSince(props.episode.pub_date)}</h5>
                         {listenText && (
                             <h5 style={{ marginLeft: '5px', color: '#48f' }}>
                                 {listenText}
                             </h5>
                         )}
+                    </div>
+                    <div className={styles.control_container}>
+                        <div
+                            className={styles.control_button}
+                            onClick={() => {
+                                props.state.setPlaying(false);
+                                props.state.setListenTime(listenTime || 0);
+                                props.state.setPlaying(true);
+                                props.state.setPodcast(props.episode);
+                                navigator.mediaSession.metadata =
+                                    new MediaMetadata({
+                                        title: props.episode.title,
+                                        artist: props.episode.podcast_feed
+                                            .feed_title,
+                                        artwork: [
+                                            { src: props.episode.image_url },
+                                        ],
+                                    });
+                            }}
+                        >
+                            Play
+                        </div>
+                        <div
+                            className={styles.control_button}
+                            onClick={() => {
+                                props.state.setPlaying(false);
+                                props.state.session
+                                    .setPodcastFinished(props.episode.$id)
+                                    .then();
+                                const newListenTimes = new Map(
+                                    props.listenTimes
+                                );
+                                newListenTimes.set(props.episode.$id, [
+                                    0,
+                                    true,
+                                ]);
+                                props.state.setListenTimes(newListenTimes);
+                            }}
+                        >
+                            Mark as Played
+                        </div>
+                        <div className={styles.control_button}>
+                            Add to Queue
+                        </div>
                     </div>
                 </div>
                 <div className={styles.episode_info}>

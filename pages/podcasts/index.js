@@ -137,6 +137,7 @@ export default function Podcasts() {
                         showFilledProgress={true}
                         showJumpControls={true}
                         showFilledVolume={true}
+                        progressJumpSteps={{ forward: 15000, backward: 15000 }}
                         loop={false}
                         autoPlay={true}
                         autoPlayAfterSrcChange={true}

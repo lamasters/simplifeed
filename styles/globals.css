@@ -9,10 +9,12 @@
   :root {
     --background: #12151d;
     --background-hover: #212735;
-    --accent-primary:#3760c0;
+    --accent-primary: #3760c0;
     --accent-primary-hover: #48f;
     --accent-secondary: #69f;
     --accent-secondary-hover: #9ebeff;
+    --button-secondary: #1d2d50;
+    --button-secondary-hover: #2a3b63;
     --text-primary: #48f;
     --text-secondary: #9cf;
     --text-paragraph: #f9fbf7;
@@ -23,10 +25,12 @@
   :root {
     --background: #fff;
     --background-hover: #ddd;
-    --accent-primary:#eee;
+    --accent-primary: #eee;
     --accent-primary-hover: #ccc;
     --accent-secondary: #69f;
     --accent-secondary-hover: #9ebeff;
+    --button-secondary: #1d2d50;
+    --button-secondary-hover: #2a3b63;
     --text-primary: #48f;
     --text-secondary: #555;
     --text-paragraph: #000;

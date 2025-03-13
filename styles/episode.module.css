@@ -4,14 +4,9 @@
     min-width: 300px;
 }
 
-.episode:hover {
-    cursor: pointer;
-    background-color: var(--background-hover);
-}
-
 .cover {
-    width: 75px;
-    height: 75px;
+    width: 100px;
+    height: 100px;
     margin-right: 25px;
 }
 
@@ -22,4 +17,26 @@
 
 .source {
     margin-right: 25px;
+}
+
+.control_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+    height: 40px;
+}
+
+.control_button {
+    border-radius: 20px;
+    width: 175px;
+    margin-right: 10px;
+    padding: 10px;
+    background-color: var(--button-secondary);
+    text-align: center;
+}
+
+.control_button:hover {
+    cursor: pointer;
+    background-color: var(--button-secondary-hover);
 }
