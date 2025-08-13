@@ -8,6 +8,7 @@ import datetime
 from appwrite.client import Client
 from appwrite.services.databases import Databases
 from appwrite.services.functions import Functions
+from appwrite.query import Query
 
 PROJECT_ID = "67cccd44002cccfc9ae0"
 FEED_DATABASE_ID = "6466af38420c3ca601c1"
@@ -33,26 +34,42 @@ def main(context):
     databases = Databases(client)
     functions = Functions(client)
 
-    res = databases.list_documents(
-        FEED_DATABASE_ID,
-        NEWS_FEEDS_COLLECTION_ID,
-    )
-    if not res:
-        context.error("No news feeds found")
-        news_rss_feeds = []
-    else:
-        context.log(f"Found {len(res['documents'])} news feeds")
-        news_rss_feeds = res["documents"]
-    res = databases.list_documents(
-        FEED_DATABASE_ID,
-        PODCAST_FEEDS_COLLECTION_ID,
-    )
-    if not res:
-        context.error("No podcast feeds found")
-        podcast_rss_feeds = []
-    else:
-        context.log(f"Found {len(res['documents'])} podcast feeds")
-        podcast_rss_feeds = res["documents"]
+    news_rss_feeds = []
+    num_results = 100
+    page_size = 100
+    offset = 0
+    while num_results >= page_size:
+        res = databases.list_documents(
+            FEED_DATABASE_ID,
+            NEWS_FEEDS_COLLECTION_ID,
+            queries=[Query.limit(page_size), Query.offset(offset)],
+        )
+        if not res:
+            context.error("No news feeds found")
+            break
+        else:
+            context.log(f"Found {len(res['documents'])} news feeds")
+            news_rss_feeds += res["documents"]
+            num_results = len(res["documents"])
+            offset += page_size
+            
+    num_results = 100
+    offset = 0
+    podcast_rss_feeds = []
+    while num_results >= page_size:
+        res = databases.list_documents(
+            FEED_DATABASE_ID,
+            PODCAST_FEEDS_COLLECTION_ID,
+            queries=[Query.limit(page_size), Query.offset(offset)],
+        )
+        if not res:
+            context.error("No podcast feeds found")
+            break
+        else:
+            context.log(f"Found {len(res['documents'])} podcast feeds")
+            podcast_rss_feeds += res["documents"]
+            num_results = len(res["documents"])
+            offset += page_size
 
     news_feed_id_to_execution_id = {}
     for feed in news_rss_feeds:
