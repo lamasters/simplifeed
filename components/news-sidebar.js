@@ -1,4 +1,8 @@
-import { searchNewsFeeds, subscribeToNewsFeed } from '../util/feed-api';
+import {
+    fetchNewsData,
+    searchNewsFeeds,
+    subscribeToNewsFeed,
+} from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
 import { Typeahead } from 'react-typeahead';
@@ -20,6 +24,11 @@ function sortedFeeds(feedData) {
     return feedDataCopy;
 }
 
+function selectFeed(filter, state) {
+    state.setFilter(filter);
+    fetchNewsData(state, 100, 0, filter);
+}
+
 async function deleteFeed(source, props) {
     props.state.setLoading(true);
     await props.state.session.deleteNewsSubscription(source.$id);
@@ -34,7 +43,7 @@ async function deleteFeed(source, props) {
     props.state.setLoadedData(newLoadedData);
     props.state.setLoading(false);
     if (props.filter === source.$id) {
-        props.state.setFilter(null);
+        selectFeed(null, props.state);
     }
 }
 
@@ -100,7 +109,7 @@ export default function NewsSidebar(props) {
             <ul id={styles.feedlist}>
                 <div className={styles.source_row}>
                     <li
-                        onClick={() => props.state.setFilter(null)}
+                        onClick={() => selectFeed(null, props.state)}
                         className={styles.source}
                         style={{ width: '100%' }}
                         key={0}
@@ -112,7 +121,7 @@ export default function NewsSidebar(props) {
                     <div className={styles.source_row} key={feed?.feed_title}>
                         {getFeedIcon(feed, editing, props)}
                         <li
-                            onClick={() => props.state.setFilter(feed?.$id)}
+                            onClick={() => selectFeed(feed.$id, props.state)}
                             className={styles.source}
                         >
                             {feed?.feed_title}

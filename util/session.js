@@ -359,7 +359,7 @@ export class UserSession {
      * Retrieves articles from the user's subscribed news feeds.
      * @returns {Array<Object>|null} An array of all articles, or null if an error occurs.
      */
-    async getNewsArticles(limit = 100, offset = 0) {
+    async getNewsArticles(limit = 100, offset = 0, news_feed_id = null) {
         if (!this.newsSubscriptions) await this.getSubscriptions();
         if (this.newsSubscriptions.length === 0) return [];
         const subscription_queries = this.newsSubscriptions.map((source) =>
@@ -370,7 +370,9 @@ export class UserSession {
             Query.offset(offset),
             Query.orderDesc('pub_date'),
         ];
-        if (subscription_queries.length === 1) {
+        if (news_feed_id !== null) {
+            queries.push(Query.equal('news_feed', news_feed_id));
+        } else if (subscription_queries.length === 1) {
             queries.push(subscription_queries[0]);
         } else if (subscription_queries.length > 1) {
             queries.push(Query.or(subscription_queries));
