@@ -1,8 +1,21 @@
-import { searchPodcastFeeds, subscribeToPodcastFeed } from '../util/feed-api';
+import {
+    fetchPodcastData,
+    searchPodcastFeeds,
+    subscribeToPodcastFeed,
+} from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
 import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
+
+function selectPodcastFeed(filter, state) {
+    state.setFilter(filter);
+    if (filter == 'continue' || filter == 'unlistened') {
+        fetchPodcastData(state, 100, 0, null);
+    } else {
+        fetchPodcastData(state, 100, 0, filter);
+    }
+}
 
 async function deletePodcast(source, props) {
     props.state.setLoading(true);
@@ -18,7 +31,7 @@ async function deletePodcast(source, props) {
     props.state.setLoadedData(newLoadedData);
     props.state.setLoading(false);
     if (props.filter === source.$id) {
-        props.state.setFilter(null);
+        selectPodcastFeed(null, props.state);
     }
 }
 
@@ -86,7 +99,7 @@ export default function PodcastSidebar(props) {
             <ul id={styles.feedlist}>
                 <div className={styles.source_row}>
                     <li
-                        onClick={() => props.state.setFilter(null)}
+                        onClick={() => selectPodcastFeed(null, props.state)}
                         className={styles.source}
                         style={{ width: '100%' }}
                         key={0}
@@ -96,7 +109,9 @@ export default function PodcastSidebar(props) {
                 </div>
                 <div className={styles.source_row}>
                     <li
-                        onClick={() => props.state.setFilter('continue')}
+                        onClick={() =>
+                            selectPodcastFeed('continue', props.state)
+                        }
                         className={styles.source}
                         style={{ width: '100%' }}
                         key={1}
@@ -106,7 +121,9 @@ export default function PodcastSidebar(props) {
                 </div>
                 <div className={styles.source_row}>
                     <li
-                        onClick={() => props.state.setFilter('unlistened')}
+                        onClick={() =>
+                            selectPodcastFeed('unlistened', props.state)
+                        }
                         className={styles.source}
                         style={{ width: '100%' }}
                         key={2}
@@ -118,7 +135,9 @@ export default function PodcastSidebar(props) {
                     <div className={styles.source_row} key={feed?.feed_title}>
                         {getPodcastIcon(feed, editing, props)}
                         <li
-                            onClick={() => props.state.setFilter(feed?.$id)}
+                            onClick={() =>
+                                selectPodcastFeed(feed.$id, props.state)
+                            }
                             className={styles.source}
                         >
                             {feed?.feed_title}

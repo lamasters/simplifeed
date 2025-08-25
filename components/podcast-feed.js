@@ -23,7 +23,7 @@ function filterPodcasts(podcastData, listenTimes, filter) {
             return listenTime && listenTime[0] > 0;
         });
     }
-    return podcastData.filter((item) => item.podcast_feed.$id === filter);
+    return podcastData;
 }
 
 export default function PodcastFeed(props) {
@@ -87,7 +87,8 @@ export default function PodcastFeed(props) {
                                         props.state,
                                         props.podcastData,
                                         props.limit,
-                                        props.offset + PAGE_SIZE
+                                        props.offset + PAGE_SIZE,
+                                        props.filter
                                     );
                                     props.state.setOffset(
                                         props.offset + PAGE_SIZE

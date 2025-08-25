@@ -94,7 +94,7 @@ export default function Podcasts() {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
-        fetchPodcastData(state);
+        fetchPodcastData(state, limit, offset, filter);
     }, []);
     return (
         <main>

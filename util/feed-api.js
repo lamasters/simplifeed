@@ -37,9 +37,12 @@ export async function loadMoreNewsData(state, feedData, limit, offset, filter) {
 
 /**
  * Fetch podcast data and update the state.
- * @param {state} state
+ * @param {Object} state - Hooks to set application state.
+ * @param {number} limit - Number of episodes to fetch.
+ * @param {number} offset - Offset for pagination.
+ * @param {string|null} filter - Filter for specific podcast feed or special filters like 'continue' or 'unlistened'.
  */
-export async function fetchPodcastData(state) {
+export async function fetchPodcastData(state, limit, offset, filter) {
     state.setLoading(true);
     let info = await state.session.getSession();
     if (info.$id == null) {
@@ -50,7 +53,11 @@ export async function fetchPodcastData(state) {
         state.router.push('/not-verified');
         return;
     }
-    let podcasts = await state.session.getPodcastEpisodes();
+    let podcasts = await state.session.getPodcastEpisodes(
+        limit,
+        offset,
+        filter
+    );
     if (podcasts === null) return;
     state.setPodcastData(podcasts);
     state.setLoadedData(podcasts);
@@ -66,9 +73,19 @@ export async function fetchPodcastData(state) {
     state.setLoading(false);
 }
 
-export async function loadMorePodcastData(state, podcastData, limit, offset) {
+export async function loadMorePodcastData(
+    state,
+    podcastData,
+    limit,
+    offset,
+    filter
+) {
     state.setLoading(true);
-    let episodes = await state.session.getPodcastEpisodes(limit, offset);
+    let episodes = await state.session.getPodcastEpisodes(
+        limit,
+        offset,
+        filter
+    );
     if (episodes === null) return;
     state.setPodcastData([...podcastData, ...episodes]);
     state.setLoading(false);

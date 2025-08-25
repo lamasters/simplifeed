@@ -607,7 +607,7 @@ export class UserSession {
      * Retrieves the user's podcasts.
      * @returns {Array<Object>|null} The user's podcast episodes, or null if an error occurs.
      */
-    async getPodcastEpisodes(limit = 100, offset = 0) {
+    async getPodcastEpisodes(limit = 100, offset = 0, podcast_feed_id = null) {
         if (!this.podcastSubscriptions) await this.getSubscriptions();
         if (this.podcastSubscriptions.length === 0) return [];
         const subscription_queries = this.podcastSubscriptions.map((source) =>
@@ -618,7 +618,13 @@ export class UserSession {
             Query.offset(offset),
             Query.orderDesc('pub_date'),
         ];
-        if (subscription_queries.length === 1) {
+        if (
+            podcast_feed_id !== null &&
+            podcast_feed_id !== 'continue' &&
+            podcast_feed_id !== 'unlistened'
+        ) {
+            queries.push(Query.equal('podcast_feed', podcast_feed_id));
+        } else if (subscription_queries.length === 1) {
             queries.push(subscription_queries[0]);
         } else if (subscription_queries.length > 1) {
             queries.push(Query.or(subscription_queries));
