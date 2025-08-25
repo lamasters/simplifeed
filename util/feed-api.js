@@ -4,7 +4,7 @@ import { FETCH_INTERVAL } from './constants';
  * Fetches feed data and updates the state.
  * @param {Object} state - Hooks to set application state.
  */
-export async function fetchNewsData(state, fetchFeedsFail) {
+export async function fetchNewsData(state, limit, offset, filter) {
     state.setLoading(true);
     let info = await state.session.getSession();
     if (info.$id == null) {
@@ -16,7 +16,7 @@ export async function fetchNewsData(state, fetchFeedsFail) {
         return;
     }
 
-    let feedData = await state.session.getNewsArticles();
+    let feedData = await state.session.getNewsArticles(limit, offset, filter);
     if (feedData === null) return;
     if (feedData.length > 0) state.setShowTutorial(false);
 
@@ -26,9 +26,9 @@ export async function fetchNewsData(state, fetchFeedsFail) {
     state.setLoading(false);
 }
 
-export async function loadMoreNewsData(state, feedData, limit, offset) {
+export async function loadMoreNewsData(state, feedData, limit, offset, filter) {
     state.setLoading(true);
-    let articles = await state.session.getNewsArticles(limit, offset);
+    let articles = await state.session.getNewsArticles(limit, offset, filter);
     if (articles === null) return;
     state.setFeedData([...feedData, ...articles]);
     state.setLoadedData([...feedData, ...articles]);
@@ -74,11 +74,11 @@ export async function loadMorePodcastData(state, podcastData, limit, offset) {
     state.setLoading(false);
 }
 
-export async function backgroundFetch(state) {
+export async function backgroundFetch(state, filter) {
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         console.debug('Background fetch');
-        let feedData = await state.session.getNewsArticles();
+        let feedData = await state.session.getNewsArticles(0, 100, filter);
         if (feedData) {
             state.setLoadedData(feedData);
             localStorage.setItem('lastFetch', Date.now());

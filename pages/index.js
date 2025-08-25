@@ -59,19 +59,6 @@ export default function Home() {
             theme: 'dark',
             transition: Slide,
         });
-    const fetchFeedsFail = (feeds) => {
-        toast.error(`Failed to update feeds:\n${feeds}`, {
-            position: 'bottom-center',
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'dark',
-            transition: Slide,
-        });
-    };
     const router = useRouter();
 
     const state = useMemo(() => {
@@ -99,9 +86,9 @@ export default function Home() {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
         }
-        fetchNewsData(state, fetchFeedsFail);
+        fetchNewsData(state, limit, offset, filter);
         fetchProcess.current = setInterval(
-            () => backgroundFetch(state),
+            () => backgroundFetch(state, filter),
             FETCH_INTERVAL
         );
     }, []);

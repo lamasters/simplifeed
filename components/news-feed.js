@@ -23,13 +23,9 @@ function feedsEqual(a, b) {
  * Creates an article list based on the provided feed data, filter, and sets the article list using the provided setter function.
  * @param {Array} feedData - The feed data containing articles from different sources.
  * @param {Function} setArticleList - The setter function to set the article list.
- * @param {string} [filter] - Optional filter to only include articles from a specific source.
  */
-function createArticleList(feedData, setArticleList, filter) {
+function createArticleList(feedData, setArticleList) {
     let articles = feedData.copyWithin();
-    if (filter) {
-        articles = articles.filter((item) => item.news_feed.$id === filter);
-    }
     setArticleList(articles);
 }
 
@@ -52,8 +48,8 @@ export default function NewsFeed(props) {
         } else {
             localStorage.setItem('seenTutorial', true);
         }
-        createArticleList(props.feedData, setArticleList, props.filter);
-    }, [props.feedData, props.filter]);
+        createArticleList(props.feedData, setArticleList);
+    }, [props.feedData]);
     const feedRef = useRef();
     return (
         <>
@@ -115,7 +111,8 @@ export default function NewsFeed(props) {
                                         props.state,
                                         props.feedData,
                                         props.limit,
-                                        props.offset + PAGE_SIZE
+                                        props.offset + PAGE_SIZE,
+                                        props.filter
                                     );
                                     props.state.setOffset(
                                         props.offset + PAGE_SIZE
