@@ -18,53 +18,7 @@ We appreciate all contributions to the project and will review your pull request
 
 ## Self Hosting
 
-### Backend
-
-SimpliFeed uses [appwrite](https://appwrite.io/) as the backend. 
-In order to self host, you will have to sign up for an appwrite account or self host the appwrite backend.
-Set up for self hosting appwrite is fairly simple and documentation can be [found here](https://appwrite.io/docs/advanced/self-hosting).
-
-SimpliFeed uses 2 databases with the following schemas:
-```
-Feeds Database
-|_
-  News Collection 
-  |_
-    Feed Record
-    |_ (String) user_id
-    |_ (URL) url
-```
-```
-Users Database
-|_
-  Pro Users Collection
-  |_
-    User Record
-    |_ (String) user_id
-```
-It also uses 2 serverless functions, the code for each can be found in `functions`.
-The AI summary function requires an appwrite API key and an OpenAI API key.
-The appwrite API key can be generated from the project dashboard. You will need to
-create an OpenAI account and then [generate a key here](https://platform.openai.com/api-keys).
-These can then be entered as environment variables in the settings page for the serverless
-function.
-
-### Frontend
-
-Once appwrite is correctly configured you will need to update the file `util/constants.js`.
-The values should be assigned as follows:
-```
-export const APPWRITE_CONFIG = {
-    ENDPOINT: The API URL where your appwrite backend is hosted (typically https://cloud.appwrite.io/v1,
-    PROJECT: Your appwrite project ID,
-    FEEDS_DB: Your feeds database ID,
-    USERS_DB: Your users database ID,
-    NEWS: Your news collection ID,
-    FETCH_ARTICLES: Your get_articles serverless function ID,
-    PRO_USERS: Your pro users collection ID,
-    SUMMARIZE_ARTICLE: Your summarize_article serverless function ID,
-};
-```
+New self hosting instructions coming soon!
 
 ### Hosting
 

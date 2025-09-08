@@ -35,7 +35,7 @@ def main(context):
 
     appwrite_client = Client()
     appwrite_client.set_key(os.getenv("APPWRITE_API_KEY"))
-    appwrite_client.set_endpoint("https://cloud.appwrite.io/v1")
+    appwrite_client.set_endpoint("https://appwrite.liammasters.space/v1")
     appwrite_client.set_project(PROJECT_ID)
 
     database = Databases(appwrite_client)
