@@ -385,7 +385,7 @@
             "runtime": "python-3.9",
             "scopes": [],
             "events": [],
-            "schedule": "",
+            "schedule": "*/20 * * * *",
             "timeout": 15,
             "entrypoint": "scheduler.py",
             "commands": "pip install -r requirements.txt",
