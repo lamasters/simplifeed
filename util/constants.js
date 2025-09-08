@@ -1,5 +1,5 @@
 export const APPWRITE_CONFIG = {
-    ENDPOINT: 'https://cloud.appwrite.io/v1',
+    ENDPOINT: 'https://appwrite.liammasters.space/v1',
     PROJECT: '67cccd44002cccfc9ae0',
     FEEDS_DB: '6466af38420c3ca601c1',
     LISTEN_TIME: '674637b9001d90563572',

@@ -1,4 +1,514 @@
 {
     "projectId": "67cccd44002cccfc9ae0",
-    "projectName": "Simplifeed"
+    "endpoint": "https://appwrite.liammasters.space/v1",
+    "projectName": "Simplifeed",
+    "databases": [
+        {
+            "$id": "6466af38420c3ca601c1",
+            "name": "feeds",
+            "enabled": true
+        }
+    ],
+    "collections": [
+        {
+            "$id": "674637b9001d90563572",
+            "$permissions": [],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "listened_podcasts",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "finished",
+                    "type": "boolean",
+                    "required": true,
+                    "array": false,
+                    "default": null
+                },
+                {
+                    "key": "user_id",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 64,
+                    "default": null
+                },
+                {
+                    "key": "time",
+                    "type": "double",
+                    "required": true,
+                    "array": false,
+                    "min": 0,
+                    "max": 1.7976931348623157e+308,
+                    "default": null
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "6797ac11003778ff768a",
+            "$permissions": [
+                "read(\"users\")"
+            ],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "podcast_feeds",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "rss_url",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "update_interval_minutes",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "min": 30,
+                    "max": 43200,
+                    "default": 240
+                },
+                {
+                    "key": "last_update",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
+                    "default": "2025-01-01T00:00"
+                },
+                {
+                    "key": "feed_title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 512,
+                    "default": null
+                },
+                {
+                    "key": "image_url",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "6797ac1d0029e18b03da",
+            "$permissions": [
+                "read(\"users\")"
+            ],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "news_feeds",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "rss_url",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "update_interval_minutes",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "min": 0,
+                    "max": 43200,
+                    "default": 30
+                },
+                {
+                    "key": "last_update",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
+                    "default": "2025-01-01T00:00"
+                },
+                {
+                    "key": "feed_title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 512,
+                    "default": null
+                },
+                {
+                    "key": "image_url",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "6797ac2700062e762fdd",
+            "$permissions": [
+                "read(\"users\")"
+            ],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "podcast_episodes",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "image_url",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "audio_url",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4096,
+                    "default": null
+                },
+                {
+                    "key": "duration_s",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "min": 0,
+                    "max": 36000,
+                    "default": null
+                },
+                {
+                    "key": "pub_date",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
+                    "default": null
+                },
+                {
+                    "key": "podcast_feed",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedCollection": "6797ac11003778ff768a",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "67cf6c3e001c87515ea2",
+                    "onDelete": "cascade",
+                    "side": "parent"
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "6797ac2e001706792636",
+            "$permissions": [
+                "read(\"users\")"
+            ],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "news_articles",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4096,
+                    "default": null
+                },
+                {
+                    "key": "article_url",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "pub_date",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
+                    "default": null
+                },
+                {
+                    "key": "author",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "image_url",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "summary_id",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 32,
+                    "default": null
+                },
+                {
+                    "key": "news_feed",
+                    "type": "relationship",
+                    "required": false,
+                    "array": false,
+                    "relatedCollection": "6797ac1d0029e18b03da",
+                    "relationType": "manyToOne",
+                    "twoWay": false,
+                    "twoWayKey": "67cf6c21001b34c1f841",
+                    "onDelete": "cascade",
+                    "side": "parent"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "article_title",
+                    "type": "fulltext",
+                    "status": "available",
+                    "attributes": [
+                        "title"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "6797b43c001f4e9c95a0",
+            "$permissions": [
+                "create(\"users\")"
+            ],
+            "databaseId": "6466af38420c3ca601c1",
+            "name": "subscriptions",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "news_feed_ids",
+                    "type": "string",
+                    "required": false,
+                    "array": true,
+                    "size": 32,
+                    "default": null
+                },
+                {
+                    "key": "podcast_feed_ids",
+                    "type": "string",
+                    "required": false,
+                    "array": true,
+                    "size": 32,
+                    "default": null
+                }
+            ],
+            "indexes": []
+        }
+    ],
+    "buckets": [
+        {
+            "$id": "664bcddf002e5c7eba87",
+            "$permissions": [
+                "read(\"users\")",
+                "read(\"any\")"
+            ],
+            "fileSecurity": true,
+            "name": "summaries",
+            "enabled": true,
+            "maximumFileSize": 30000000,
+            "allowedFileExtensions": [],
+            "compression": "none",
+            "encryption": false,
+            "antivirus": true
+        }
+    ],
+    "functions": [
+        {
+            "$id": "67a165e260f7bd4375f4",
+            "execute": [],
+            "name": "scheduler",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "*/20 * * * *",
+            "timeout": 15,
+            "entrypoint": "scheduler.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/scheduler"
+        },
+        {
+            "$id": "65bed72070bb85067dd9",
+            "execute": [
+                "users"
+            ],
+            "name": "summarize_article",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 30,
+            "entrypoint": "summarize.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/summarize_article"
+        },
+        {
+            "$id": "674661f2001479869775",
+            "execute": [
+                "users"
+            ],
+            "name": "record_listen_time",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 30,
+            "entrypoint": "record_listen_time.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/record_listen_time"
+        },
+        {
+            "$id": "679fc996043c9a90e2df",
+            "execute": [],
+            "name": "index_news_feed",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 360,
+            "entrypoint": "index_news_feed.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/index_news_feed"
+        },
+        {
+            "$id": "679fe0e256c67950d62e",
+            "execute": [],
+            "name": "index_podcast_feed",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 900,
+            "entrypoint": "index_podcast_feed.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/index_podcast_feed"
+        },
+        {
+            "$id": "67a12be8e3a2ad0d676e",
+            "execute": [],
+            "name": "create_news_feed",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 300,
+            "entrypoint": "create_news_feed.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/create_news_feed"
+        },
+        {
+            "$id": "67a147e4791d9ec6e02f",
+            "execute": [],
+            "name": "create_podcast_feed",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 900,
+            "entrypoint": "create_podcast_feed.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/create_podcast_feed"
+        },
+        {
+            "$id": "67a15bad9774f8a009c5",
+            "execute": [
+                "users"
+            ],
+            "name": "get_article",
+            "enabled": true,
+            "logging": true,
+            "runtime": "python-3.9",
+            "scopes": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 30,
+            "entrypoint": "get_article.py",
+            "commands": "pip install -r requirements.txt",
+            "specification": "s-1vcpu-512mb",
+            "path": "functions/get_article"
+        }
+    ]
 }

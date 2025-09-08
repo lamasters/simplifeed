@@ -16,7 +16,7 @@ SUMMARIES_BUCKET_ID = "664bcddf002e5c7eba87"
 def main():
     client = Client()
     client.set_key(os.getenv("APPWRITE_API_KEY"))
-    client.set_endpoint("https://cloud.appwrite.io/v1")
+    client.set_endpoint("https://appwrite.liammasters.space/v1")
     client.set_project(PROJECT_ID)
 
     databases = Databases(client)
