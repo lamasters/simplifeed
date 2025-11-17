@@ -172,6 +172,9 @@ export default function NewsSidebar(props) {
                 />
                 <button
                     onClick={() => {
+                        props.infoToast(
+                            'Adding news feed... this may take a few minutes.'
+                        );
                         subscribeToNewsFeed(
                             url,
                             props.state,

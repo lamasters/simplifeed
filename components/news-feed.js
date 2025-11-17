@@ -34,9 +34,13 @@ function createArticleList(feedData, setArticleList) {
  *
  * @param {Object} props - The component props.
  * @param {Array} props.feedData - The data for the feed.
+ * @param {Array} props.loadedData - Feed data loaded in the background
  * @param {string} props.filter - The name of the source to display.
  * @param {boolean} props.showTutorial - Flag indicating whether to show the tutorial.
- * @param {string} props.state - Hooks to set the application state.
+ * @param {Object} props.state - Hooks to set the application state.
+ * @param {boolean} collapse -
+ * @param {number} limit - The number of articles to load
+ * @param {number} offset - The starting index to load from the database
  * @returns {JSX.Element} The rendered feed component.
  */
 export default function NewsFeed(props) {
