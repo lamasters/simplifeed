@@ -59,6 +59,19 @@ export default function Home() {
             theme: 'dark',
             transition: Slide,
         });
+    const infoToast = (msg) => {
+        toast.info(msg, {
+            position: 'bottom-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: 'dark',
+            transition: Slide,
+        });
+    };
     const router = useRouter();
 
     const state = useMemo(() => {
@@ -114,6 +127,7 @@ export default function Home() {
                         filter={filter}
                         addFeedFail={addFeedFail}
                         logoutFail={logoutFail}
+                        infoToast={infoToast}
                     />
                 )}
                 <NewsFeed

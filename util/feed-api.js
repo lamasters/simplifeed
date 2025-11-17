@@ -17,22 +17,19 @@ export async function fetchNewsData(state, limit, offset, filter) {
     }
 
     let feedData = await state.session.getNewsArticles(limit, offset, filter);
-    if (feedData === null) return;
+    state.setLoading(false);
     if (feedData.length > 0) state.setShowTutorial(false);
 
     state.setFeedData(feedData);
     state.setLoadedData(feedData);
-
-    state.setLoading(false);
 }
 
 export async function loadMoreNewsData(state, feedData, limit, offset, filter) {
     state.setLoading(true);
     let articles = await state.session.getNewsArticles(limit, offset, filter);
-    if (articles === null) return;
+    state.setLoading(false);
     state.setFeedData([...feedData, ...articles]);
     state.setLoadedData([...feedData, ...articles]);
-    state.setLoading(false);
 }
 
 /**
@@ -95,8 +92,8 @@ export async function backgroundFetch(state, filter) {
     const lastFetch = localStorage.getItem('lastFetch');
     if (!lastFetch || Date.now() - lastFetch > FETCH_INTERVAL) {
         console.debug('Background fetch');
-        let feedData = await state.session.getNewsArticles(0, 100, filter);
-        if (feedData) {
+        let feedData = await state.session.getNewsArticles(100, 0, filter);
+        if (feedData.length > 0) {
             state.setLoadedData(feedData);
             localStorage.setItem('lastFetch', Date.now());
         }

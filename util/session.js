@@ -291,13 +291,14 @@ export class UserSession {
      * Subscribes to a news rss feed.
      *
      * @param {string} url - The URL of the feed source.
+     * @returns {Array<Object>} - List of articles including the new subscription
      */
     async createNewsSubscription(url, addFeedFail, setLoading) {
         setLoading(true);
         if (!url) {
             addFeedFail();
             setLoading(false);
-            return null;
+            return [];
         }
         if (this.uid === null) {
             await this.getSession();
@@ -330,7 +331,7 @@ export class UserSession {
             console.error(err);
             addFeedFail();
             setLoading(false);
-            return null;
+            return [];
         }
     }
 
@@ -357,7 +358,7 @@ export class UserSession {
 
     /**
      * Retrieves articles from the user's subscribed news feeds.
-     * @returns {Array<Object>|null} An array of all articles, or null if an error occurs.
+     * @returns {Array<Object>} An array of articles
      */
     async getNewsArticles(limit = 100, offset = 0, news_feed_id = null) {
         if (!this.newsSubscriptions) await this.getSubscriptions();
@@ -386,7 +387,7 @@ export class UserSession {
             return articles.documents;
         } catch (err) {
             console.error(err);
-            return null;
+            return [];
         }
     }
 
