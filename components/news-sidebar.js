@@ -81,12 +81,7 @@ function getFeedIcon(source, editing, props) {
     }
 }
 
-/**
- * Renders the sidebar component.
- *
- * @param {Object} props - The component props.
- * @returns {JSX.Element} The rendered sidebar component.
- */
+
 export default function NewsSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
@@ -187,7 +182,10 @@ export default function NewsSidebar(props) {
                 </button>
             </div>
             <button
-                onClick={() => props.state.router.push('/podcasts')}
+                onClick={() => {
+                    localStorage.setItem('lastSection', 'podcasts');
+                    props.state.router.push('/podcasts');
+                }}
                 type="submit"
             >
                 Switch to Podcasts

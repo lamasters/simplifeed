@@ -14,11 +14,7 @@ import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 
-/**
- * Renders the Home page component.
- *
- * @returns {JSX.Element} The rendered Home component.
- */
+
 export default function Home() {
     const [feedData, setFeedData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
@@ -95,6 +91,10 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
+        const lastSection = localStorage.getItem('lastSection');
+        if (lastSection === 'podcasts') {
+            router.replace('/podcasts');
+        }
         clearInterval(fetchProcess.current);
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
