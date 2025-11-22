@@ -1,4 +1,4 @@
-import { createContext, useState, useRef, useContext } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 const PlayerContext = createContext();
 
@@ -7,6 +7,7 @@ export function PlayerProvider({ children }) {
     const [podcast, setPodcast] = useState(null);
     const [listenTime, setListenTime] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [queue, setQueue] = useState([]);
     const audioPlayer = useRef();
 
     const value = {
@@ -18,6 +19,8 @@ export function PlayerProvider({ children }) {
         setListenTime,
         loading,
         setLoading,
+        queue,
+        setQueue,
         audioPlayer,
     };
 

@@ -738,6 +738,9 @@ export class UserSession {
     }
 
     async setPodcastListenTime(title, time) {
+        if (this.uid === null) {
+            await this.getSession();
+        }
         try {
             await this.functions.createExecution(
                 APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
@@ -757,6 +760,9 @@ export class UserSession {
     }
 
     async setPodcastFinished(title) {
+        if (this.uid === null) {
+            await this.getSession();
+        }
         try {
             await this.functions.createExecution(
                 APPWRITE_CONFIG.RECORD_PODCAST_LISTEN_TIME_FN,
@@ -775,6 +781,9 @@ export class UserSession {
     }
 
     async getPodcastListenTime(title) {
+        if (this.uid === null) {
+            await this.getSession();
+        }
         try {
             const res = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,

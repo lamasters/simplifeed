@@ -1,16 +1,21 @@
-import AudioPlayer from 'react-h5-audio-player';
-import { usePlayer } from './player-context';
-import styles from '../styles/podcasts.module.css';
-import { UserSession } from '../util/session';
 import { useMemo, useState } from 'react';
+
+import AudioPlayer from 'react-h5-audio-player';
+import { UserSession } from '../util/session';
+import styles from '../styles/podcasts.module.css';
+import { usePlayer } from './player-context';
 
 export default function GlobalPlayer() {
     const {
         playing,
         setPlaying,
         podcast,
+        setPodcast,
         listenTime,
+        setListenTime,
         setLoading,
+        queue,
+        setQueue,
         audioPlayer,
     } = usePlayer();
 
@@ -25,6 +30,19 @@ export default function GlobalPlayer() {
 
     const onPodcastEnd = () => {
         setPlaying(false);
+        if (queue.length > 0) {
+            let newQueue = queue.copyWithin();
+            const nextEpisode = newQueue.shift();
+            setListenTime(0);
+            setPlaying(true);
+            setPodcast(nextEpisode);
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: nextEpisode.title,
+                artis: nextEpisode.podcast_feed.feed_title,
+                artwork: [{ src: nextEpisode.image_url }],
+            });
+            setQueue(newQueue);
+        }
         session
             .setPodcastFinished(
                 `${podcast.podcast_feed.feed_title} - ${podcast.title}`
@@ -55,7 +73,10 @@ export default function GlobalPlayer() {
                 >
                     {podcast.podcast_feed.feed_title} - {podcast.title}
                 </h2>
-                <button onClick={toggleMinimize} className={styles.toggle_button}>
+                <button
+                    onClick={toggleMinimize}
+                    className={styles.toggle_button}
+                >
                     <svg
                         width="24"
                         height="24"
@@ -114,6 +135,10 @@ export default function GlobalPlayer() {
                 showDownloadProgress={true}
                 showFilledProgress={true}
                 showJumpControls={true}
+                progressJumpSteps={{
+                    backward: 5_000,
+                    forward: 10_000,
+                }}
                 showFilledVolume={true}
                 loop={false}
                 autoPlay={true}
@@ -132,7 +157,8 @@ export default function GlobalPlayer() {
                 onLoadedData={() => {
                     setLoading(false);
                     if (listenTime && audioPlayer.current) {
-                        audioPlayer.current.audio.current.currentTime = listenTime;
+                        audioPlayer.current.audio.current.currentTime =
+                            listenTime;
                     }
                     if (audioPlayer.current) {
                         setDuration(audioPlayer.current.audio.current.duration);

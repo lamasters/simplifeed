@@ -10,7 +10,7 @@ import styles from '../styles/sidebar.module.css';
 
 function selectPodcastFeed(filter, state) {
     state.setFilter(filter);
-    if (filter == 'continue' || filter == 'unlistened') {
+    if (filter == 'continue' || filter == 'unlistened' || filter == 'queue') {
         fetchPodcastData(state, 100, 0, null);
     } else {
         fetchPodcastData(state, 100, 0, filter);
@@ -71,7 +71,6 @@ function getPodcastIcon(source, editing, props) {
     }
 }
 
-
 export default function PodcastSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
@@ -92,36 +91,42 @@ export default function PodcastSidebar(props) {
             </div>
             <h2>Podcasts</h2>
             <ul id={styles.feedlist}>
-                <div className={styles.source_row}>
+                <div className={styles.source_row} key="all">
                     <li
                         onClick={() => selectPodcastFeed(null, props.state)}
                         className={styles.source}
                         style={{ width: '100%' }}
-                        key={0}
                     >
                         All Podcasts
                     </li>
                 </div>
-                <div className={styles.source_row}>
+                <div className={styles.source_row} key="queue">
+                    <li
+                        onClick={() => selectPodcastFeed('queue', props.state)}
+                        className={styles.source}
+                        style={{ width: '100%' }}
+                    >
+                        Queue
+                    </li>
+                </div>
+                <div className={styles.source_row} key="continue">
                     <li
                         onClick={() =>
                             selectPodcastFeed('continue', props.state)
                         }
                         className={styles.source}
                         style={{ width: '100%' }}
-                        key={1}
                     >
                         Continue Listening
                     </li>
                 </div>
-                <div className={styles.source_row}>
+                <div className={styles.source_row} key="unlistened">
                     <li
                         onClick={() =>
                             selectPodcastFeed('unlistened', props.state)
                         }
                         className={styles.source}
                         style={{ width: '100%' }}
-                        key={2}
                     >
                         New Episodes
                     </li>
