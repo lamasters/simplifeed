@@ -2,6 +2,7 @@
     padding: 10px;
     min-height: 100px;
     min-width: 300px;
+    position: relative;
 }
 
 .episode:hover {
