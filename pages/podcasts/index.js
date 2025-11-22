@@ -3,7 +3,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { usePlayer } from '../../components/player-context';
 import Head from 'next/head';
 import PodcastFeed from '../../components/podcast-feed';
 import PodcastSidebar from '../../components/podcast-sidebar';
@@ -12,6 +11,7 @@ import { UserSession } from '../../util/session';
 import base_styles from '../../styles/Home.module.css';
 import { fetchPodcastData } from '../../util/feed-api';
 import styles from '../../styles/podcasts.module.css';
+import { usePlayer } from '../../components/player-context';
 import { useRouter } from 'next/router';
 
 export default function Podcasts() {
@@ -27,10 +27,13 @@ export default function Podcasts() {
     const {
         playing,
         setPlaying,
+        podcast,
         setPodcast,
         setListenTime,
         loading,
         setLoading,
+        queue,
+        setQueue,
     } = usePlayer();
 
     const errorToast = (message) =>
@@ -79,7 +82,6 @@ export default function Podcasts() {
         };
     }, [router, setLoading, setPlaying, setPodcast, setListenTime]);
 
-
     useEffect(() => {
         if (window.innerHeight > window.innerWidth) {
             setCollapse(true);
@@ -119,6 +121,9 @@ export default function Podcasts() {
                     collapse={collapse}
                     limit={limit}
                     offset={offset}
+                    queue={queue}
+                    setQueue={setQueue}
+                    podcast={podcast}
                 />
             </div>
             {loading && <TopLoader />}

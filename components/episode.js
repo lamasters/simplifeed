@@ -1,6 +1,7 @@
+import { useMemo, useState } from 'react';
+
 import styles from '../styles/episode.module.css';
 import { timeSince } from './card';
-import { useState } from 'react';
 
 export default function Episode(props) {
     const [showMenu, setShowMenu] = useState(false);
@@ -13,6 +14,11 @@ export default function Episode(props) {
     ) || [0, false];
     const listenTime = listenData[0];
     const finished = listenData[1];
+
+    const queuedIds = useMemo(
+        () => props.queue.map((episode) => episode.$id),
+        [props.queue]
+    );
 
     const formatListenTime = (seconds) => {
         if (seconds <= 0) {
@@ -55,27 +61,9 @@ export default function Episode(props) {
     return (
         <li
             className={styles.episode}
-            onClick={() => {
-                props.state.setPlaying(false);
-                props.state.setListenTime(listenTime || 0);
-                props.state.setPlaying(true);
-                props.state.setPodcast(props.episode);
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: props.episode.title,
-                    artist: props.episode.podcast_feed.feed_title,
-                    artwork: [{ src: props.episode.image_url }],
-                });
-            }}
             style={finished ? { color: 'gray' } : {}}
         >
-            <div
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    zIndex: 10,
-                }}
-            >
+            <div className={styles.ellipsis_container}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -86,52 +74,68 @@ export default function Episode(props) {
                         e.stopPropagation();
                         setShowMenu(!showMenu);
                     }}
-                    style={{
-                        cursor: 'pointer',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        color: 'var(--accent-primary)',
-                        backgroundColor: showMenu
-                            ? 'rgba(255,255,255,0.1)'
-                            : 'transparent',
-                    }}
+                    className={
+                        showMenu
+                            ? styles.ellipsis_icon_active
+                            : styles.ellipsis_icon
+                    }
                 >
                     <path d="M0 0h24v24H0z" fill="none" />
                     <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
                 {showMenu && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            right: '0',
-                            top: '30px',
-                            backgroundColor: 'var(--background)',
-                            border: '1px solid var(--background-hover)',
-                            borderRadius: '5px',
-                            padding: '5px 0',
-                            width: '150px',
-                            zIndex: 20,
-                            boxShadow: '0 2px 5px rgba(0,0,0,0.5)',
-                        }}
-                    >
+                    <div className={styles.dropdown_menu}>
                         <div
                             onClick={togglePlayed}
-                            style={{
-                                padding: '8px 15px',
-                                cursor: 'pointer',
-                                color: 'var(--text-paragraph)',
-                                fontSize: '14px',
-                            }}
-                            onMouseEnter={(e) =>
-                            (e.target.style.backgroundColor =
-                                'var(--background-hover)')
-                            }
-                            onMouseLeave={(e) =>
-                                (e.target.style.backgroundColor = 'transparent')
-                            }
+                            className={styles.dropdown_item}
                         >
                             {finished ? 'Mark as Unplayed' : 'Mark as Played'}
                         </div>
+                        <div
+                            className={styles.dropdown_item}
+                            onClick={() => {
+                                if (
+                                    !queuedIds.includes(props.episode.$id) &&
+                                    props.podcast?.$id !== props.episode.$id
+                                ) {
+                                    props.setQueue(
+                                        props.queue.concat([props.episode])
+                                    );
+                                } else {
+                                    props.setQueue((prev) => {
+                                        return prev.filter(
+                                            (episode) =>
+                                                episode.$id != props.episode.$id
+                                        );
+                                    });
+                                }
+                                setShowMenu(!showMenu);
+                            }}
+                        >
+                            {queuedIds.includes(props.episode.$id)
+                                ? 'Remove from Queue'
+                                : 'Add to Queue'}
+                        </div>
+                        {!queuedIds.includes(props.episode.$id) && (
+                            <div
+                                className={styles.dropdown_item}
+                                onClick={() => {
+                                    if (
+                                        !queuedIds.includes(
+                                            props.episode.$id
+                                        ) &&
+                                        props.podcast?.$id !== props.episode.$id
+                                    ) {
+                                        props.setQueue(
+                                            [props.episode].concat(props.queue)
+                                        );
+                                    }
+                                    setShowMenu(!showMenu);
+                                }}
+                            >
+                                Play Next
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -160,9 +164,39 @@ export default function Episode(props) {
                         )}
                     </div>
                 </div>
-                <div className={styles.episode_info}>
-                    <h3>{props.episode.title}</h3>
-                    <p className={styles.description}>{description}</p>
+                <div className={styles.episode_bottom_container}>
+                    <div className={styles.episode_info}>
+                        <h3>{props.episode.title}</h3>
+                        <p className={styles.description}>{description}</p>
+                    </div>
+                    <div
+                        className={styles.play_button}
+                        onClick={() => {
+                            props.state.setPlaying(false);
+                            props.state.setListenTime(listenTime || 0);
+                            props.state.setPlaying(true);
+                            props.state.setPodcast(props.episode);
+                            navigator.mediaSession.metadata = new MediaMetadata(
+                                {
+                                    title: props.episode.title,
+                                    artist: props.episode.podcast_feed
+                                        .feed_title,
+                                    artwork: [{ src: props.episode.image_url }],
+                                }
+                            );
+                        }}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            width="48px"
+                            height="48px"
+                        >
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
         </li>

@@ -36,6 +36,8 @@ export default function PodcastFeed(props) {
             state.setShowTutorial(false);
             if (props.filter == null) {
                 setEpisodes(props.podcastData);
+            } else if (props.filter === 'queue') {
+                setEpisodes(props.queue);
             } else {
                 setEpisodes(
                     filterPodcasts(
@@ -46,7 +48,7 @@ export default function PodcastFeed(props) {
                 );
             }
         }
-    }, [props.podcastData, props.filter]);
+    }, [props.podcastData, props.filter, props.queue]);
     return (
         <>
             <div id={styles.collapse_container}>
@@ -72,6 +74,9 @@ export default function PodcastFeed(props) {
                                     episode={episode}
                                     state={props.state}
                                     listenTimes={props.listenTimes}
+                                    queue={props.queue}
+                                    setQueue={props.setQueue}
+                                    podcast={props.podcast}
                                 />
                                 <div
                                     className={styles.divider}
