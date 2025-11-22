@@ -12,6 +12,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: flex-start;
     transition: transform 0.3s ease-in-out;
 }
 
@@ -19,7 +20,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
     text-wrap-mode: nowrap;
-    margin-right: 40px;
+    flex: 1;
+    min-width: 0;
+    margin-right: 10px;
 }
 
 .minimized_player {
@@ -53,17 +56,18 @@
     border: none;
     color: var(--text-primary);
     cursor: pointer;
-    padding: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1002;
+    margin: 0;
+    padding: 0;
+    margin-right: 10px;
 }
 
 .episode_info .toggle_button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    flex-shrink: 0;
+    margin-top: 0;
 }
 
 .minimized_player .toggle_button {
