@@ -9,10 +9,69 @@
     box-shadow: var(--accent-primary) 0 0 20px;
     padding-left: 15px;
     padding-right: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    transition: transform 0.3s ease-in-out;
 }
 
 .episode_title {
     overflow: hidden;
     text-overflow: ellipsis;
     text-wrap-mode: nowrap;
+    margin-right: 40px;
+}
+
+.minimized_player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background-color: var(--background);
+    z-index: 1001;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.minimized_progress_bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--accent-primary);
+    opacity: 0.9;
+    transition: width 0.2s linear;
+}
+
+.toggle_button {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1002;
+}
+
+.episode_info .toggle_button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.minimized_player .toggle_button {
+    position: relative;
+    z-index: 1003;
+}
+
+.toggle_button:hover {
+    background: none;
+    opacity: 0.7;
 }
