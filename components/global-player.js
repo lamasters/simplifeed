@@ -29,7 +29,7 @@ export default function GlobalPlayer() {
 
     return (
         <>
-            <div className={styles.episode_info} style={{ position: 'fixed', bottom: '0px', left: '0px', zIndex: 1000, background: 'rgba(0,0,0,0.9)', padding: '10px', borderRadius: '5px' }}>
+            <div className={styles.episode_info} style={{ position: 'fixed', bottom: '0px', left: '0px', zIndex: 1000, background: 'var(--background)', padding: '10px', borderRadius: '5px' }}>
                 <h2 className={styles.episode_title} style={{ fontSize: '1rem', margin: 0 }}>
                     {podcast.podcast_feed.feed_title} - {podcast.title}
                 </h2>
@@ -48,7 +48,8 @@ export default function GlobalPlayer() {
                     position: 'fixed',
                     width: '100%',
                     bottom: '0px',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    background: 'var(--background)',
                 }}
                 onEnded={onPodcastEnd}
                 onLoadStart={() => setLoading(true)}
