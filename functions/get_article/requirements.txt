@@ -1,4 +1,4 @@
 fastapi==0.111.0
 pydantic==2.4.2
 requests==2.32.4
-html-reader-mode==0.1.0
+html-reader-mode==0.1.1
