@@ -461,8 +461,7 @@ export class UserSession {
                         margin: 'auto',
                         marginTop: '10px',
                         marginBottom: '10px',
-                        width: '90%',
-                        minWidth: `${Math.max(width * 0.8, 275)}px`,
+                        width: '100%',
                     }}
                 >
                     {' '}
@@ -477,7 +476,6 @@ export class UserSession {
                     <h1
                         style={{
                             textAlign: 'left',
-                            width: '600px',
                             marginTop: '10px',
                             marginLeft: '20px'
                         }}
