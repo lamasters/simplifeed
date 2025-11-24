@@ -1,12 +1,12 @@
 import datetime
 import http
 import json
-from typing import Callable, Optional
+from typing import Optional
 
 import requests
-from bs4 import BeautifulSoup
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
+from html_reader_mode import HTMLReaderMode
 
 
 class ServerRequest(BaseModel):
@@ -15,10 +15,17 @@ class ServerRequest(BaseModel):
     url: str = Field(...)
 
 
+class ArticleBlock(BaseModel):
+    """Model for a single block of content"""
+
+    tag: str
+    content: str
+
+
 class ArticleContent(BaseModel):
     """Model of a single article text content"""
 
-    tags: list[str] = Field(default_factory=list)
+    tags: list[ArticleBlock] = Field(default_factory=list)
 
 
 class ArticleContentRes(BaseModel):
@@ -35,11 +42,13 @@ def fetch_article_content(url: str) -> ArticleContentRes:
     html_res = res.text
     if html_res is None:
         return ArticleContentRes(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-    soup = BeautifulSoup(html_res, "html.parser")
-    tags = soup.find_all("p")
-    if not tags:
+
+    reader_mode = HTMLReaderMode()
+    content_blocks = reader_mode.sanitize(html_res)
+
+    if not content_blocks:
         return ArticleContentRes(status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
-    return ArticleContentRes(data=ArticleContent(tags=[tag.text for tag in tags]))
+    return ArticleContentRes(data=ArticleContent(tags=content_blocks))
 
 
 def main(context):

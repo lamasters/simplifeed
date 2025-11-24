@@ -495,21 +495,74 @@ export class UserSession {
             let rawText = '';
             let tagCount = 0;
             for (let tag of article.tags) {
-                rawText += tag + '\n';
-                content.push(
-                    <p
-                        style={{
-                            width: '70%',
-                            minWidth: `${Math.max(width * 0.7, 275)}px`,
-                            margin: 'auto',
-                        }}
-                        key={tagCount}
-                    >
-                        {tag}
-                    </p>
-                );
-                tagCount++;
-                content.push(<br key={tagCount} />);
+                rawText += tag.content + '\n';
+                const TagName = tag.tag;
+                const textContent = tag.content;
+
+                let element;
+                if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(TagName)) {
+                    element = (
+                        <h3
+                            style={{
+                                width: '70%',
+                                minWidth: `${Math.max(width * 0.7, 275)}px`,
+                                margin: 'auto',
+                                marginTop: '20px',
+                                marginBottom: '10px',
+                                fontWeight: 'bold'
+                            }}
+                            key={tagCount}
+                        >
+                            {textContent}
+                        </h3>
+                    );
+                } else if (TagName === 'li') {
+                    element = (
+                        <li
+                            style={{
+                                width: '70%',
+                                minWidth: `${Math.max(width * 0.7, 275)}px`,
+                                margin: 'auto',
+                                marginLeft: 'auto',
+                                listStylePosition: 'inside'
+                            }}
+                            key={tagCount}
+                        >
+                            {textContent}
+                        </li>
+                    );
+                } else if (TagName === 'blockquote') {
+                    element = (
+                        <blockquote
+                            style={{
+                                width: '70%',
+                                minWidth: `${Math.max(width * 0.7, 275)}px`,
+                                margin: 'auto',
+                                fontStyle: 'italic',
+                                borderLeft: '4px solid #ccc',
+                                paddingLeft: '10px'
+                            }}
+                            key={tagCount}
+                        >
+                            {textContent}
+                        </blockquote>
+                    );
+                } else {
+                    element = (
+                        <p
+                            style={{
+                                width: '70%',
+                                minWidth: `${Math.max(width * 0.7, 275)}px`,
+                                margin: 'auto',
+                                marginBottom: '10px'
+                            }}
+                            key={tagCount}
+                        >
+                            {textContent}
+                        </p>
+                    );
+                }
+                content.push(element);
                 tagCount++;
             }
             for (let i = 0; i < 15; i++) {
