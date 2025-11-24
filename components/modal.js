@@ -16,7 +16,7 @@ import { useState } from 'react';
 export default function Modal(props) {
     return (
         <div>
-            <div id={styles.article}>
+            <div className={styles.article}>
                 {props.rawText && !props.summary && (
                     <div
                         className={styles.summarize}
@@ -37,11 +37,11 @@ export default function Modal(props) {
                         <div className={styles.summary}>{props.summary}</div>
                     </>
                 )}
-                <div id={styles.articlecontent}>{props.articleContent}</div>
+                <div className={styles.articlecontent}>{props.articleContent}</div>
             </div>
-            <div onClick={() => props.state.router.back()} id={styles.back}>
+            <div onClick={() => props.state.router.back()} className={styles.back}>
                 <img
-                    id={styles.back_icon}
+                    className={styles.back_icon}
                     src="/chevron-left-solid.svg"
                     alt="Back"
                     height="36px"

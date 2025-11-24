@@ -476,18 +476,19 @@ export class UserSession {
                     />
                     <h1
                         style={{
-                            textAlign: 'center',
-                            width: 'calc(100% - 64px)',
+                            textAlign: 'left',
+                            width: '600px',
                             marginTop: '10px',
+                            marginLeft: '20px'
                         }}
                     >
                         {title}
                     </h1>
                 </div>,
                 author ? (
-                    <h3 style={{ margin: 'auto', width: '70%' }}>{author}</h3>
+                    <h3 style={{ width: '70%' }}>{author}</h3>
                 ) : null,
-                <h3 style={{ margin: 'auto', width: '70%' }}>
+                <h3 style={{ width: '70%' }}>
                     {new Date(pubDate).toLocaleString()}
                 </h3>,
                 <br />,
@@ -504,8 +505,6 @@ export class UserSession {
                     element = (
                         <h3
                             style={{
-                                width: '70%',
-                                minWidth: `${Math.max(width * 0.7, 275)}px`,
                                 margin: 'auto',
                                 marginTop: '20px',
                                 marginBottom: '10px',
@@ -520,8 +519,6 @@ export class UserSession {
                     element = (
                         <li
                             style={{
-                                width: '70%',
-                                minWidth: `${Math.max(width * 0.7, 275)}px`,
                                 margin: 'auto',
                                 marginLeft: 'auto',
                                 listStylePosition: 'inside'
@@ -535,8 +532,6 @@ export class UserSession {
                     element = (
                         <blockquote
                             style={{
-                                width: '70%',
-                                minWidth: `${Math.max(width * 0.7, 275)}px`,
                                 margin: 'auto',
                                 fontStyle: 'italic',
                                 borderLeft: '4px solid #ccc',
@@ -551,8 +546,6 @@ export class UserSession {
                     element = (
                         <p
                             style={{
-                                width: '70%',
-                                minWidth: `${Math.max(width * 0.7, 275)}px`,
                                 margin: 'auto',
                                 marginBottom: '10px'
                             }}
