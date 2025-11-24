@@ -46,13 +46,10 @@ export default function Episode(props) {
         const newListenTimes = new Map(props.listenTimes);
 
         if (finished) {
-            await props.state.session.setPodcastListenTime(
-                props.episode.title,
-                0
-            );
+            await props.state.session.setPodcastListenTime(key, 0);
             newListenTimes.set(key, [0, false]);
         } else {
-            await props.state.session.setPodcastFinished(props.episode.title);
+            await props.state.session.setPodcastFinished(key);
             newListenTimes.set(key, [0, true]);
         }
         props.state.setListenTimes(newListenTimes);
