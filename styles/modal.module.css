@@ -1,6 +1,6 @@
-#article {
+.article {
     position: fixed;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     top: 0;
     left: 0;
@@ -9,16 +9,17 @@
     overflow-y: scroll;
 }
 
-#articlecontent {
+.articlecontent {
     width: 100%;
+    max-width: 800px;
     height: 100%;
     font-size: 16px;
     text-align: left;
-    margin: auto;
+    margin: 0 auto;
     margin-top: 50px;
 }
 
-#back {
+.back {
     position: fixed;
     top: 10px;
     left: 10px;
@@ -27,12 +28,12 @@
     filter: brightness(0) saturate(100%) invert(52%) sepia(25%) saturate(7164%) hue-rotate(202deg) brightness(101%) contrast(104%);
 }
 
-#back:hover {
+.back:hover {
     cursor: pointer;
     opacity: 0.8;
 }
 
-#back_icon {
+.back_icon {
     height: 100%;
     margin: auto;
 }
