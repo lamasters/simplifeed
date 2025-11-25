@@ -9,13 +9,14 @@
   :root {
     --background: #12151d;
     --background-hover: #212735;
-    --accent-primary:#3760c0;
+    --accent-primary: #3760c0;
     --accent-primary-hover: #48f;
     --accent-secondary: #69f;
     --accent-secondary-hover: #9ebeff;
     --text-primary: #48f;
     --text-secondary: #9cf;
     --text-paragraph: #f9fbf7;
+    --text-muted: #9ab;
   }
 }
 
@@ -23,13 +24,14 @@
   :root {
     --background: #fff;
     --background-hover: #ddd;
-    --accent-primary:#eee;
+    --accent-primary: #eee;
     --accent-primary-hover: #ccc;
     --accent-secondary: #69f;
     --accent-secondary-hover: #9ebeff;
     --text-primary: #48f;
     --text-secondary: #555;
     --text-paragraph: #000;
+    --text-muted: #9ab;
   }
 }
 
