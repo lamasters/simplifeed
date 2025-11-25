@@ -76,7 +76,7 @@
 
 .play_button {
     cursor: pointer;
-    color: var(--accent-primary);
+    color: var(--text-primary);
     margin-left: auto;
     padding: 5px;
 }
