@@ -65,6 +65,11 @@ export default function Podcasts() {
         });
     const router = useRouter();
 
+    const selectEpisode = (episode) => {
+        setSelectedEpisode(episode);
+        router.push('#episode');
+    };
+
     const state = useMemo(() => {
         return {
             setFilter: setFilter,
@@ -80,6 +85,7 @@ export default function Podcasts() {
             errorToast: errorToast,
             setLimit: setLimit,
             setOffset: setOffset,
+            selectEpisode: selectEpisode,
             router: router,
             session: new UserSession(),
         };
@@ -130,14 +136,13 @@ export default function Podcasts() {
                     onEpisodeClick={setSelectedEpisode}
                 />
             </div>
-            {selectedEpisode && (
+            {router.asPath.includes('episode') && selectedEpisode && (
                 <EpisodeDetails
                     episode={selectedEpisode}
                     state={state}
                     listenTimes={listenTimes}
                     queue={queue}
                     setQueue={setQueue}
-                    onClose={() => setSelectedEpisode(null)}
                 />
             )}
             {loading && <TopLoader />}

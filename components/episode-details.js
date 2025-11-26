@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import styles from '../styles/episode-details.module.css';
 
-export default function EpisodeDetails({ episode, state, listenTimes, queue, setQueue, onClose }) {
+export default function EpisodeDetails({ episode, state, listenTimes, queue, setQueue }) {
     const [showMenu, setShowMenu] = useState(false);
 
     const listenData = listenTimes.get(
@@ -88,7 +88,7 @@ export default function EpisodeDetails({ episode, state, listenTimes, queue, set
 
     return (
         <div className={styles.container}>
-            <div className={styles.back_button} onClick={onClose}>
+            <div className={styles.back_button} onClick={() => state.router.back()}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                 </svg>
