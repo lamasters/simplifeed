@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import Episode from './episode';
+import EpisodeCard from './episode-card';
 import { loadMorePodcastData } from '../util/feed-api';
 import styles from '../styles/feed.module.css';
 
@@ -70,7 +70,7 @@ export default function PodcastFeed(props) {
                     <ul style={{ width: '100%' }}>
                         {episodes.map((episode) => (
                             <>
-                                <Episode
+                                <EpisodeCard
                                     episode={episode}
                                     state={props.state}
                                     listenTimes={props.listenTimes}

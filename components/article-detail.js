@@ -12,7 +12,7 @@ import styles from '../styles/modal.module.css';
  * @param {string} props.summary - The summary of the article.
  * @returns {JSX.Element} The rendered modal component.
  */
-export default function Modal(props) {
+export default function ArticleDetail(props) {
     return (
         <div>
             <div className={styles.article}>

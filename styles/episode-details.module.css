@@ -68,7 +68,7 @@
 
 .play_button {
     cursor: pointer;
-    color: var(--accent-primary);
+    color: var(--text-primary);
     transition: transform 0.2s;
 }
 
@@ -84,7 +84,7 @@
 
 .ellipsis_icon {
     cursor: pointer;
-    color: var(--foreground);
+    color: var(--text-primary);
     opacity: 0.7;
     transition: opacity 0.2s;
 }

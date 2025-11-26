@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import Card from './card';
+import ArticleCard from './article-card';
 import { loadMoreNewsData } from '../util/feed-api';
 import styles from '../styles/feed.module.css';
 
@@ -100,7 +100,7 @@ export default function NewsFeed(props) {
                     <ul style={{ width: '100%' }}>
                         {articleList.map((article) => (
                             <>
-                                <Card article={article} state={props.state} />
+                                <ArticleCard article={article} state={props.state} />
                                 <div
                                     className={styles.divider}
                                     key={article.title + '_divider'}

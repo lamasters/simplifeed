@@ -1,5 +1,5 @@
 import { selectArticle } from '../util/feed-api';
-import styles from '../styles/card.module.css';
+import styles from '../styles/article-card.module.css';
 
 /**
  * Time since the article was published.
@@ -55,7 +55,7 @@ export function timeSince(datetime) {
  * @param {string} props.state - Hooks to set application state.
  * @returns {JSX.Element} The rendered card component.
  */
-export default function Card(props) {
+export default function ArticleCard(props) {
     const url = new URL(props.article.article_url);
     return (
         <li
@@ -71,18 +71,22 @@ export default function Card(props) {
                     width={36}
                     height={36}
                     style={{
-                        marginLeft: '10px',
                         marginRight: '10px',
                     }}
                 />
-                <div className={styles.itemTitle}>
-                    <b>{props.article.news_feed.feed_title}</b>
-                </div>
-                <div className={styles.date}>
-                    {timeSince(props.article.pub_date)}
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                    <h4 className={styles.info}>{props.article.title}</h4>
+                    <h4 className={styles.itemTitle}>
+                        {props.article.news_feed.feed_title}
+                    </h4>
                 </div>
             </div>
-            <div className={styles.info}>{props.article.title}</div>
+            <div className={styles.description}>
+                {props.article.description}
+            </div>
+            <div className={styles.date}>
+                {timeSince(props.article.pub_date)}
+            </div>
         </li>
     );
 }
