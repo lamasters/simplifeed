@@ -13,6 +13,7 @@ import { fetchPodcastData } from '../../util/feed-api';
 import styles from '../../styles/podcasts.module.css';
 import { usePlayer } from '../../components/player-context';
 import { useRouter } from 'next/router';
+import EpisodeDetails from '../../components/episode-details';
 
 export default function Podcasts() {
     const [collapse, setCollapse] = useState(false);
@@ -22,7 +23,9 @@ export default function Podcasts() {
     const [showTutorial, setShowTutorial] = useState(true);
     const [listenTimes, setListenTimes] = useState(new Map());
     const [limit, setLimit] = useState(100);
+
     const [offset, setOffset] = useState(0);
+    const [selectedEpisode, setSelectedEpisode] = useState(null);
 
     const {
         playing,
@@ -124,8 +127,19 @@ export default function Podcasts() {
                     queue={queue}
                     setQueue={setQueue}
                     podcast={podcast}
+                    onEpisodeClick={setSelectedEpisode}
                 />
             </div>
+            {selectedEpisode && (
+                <EpisodeDetails
+                    episode={selectedEpisode}
+                    state={state}
+                    listenTimes={listenTimes}
+                    queue={queue}
+                    setQueue={setQueue}
+                    onClose={() => setSelectedEpisode(null)}
+                />
+            )}
             {loading && <TopLoader />}
             <ToastContainer />
         </main>

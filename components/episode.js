@@ -5,10 +5,6 @@ import { timeSince } from './card';
 
 export default function Episode(props) {
     const [showMenu, setShowMenu] = useState(false);
-    let description = props.episode.description;
-    // if (description.length > 250) {
-    //     description = description.substring(0, 250) + '...';
-    // }
     const listenData = props.listenTimes.get(
         `${props.episode.podcast_feed.feed_title} - ${props.episode.title}`
     ) || [0, false];
@@ -59,9 +55,6 @@ export default function Episode(props) {
         <li
             className={styles.episode}
             style={finished ? { color: 'gray' } : {}}
-            onClick={() => {
-                console.log(props.episode.description);
-            }}
         >
             <div className={styles.ellipsis_container}>
                 <svg
@@ -161,7 +154,17 @@ export default function Episode(props) {
                     </div>
                 </div>
                 <div className={styles.episode_bottom_container}>
-                    <p className={styles.description}>{description}</p>
+                    <p
+                        className={styles.description}
+                        onClick={() => {
+                            if (props.onDescriptionClick) {
+                                props.onDescriptionClick(props.episode);
+                            }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {props.episode.description}
+                    </p>
                     <div
                         className={styles.play_button}
                         onClick={() => {
