@@ -147,17 +147,18 @@ export default function Episode(props) {
                         src={props.episode.image_url}
                     />
                     <div className={styles.header_container}>
-                        <h3 className={styles.title}>{props.episode.title}</h3>
-                        <h3 className={styles.source}>
+                        <h4 className={styles.title}>{props.episode.title}</h4>
+                        <h4 className={styles.source}>
                             {props.episode.podcast_feed.feed_title}
-                        </h3>
+                        </h4>
                     </div>
                 </div>
                 <div className={styles.episode_bottom_container}>
                     <p
                         className={styles.description}
                         onClick={() => {
-                            props.state.selectEpisode(props.episode);
+                            props.state.router.push('#episode');
+                            props.onDescriptionClick(props.episode);
                         }}
                         style={{ cursor: 'pointer' }}
                     >

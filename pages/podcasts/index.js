@@ -65,10 +65,8 @@ export default function Podcasts() {
         });
     const router = useRouter();
 
-    const selectEpisode = (episode) => {
-        setSelectedEpisode(episode);
-        router.push('#episode');
-    };
+
+    const session = useMemo(() => new UserSession(), []);
 
     const state = useMemo(() => {
         return {
@@ -85,11 +83,10 @@ export default function Podcasts() {
             errorToast: errorToast,
             setLimit: setLimit,
             setOffset: setOffset,
-            selectEpisode: selectEpisode,
             router: router,
-            session: new UserSession(),
+            session: session,
         };
-    }, [router, setLoading, setPlaying, setPodcast, setListenTime]);
+    }, [router, setLoading, setPlaying, setPodcast, setListenTime, session]);
 
     useEffect(() => {
         if (window.innerHeight > window.innerWidth) {

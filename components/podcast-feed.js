@@ -76,7 +76,6 @@ export default function PodcastFeed(props) {
                                     listenTimes={props.listenTimes}
                                     queue={props.queue}
                                     setQueue={props.setQueue}
-
                                     podcast={props.podcast}
                                     onDescriptionClick={props.onEpisodeClick}
                                 />
