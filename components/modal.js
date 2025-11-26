@@ -1,6 +1,5 @@
 import { getArticleSummary } from '../util/feed-api';
 import styles from '../styles/modal.module.css';
-import { useState } from 'react';
 
 /**
  * Renders a modal component for displaying an article.
