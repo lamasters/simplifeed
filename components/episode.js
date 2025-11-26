@@ -5,10 +5,6 @@ import { timeSince } from './card';
 
 export default function Episode(props) {
     const [showMenu, setShowMenu] = useState(false);
-    let description = props.episode.description;
-    if (description.length > 250) {
-        description = description.substring(0, 250) + '...';
-    }
     const listenData = props.listenTimes.get(
         `${props.episode.podcast_feed.feed_title} - ${props.episode.title}`
     ) || [0, false];
@@ -143,29 +139,32 @@ export default function Episode(props) {
                         flexDirection: 'row',
                         justifyContent: 'left',
                         width: '100%',
+                        height: '50px',
                     }}
                 >
                     <img
                         className={styles.cover}
                         src={props.episode.image_url}
                     />
-                    <h3 className={styles.source}>
-                        {props.episode.podcast_feed.feed_title}
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <h5>{timeSince(props.episode.pub_date)}</h5>
-                        {listenText && (
-                            <h5 style={{ marginLeft: '5px', color: '#48f' }}>
-                                {listenText}
-                            </h5>
-                        )}
+                    <div className={styles.header_container}>
+                        <h3 className={styles.title}>{props.episode.title}</h3>
+                        <h3 className={styles.source}>
+                            {props.episode.podcast_feed.feed_title}
+                        </h3>
                     </div>
                 </div>
                 <div className={styles.episode_bottom_container}>
-                    <div className={styles.episode_info}>
-                        <h3>{props.episode.title}</h3>
-                        <p className={styles.description}>{description}</p>
-                    </div>
+                    <p
+                        className={styles.description}
+                        onClick={() => {
+                            if (props.onDescriptionClick) {
+                                props.onDescriptionClick(props.episode);
+                            }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {props.episode.description}
+                    </p>
                     <div
                         className={styles.play_button}
                         onClick={() => {
@@ -194,6 +193,14 @@ export default function Episode(props) {
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
                         </svg>
                     </div>
+                </div>
+                <div className={styles.episode_bottom_container}>
+                    <h5 style={{ margin: '0', marginRight: '10px' }}>{timeSince(props.episode.pub_date)}</h5>
+                    {listenText && (
+                        <h5 style={{ marginLeft: '5px', color: '#48f', margin: '0' }}>
+                            {listenText}
+                        </h5>
+                    )}
                 </div>
             </div>
         </li>
