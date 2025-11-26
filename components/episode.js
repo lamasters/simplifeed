@@ -157,9 +157,7 @@ export default function Episode(props) {
                     <p
                         className={styles.description}
                         onClick={() => {
-                            if (props.onDescriptionClick) {
-                                props.onDescriptionClick(props.episode);
-                            }
+                            props.state.selectEpisode(props.episode);
                         }}
                         style={{ cursor: 'pointer' }}
                     >
