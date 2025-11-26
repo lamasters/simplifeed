@@ -2,6 +2,7 @@
     position: relative;
     font-size: 12px;
     color: var(--text-secondary);
+    margin-top: 10px;
 }
 
 .icon {
@@ -24,44 +25,51 @@
 }
 
 .info {
-    position: relative;
-    justify-content: left;
-    margin-left: 10px;
-    text-align: center;
-    line-height: 100%;
-    width: 90%;
-    font-size: 18px;
+    text-align: left;
+    margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
 
 .item {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    align-items: center;
-    margin: 10px;
+    align-items: left;
     padding: 10px;
     overflow: hidden;
     min-height: 100px;
-    min-width: 300px;
+    max-height: 200px;
     border-radius: 5px;
 }
 
 .item:hover {
     cursor: pointer;
     background-color: var(--background-hover);
+    overflow: hidden;
 }
 
 .itemHeader {
-    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: left;
     align-items: center;
-    width: 100%;
-    font-size: 18px;
     margin-bottom: 10px;
 }
 
 .itemTitle {
-    margin-right: 10px;
+    margin: 0;
+    color: var(--text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.description {
+    max-height: 97px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-muted)
 }

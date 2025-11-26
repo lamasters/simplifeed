@@ -35,6 +35,7 @@ class Article(BaseModel):
     pub_date: Optional[str] = Field(default=None)
     image_url: Optional[str] = Field(default=None)
     author: Optional[str] = Field(default=None)
+    description: Optional[str] = Field(default=None)
 
 
 def parse_news_article(
@@ -49,6 +50,15 @@ def parse_news_article(
     article_url = item.get("link")
     pub_date = item.get("published", "")
     author = item.get("author")
+    description = item.get("description")
+
+    if description is not None:
+        soup = BeautifulSoup(description, "html.parser")
+        description = soup.get_text(separator=" ")
+
+    if len(description) > 4096:
+        description = description[:4096]
+    log(f"Parsed description {description}")
 
     if title is None or article_url is None:
         return http.HTTPStatus.INTERNAL_SERVER_ERROR
@@ -65,6 +75,7 @@ def parse_news_article(
         pub_date=pub_date,
         image_url=image_url,
         author=author,
+        description=description,
     )
     document_id = md5(article_url.encode()).hexdigest()
     try:

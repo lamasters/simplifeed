@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { FETCH_INTERVAL } from '../util/constants';
 import Head from 'next/head';
-import Modal from '../components/modal';
+import ArticleDetail from '../components/article-detail';
 import NewsFeed from '../components/news-feed';
 import NewsSidebar from '../components/news-sidebar';
 import TopLoader from '../components/top-loader';
@@ -144,7 +144,7 @@ export default function Home() {
             </div>
             {loading && <TopLoader />}
             {router.asPath.includes('article') && (
-                <Modal
+                <ArticleDetail
                     articleContent={articleContent}
                     rawText={rawText}
                     state={state}

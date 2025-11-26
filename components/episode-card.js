@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 
 import styles from '../styles/episode.module.css';
-import { timeSince } from './card';
+import { timeSince } from './article-card';
 
-export default function Episode(props) {
+export default function EpisodeCard(props) {
     const [showMenu, setShowMenu] = useState(false);
     const listenData = props.listenTimes.get(
         `${props.episode.podcast_feed.feed_title} - ${props.episode.title}`
