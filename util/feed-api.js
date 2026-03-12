@@ -110,6 +110,10 @@ export async function backgroundFetch(state, filter) {
 export async function selectArticle(article, state) {
     state.setLoading(true);
     state.setArticleOpen(true);
+    // immediately expose the original URL so the detail component can render a link
+    if (state.setArticleUrl) {
+        state.setArticleUrl(article.article_url);
+    }
     state.setArticleContent(null);
     state.router.push('#article');
     state.setSummary('');

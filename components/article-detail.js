@@ -6,6 +6,7 @@ import styles from '../styles/modal.module.css';
  *
  * @param {Object} props - The props for the modal component.
  * @param {string} props.articleContent - The content of the article.
+ * @param {string} props.articleUrl - The original URL of the article.
  * @param {string} props.rawText - The raw text of the article.
  * @param {string} props.articleId - The ID of the article
  * @param {Object} props.state - Hooks to set application state.
@@ -13,9 +14,23 @@ import styles from '../styles/modal.module.css';
  * @returns {JSX.Element} The rendered modal component.
  */
 export default function ArticleDetail(props) {
+    const originalLink = props.articleUrl ? (
+        <div className={styles.original_link}>
+            <a
+                href={props.articleUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'blue', textDecoration: 'underline' }}
+            >
+                View original article
+            </a>
+        </div>
+    ) : null;
+
     return (
         <div>
             <div className={styles.article}>
+                {originalLink}
                 {props.rawText && !props.summary && (
                     <div
                         className={styles.summarize}
@@ -36,9 +51,14 @@ export default function ArticleDetail(props) {
                         <div className={styles.summary}>{props.summary}</div>
                     </>
                 )}
-                <div className={styles.articlecontent}>{props.articleContent}</div>
+                <div className={styles.articlecontent}>
+                    {props.articleContent}
+                </div>
             </div>
-            <div onClick={() => props.state.router.back()} className={styles.back}>
+            <div
+                onClick={() => props.state.router.back()}
+                className={styles.back}
+            >
                 <img
                     className={styles.back_icon}
                     src="/chevron-left-solid.svg"

@@ -4,9 +4,9 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import { backgroundFetch, fetchNewsData } from '../util/feed-api';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import ArticleDetail from '../components/article-detail';
 import { FETCH_INTERVAL } from '../util/constants';
 import Head from 'next/head';
-import ArticleDetail from '../components/article-detail';
 import NewsFeed from '../components/news-feed';
 import NewsSidebar from '../components/news-sidebar';
 import TopLoader from '../components/top-loader';
@@ -14,13 +14,13 @@ import { UserSession } from '../util/session';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 
-
 export default function Home() {
     const [feedData, setFeedData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
     const [filter, setFilter] = useState(null);
     const [articleOpen, setArticleOpen] = useState(false);
     const [articleContent, setArticleContent] = useState(null);
+    const [articleUrl, setArticleUrl] = useState(null);
     const [articleId, setArticleId] = useState(null);
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
@@ -73,6 +73,7 @@ export default function Home() {
     const state = useMemo(() => {
         return {
             setArticleContent: setArticleContent,
+            setArticleUrl: setArticleUrl,
             setArticleOpen: setArticleOpen,
             setFeedData: setFeedData,
             setFilter: setFilter,
@@ -146,6 +147,7 @@ export default function Home() {
             {router.asPath.includes('article') && (
                 <ArticleDetail
                     articleContent={articleContent}
+                    articleUrl={articleUrl}
                     rawText={rawText}
                     state={state}
                     articleId={articleId}

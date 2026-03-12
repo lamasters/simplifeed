@@ -409,49 +409,12 @@ export class UserSession {
             );
             const article = JSON.parse(res.responseBody).data;
             if (res.responseStatusCode != 200)
-                return (
-                    <div>
-                        Couldn't parse article.{' '}
-                        <a
-                            href={url}
-                            target="_blank"
-                            style={{
-                                color: 'blue',
-                                textDecoration: 'underline',
-                            }}
-                        >
-                            View original article.
-                        </a>
-                    </div>
-                );
+                return <div>Couldn't parse article.</div>;
             let url_origin = new URL(url).origin;
             let flex_dir =
                 window.innerWidth > window.innerHeight ? 'row' : 'column';
             let width = Math.min(screen.width, window.innerWidth);
             let content = [
-                <span
-                    style={{
-                        display: 'flex',
-                        flexDirection: flex_dir,
-                        justifyItems: 'center',
-                        alignItems: 'center',
-                        margin: 'auto',
-                        textAlign: 'center',
-                    }}
-                >
-                    <a
-                        href={url}
-                        target="_blank"
-                        style={{
-                            color: 'blue',
-                            textDecoration: 'underline',
-                            margin: 'auto',
-                        }}
-                    >
-                        View original article
-                    </a>
-                </span>,
-                <br />,
                 <div
                     style={{
                         display: 'flex',
@@ -463,8 +426,8 @@ export class UserSession {
                         marginBottom: '10px',
                         width: '100%',
                     }}
+                    key="header"
                 >
-                    {' '}
                     <img
                         src={`https://www.google.com/s2/favicons?sz=64&domain=${url_origin}`}
                         width="48px"
@@ -472,20 +435,19 @@ export class UserSession {
                         style={{
                             alignSelf: 'center',
                         }}
+                        alt="favicon"
                     />
                     <h1
                         style={{
                             textAlign: 'left',
                             marginTop: '10px',
-                            marginLeft: '20px'
+                            marginLeft: '20px',
                         }}
                     >
                         {title}
                     </h1>
                 </div>,
-                author ? (
-                    <h3 style={{ width: '70%' }}>{author}</h3>
-                ) : null,
+                author ? <h3 style={{ width: '70%' }}>{author}</h3> : null,
                 <h3 style={{ width: '70%' }}>
                     {new Date(pubDate).toLocaleString()}
                 </h3>,
@@ -506,7 +468,7 @@ export class UserSession {
                                 margin: 'auto',
                                 marginTop: '20px',
                                 marginBottom: '10px',
-                                fontWeight: 'bold'
+                                fontWeight: 'bold',
                             }}
                             key={tagCount}
                         >
@@ -519,7 +481,7 @@ export class UserSession {
                             style={{
                                 margin: 'auto',
                                 marginLeft: 'auto',
-                                listStylePosition: 'inside'
+                                listStylePosition: 'inside',
                             }}
                             key={tagCount}
                         >
@@ -533,7 +495,7 @@ export class UserSession {
                                 margin: 'auto',
                                 fontStyle: 'italic',
                                 borderLeft: '4px solid #ccc',
-                                paddingLeft: '10px'
+                                paddingLeft: '10px',
                             }}
                             key={tagCount}
                         >
@@ -545,7 +507,7 @@ export class UserSession {
                         <p
                             style={{
                                 margin: 'auto',
-                                marginBottom: '10px'
+                                marginBottom: '10px',
                             }}
                             key={tagCount}
                         >

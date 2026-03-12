@@ -84,3 +84,10 @@
     font-size: 16px;
     line-height: 22px;
 }
+
+.original_link {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
