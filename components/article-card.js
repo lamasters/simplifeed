@@ -70,11 +70,9 @@ export default function ArticleCard(props) {
                     src={`https://www.google.com/s2/favicons?sz=64&domain=${url.origin}`}
                     width={36}
                     height={36}
-                    style={{
-                        marginRight: '10px',
-                    }}
+                    className={styles.favicon}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                <div className={styles.headerText}>
                     <h4 className={styles.info}>{props.article.title}</h4>
                     <h4 className={styles.itemTitle}>
                         {props.article.news_feed.feed_title}
