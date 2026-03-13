@@ -23,13 +23,16 @@ export default function ArticleDetail(props) {
                         onClick={() => returnToFeed(props.state)}
                         aria-label="Back to feed"
                     >
-                        <img
-                            className={styles.back_icon}
-                            src="/chevron-left-solid.svg"
-                            alt="Back"
-                            height="24px"
-                            width="24px"
-                        />
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 320 512"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" />
+                        </svg>
                     </button>
                     <span className={styles.readerTitle}>Reader View</span>
                     <button
