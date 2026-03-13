@@ -117,7 +117,7 @@ deploy_get_article:
 	--function-id=67a15bad9774f8a009c5 \
 	--entrypoint='get_article.py' \
 	--commands='pip install -r requirements.txt' \
-	--code="./functions/get_article" \
+	--code="./functions/summarize_article" \
 	--activate=true
 
 create_get_article:
@@ -126,7 +126,7 @@ create_get_article:
 	--name="get_article" \
 	--runtime=python-3.9 \
 	--commands='pip install -r requirements.txt' \
-	--provider-root-directory="./functions/get_article" \
+	--provider-root-directory="./functions/summarize_article" \
 	--entrypoint='get_article.py' \
 	--timeout=30 \
 	--enabled=true

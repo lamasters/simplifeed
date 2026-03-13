@@ -30,7 +30,7 @@ function LoadingPhrases() {
                 setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
                 setIsVisible(true);
             }, 300);
-        }, 1000);
+        }, 2000);
 
         return () => clearInterval(interval);
     }, [phrases.length]);
