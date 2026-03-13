@@ -29,7 +29,7 @@ function LoadingPhrases() {
             setTimeout(() => {
                 setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
                 setIsVisible(true);
-            }, 300);
+            }, 500);
         }, 2000);
 
         return () => clearInterval(interval);
