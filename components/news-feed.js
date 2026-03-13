@@ -82,6 +82,7 @@ export default function NewsFeed(props) {
                             </div>
                         ))}
                     {!feedsEqual(props.feedData, props.loadedData) &&
+                        !props.filter &&
                         !props.articleOpen && (
                             <div
                                 className={`${styles.update} ${styles.slide_bottom}`}
@@ -100,7 +101,10 @@ export default function NewsFeed(props) {
                     <ul style={{ width: '100%' }}>
                         {articleList.map((article) => (
                             <>
-                                <ArticleCard article={article} state={props.state} />
+                                <ArticleCard
+                                    article={article}
+                                    state={props.state}
+                                />
                                 <div
                                     className={styles.divider}
                                     key={article.title + '_divider'}
