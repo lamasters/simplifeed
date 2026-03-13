@@ -10,8 +10,8 @@ from appwrite.input_file import InputFile
 from appwrite.services.databases import Databases
 from appwrite.services.storage import Storage
 from pydantic import BaseModel, Field
-import google.generativeai as genai
-from .get_article import fetch_article_content, ArticleContentRes
+from google import genai
+from google.genai import types
 
 PROJECT_ID = "67cccd44002cccfc9ae0"
 FEEDS_DATABASE_ID = "6466af38420c3ca601c1"
@@ -50,31 +50,21 @@ def main(context):
     except Exception:
         context.log("No summary found, generating one")
 
-    res_data: ArticleContentRes = fetch_article_content(req_data.article_url)
-    if not res_data.data:
-        context.log("Could not fetch article content")
-        return context.res.json({"error": "Failed to fetch article content from URL"})
-    article_content = "\n".join(block.content for block in res_data.data.tags)
-    if not article_content:
-        context.log("Fetched article but content empty")
-        return context.res.json({"error": "Article content empty"})
-
     context.log("Getting article summary from Gemini")
     try:
-        genai.configure(api_key=os.getenv("GOOGLE_GEMINI_API_KEY"))
-        model = genai.GenerativeModel(
-            "gemini-2.5-flash-lite",
-            system_instruction="Summarize the following article, highlighting the main points "
+        client = genai.Client(api_key=os.getenv("GOOGLE_GEMINI_API_KEY"))
+        grounding_tool = types.Tool(google_search=types.GoogleSearch())
+
+        config = types.GenerateContentConfig(tools=[grounding_tool])
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents="Summarize the following article, highlighting the main points "
             "and providing key takeaways. Keep the summary to one paragraph to make it "
-            "digestible for readers, breaking it up into bullet points. Avoid any prose that isn't directly summarizing the article.",
+            "digestible for readers, breaking it up into bullet points. Avoid any prose "
+            f"that isn't directly summarizing the article.\n\n {req_data.article_url}",
+            config=config,
         )
-
-        # Truncate content if too long (Gemini has token limits)
-        max_chars = 8000
-        if len(article_content) > max_chars:
-            article_content = article_content[:max_chars] + "..."
-
-        response = model.generate_content(article_content)
 
         summary_text = response.text
         context.log("Generated summary using Gemini")
