@@ -27,7 +27,9 @@ function LoadingPhrases() {
         'Rounding up the facts...',
     ];
 
-    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(
+        Math.floor(Math.random() * phrases.length)
+    );
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
