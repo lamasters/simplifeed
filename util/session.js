@@ -50,6 +50,12 @@ export class UserSession {
     async login(email, password, router, setLoading, loginFail) {
         setLoading(true);
         try {
+            const existingSession = await this.getSession();
+            if (existingSession.$id) {
+                router.push('/');
+                return;
+            }
+
             let res = await this.account.createEmailPasswordSession(
                 email,
                 password
