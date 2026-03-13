@@ -17,6 +17,14 @@ function LoadingPhrases() {
         'Extracting points...',
         'Getting the gist...',
         'Crafting summary...',
+        'Scanning the headlines...',
+        'Connecting the dots...',
+        'Polishing the highlights...',
+        'Translating jargon...',
+        'Trimming the fluff...',
+        'Squashing the buzzwords...',
+        'Reading between the lines...',
+        'Rounding up the facts...',
     ];
 
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
@@ -27,7 +35,9 @@ function LoadingPhrases() {
             setIsVisible(false);
 
             setTimeout(() => {
-                setCurrentPhraseIndex((prev) => (prev + 1) % phrases.length);
+                setCurrentPhraseIndex(
+                    Math.floor(Math.random() * phrases.length)
+                );
                 setIsVisible(true);
             }, 500);
         }, 2000);
