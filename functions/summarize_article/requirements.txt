@@ -1,4 +1,8 @@
 appwrite==4.1.0
-openai==1.60.1
+google-generativeai>=0.3.0
+pydantic==2.4.2
+requests==2.32.4
+fastapi==0.111.0
+html-reader-mode==0.1.1
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability

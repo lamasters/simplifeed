@@ -1,71 +1,52 @@
-import { getArticleSummary } from '../util/feed-api';
+import { openArticleSource, returnToFeed } from '../util/feed-api';
+
 import styles from '../styles/modal.module.css';
 
 /**
- * Renders a modal component for displaying an article.
+ * Renders the reader view - the clean, parsed text version of the full article.
+ * This component displays the article content and provides navigation to summary or source.
  *
- * @param {Object} props - The props for the modal component.
+ * @param {Object} props - The props for the reader view component.
  * @param {string} props.articleContent - The content of the article.
  * @param {string} props.articleUrl - The original URL of the article.
  * @param {string} props.rawText - The raw text of the article.
- * @param {string} props.articleId - The ID of the article
  * @param {Object} props.state - Hooks to set application state.
- * @param {string} props.summary - The summary of the article.
- * @returns {JSX.Element} The rendered modal component.
+ * @returns {JSX.Element} The rendered reader view component.
  */
 export default function ArticleDetail(props) {
-    const originalLink = props.articleUrl ? (
-        <div className={styles.original_link}>
-            <a
-                href={props.articleUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'blue', textDecoration: 'underline' }}
-            >
-                View original article
-            </a>
-        </div>
-    ) : null;
-
     return (
         <div>
             <div className={styles.article}>
-                {originalLink}
-                {props.rawText && !props.summary && (
-                    <div
-                        className={styles.summarize}
-                        onClick={() => {
-                            getArticleSummary(
-                                props.state,
-                                props.rawText,
-                                props.articleId
-                            );
-                        }}
+                <div className={styles.readerHeader}>
+                    <button
+                        className={styles.readerBackBtn}
+                        onClick={() => returnToFeed(props.state)}
+                        aria-label="Back to feed"
                     >
-                        <div className={styles.summary_text}>✨ Summarize</div>
-                    </div>
-                )}
-                {props.summary && (
-                    <>
-                        <h2 className={styles.ai_header}>AI Summary</h2>
-                        <div className={styles.summary}>{props.summary}</div>
-                    </>
-                )}
+                        <img
+                            className={styles.back_icon}
+                            src="/chevron-left-solid.svg"
+                            alt="Back"
+                            height="24px"
+                            width="24px"
+                        />
+                    </button>
+                    <span className={styles.readerTitle}>Reader View</span>
+                    <button
+                        className={styles.readerSourceBtn}
+                        onClick={() => {
+                            openArticleSource({
+                                article_url: props.articleUrl,
+                            });
+                        }}
+                        aria-label="Open source"
+                    >
+                        🌐
+                    </button>
+                </div>
                 <div className={styles.articlecontent}>
                     {props.articleContent}
                 </div>
-            </div>
-            <div
-                onClick={() => props.state.router.back()}
-                className={styles.back}
-            >
-                <img
-                    className={styles.back_icon}
-                    src="/chevron-left-solid.svg"
-                    alt="Back"
-                    height="36px"
-                    width="36px"
-                />
             </div>
         </div>
     );

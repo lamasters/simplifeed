@@ -1,4 +1,5 @@
-import { selectArticle } from '../util/feed-api';
+import { openArticleSource, openArticleSummary } from '../util/feed-api';
+
 import styles from '../styles/article-card.module.css';
 
 /**
@@ -58,13 +59,7 @@ export function timeSince(datetime) {
 export default function ArticleCard(props) {
     const url = new URL(props.article.article_url);
     return (
-        <li
-            onClick={() => {
-                selectArticle(props.article, props.state);
-            }}
-            className={styles.item}
-            key={props.article.title}
-        >
+        <li className={styles.item} key={props.article.title}>
             <div className={styles.itemHeader}>
                 <img
                     src={`https://www.google.com/s2/favicons?sz=64&domain=${url.origin}`}
@@ -84,6 +79,26 @@ export default function ArticleCard(props) {
             </div>
             <div className={styles.date}>
                 {timeSince(props.article.pub_date)}
+            </div>
+            <div className={styles.actionBar}>
+                <button
+                    className={styles.actionBtn}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        openArticleSummary(props.article, props.state);
+                    }}
+                >
+                    ✨ Summary
+                </button>
+                <button
+                    className={styles.actionBtn}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        openArticleSource(props.article);
+                    }}
+                >
+                    🌐 Source
+                </button>
             </div>
         </li>
     );

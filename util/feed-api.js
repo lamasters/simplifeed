@@ -134,6 +134,92 @@ export async function selectArticle(article, state) {
 }
 
 /**
+ * Opens the article summary page.
+ * @param {Object} article - The article object to be displayed.
+ * @param {Object} state - Hooks to update application state.
+ */
+export async function openArticleSummary(article, state) {
+    state.setLoading(true);
+    state.setArticleOpen(true);
+    state.setViewMode('summary');
+
+    if (state.setArticleUrl) {
+        state.setArticleUrl(article.article_url);
+    }
+    state.setArticleId(article.$id);
+    state.setArticleTitle(article.title);
+    state.setArticleSource(article.news_feed.feed_title);
+
+    state.setArticleContent(null);
+    state.setSummary('');
+    state.setRawText('');
+
+    state.router.push('#summary');
+
+    const summary = await state.session.getSummary(
+        article.article_url,
+        article.$id
+    );
+    if (summary) {
+        state.setSummary(summary);
+    } else if (summary === null) {
+        state.setSummary('Failed to fetch summary.');
+    }
+
+    state.setLoading(false);
+}
+
+/**
+ * Opens the article source in a new tab/window.
+ * @param {Object} article - The article object with source URL.
+ */
+export function openArticleSource(article) {
+    window.open(article.article_url, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * Returns to the feed page from the summary or reader view.
+ * @param {Object} state - Hooks to update application state.
+ */
+export function returnToFeed(state) {
+    state.setArticleOpen(false);
+    state.setViewMode('feed');
+    state.router.push('/');
+}
+
+/**
+ * Opens the reader view from the summary page.
+ * @param {Object} state - Hooks to update application state.
+ * @param {string} articleUrl - The article URL to fetch.
+ * @param {string} articleTitle - The article title.
+ * @param {string} articleAuthor - The article author.
+ * @param {string} pubDate - The publication date.
+ */
+export async function openReaderView(
+    state,
+    articleUrl,
+    articleTitle,
+    articleAuthor,
+    pubDate
+) {
+    state.setLoading(true);
+    state.setViewMode('reader');
+
+    state.router.push('#reader');
+
+    const articleContent = await state.session.getArticle(
+        articleUrl,
+        articleTitle,
+        articleAuthor,
+        pubDate,
+        state.setRawText
+    );
+
+    state.setArticleContent(articleContent);
+    state.setLoading(false);
+}
+
+/**
  * Adds a feed to the state and updates the feed data.
  * @param {string} url - The URL of the feed to be added.
  * @param {object} state - The state object containing session and feed data.

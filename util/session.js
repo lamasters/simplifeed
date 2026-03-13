@@ -557,9 +557,9 @@ export class UserSession {
 
     /**
      * Retrieves the AI summary of an article.
-     * @param {string} article - The article to retrieve the summary for.
+     * @param {string} article_url- The article url to retrieve the summary for.
      */
-    async getSummary(article, articleId) {
+    async getSummary(article_url, articleId) {
         const download = await this.downloadSummary(articleId);
         if (download) return download;
         try {
@@ -567,7 +567,7 @@ export class UserSession {
                 APPWRITE_CONFIG.SUMMARIZE_ARTICLE_FN,
                 JSON.stringify({
                     user_id: this.uid,
-                    article: article,
+                    article_url: article_url,
                     article_id: articleId,
                 }),
                 false,
@@ -579,7 +579,7 @@ export class UserSession {
             console.error(err);
         }
 
-        return '';
+        return null;
     }
 
     async searchNewsFeeds(query) {

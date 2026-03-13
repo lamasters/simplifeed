@@ -37,7 +37,10 @@
     flex-direction: column;
     justify-content: left;
     align-items: left;
-    padding: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
     overflow: hidden;
     min-height: 100px;
     /* removed fixed max-height so content can determine size */
@@ -46,8 +49,6 @@
 }
 
 .item:hover {
-    cursor: pointer;
-    background-color: var(--background-hover);
     overflow: hidden;
 }
 
@@ -68,8 +69,9 @@
 }
 
 .description {
-    /* allow a bit more space before truncating long text */
-    max-height: 128px;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -86,4 +88,31 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
+}
+
+.actionBar {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.actionBtn {
+    flex: 1;
+    padding: 12px 8px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--background-hover);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.actionBtn:hover {
+    background-color: var(--accent-primary-hover);
+}
+
+.actionBtn:active {
+    transform: scale(0.98);
 }

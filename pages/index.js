@@ -5,6 +5,7 @@ import { backgroundFetch, fetchNewsData } from '../util/feed-api';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import ArticleDetail from '../components/article-detail';
+import ArticleSummary from '../components/article-summary';
 import { FETCH_INTERVAL } from '../util/constants';
 import Head from 'next/head';
 import NewsFeed from '../components/news-feed';
@@ -22,11 +23,16 @@ export default function Home() {
     const [articleContent, setArticleContent] = useState(null);
     const [articleUrl, setArticleUrl] = useState(null);
     const [articleId, setArticleId] = useState(null);
+    const [articleTitle, setArticleTitle] = useState(null);
+    const [articleSource, setArticleSource] = useState(null);
+    const [articleAuthor, setArticleAuthor] = useState(null);
+    const [pubDate, setPubDate] = useState(null);
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rawText, setRawText] = useState('');
     const [summary, setSummary] = useState('');
+    const [viewMode, setViewMode] = useState('feed'); // 'feed', 'summary', 'reader'
     const [limit, setLimit] = useState(100);
     const [offset, setOffset] = useState(0);
 
@@ -75,6 +81,10 @@ export default function Home() {
             setArticleContent: setArticleContent,
             setArticleUrl: setArticleUrl,
             setArticleOpen: setArticleOpen,
+            setArticleTitle: setArticleTitle,
+            setArticleSource: setArticleSource,
+            setArticleAuthor: setArticleAuthor,
+            setPubDate: setPubDate,
             setFeedData: setFeedData,
             setFilter: setFilter,
             setLoadedData: setLoadedData,
@@ -86,6 +96,7 @@ export default function Home() {
             setOffset: setOffset,
             setArticleId: setArticleId,
             setSummary: setSummary,
+            setViewMode: setViewMode,
             router: router,
             session: new UserSession(),
         };
@@ -106,6 +117,7 @@ export default function Home() {
             FETCH_INTERVAL
         );
     }, []);
+
     return (
         <main>
             <Head>
@@ -144,7 +156,20 @@ export default function Home() {
                 />
             </div>
             {loading && <TopLoader />}
-            {router.asPath.includes('article') && (
+
+            {router.asPath.includes('summary') && (
+                <ArticleSummary
+                    articleTitle={articleTitle}
+                    articleSource={articleSource}
+                    articleUrl={articleUrl}
+                    summary={summary}
+                    state={state}
+                    articleAuthor={articleAuthor}
+                    pubDate={pubDate}
+                />
+            )}
+
+            {router.asPath.includes('reader') && (
                 <ArticleDetail
                     articleContent={articleContent}
                     articleUrl={articleUrl}
@@ -154,6 +179,7 @@ export default function Home() {
                     summary={summary}
                 />
             )}
+
             <ToastContainer />
         </main>
     );
