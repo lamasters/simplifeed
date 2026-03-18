@@ -1,5 +1,5 @@
 import { loadMoreNewsData, searchNewsArticles } from '../util/feed-api';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ArticleCard from './article-card';
 import styles from '../styles/feed.module.css';
@@ -49,6 +49,8 @@ export default function NewsFeed(props) {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
+    const searchTimeoutRef = useRef(null);
+    const abortControllerRef = useRef(null);
     useEffect(() => {
         if (localStorage.getItem('seenTutorial') !== null) {
             setSeenTutorial(true);
@@ -62,22 +64,57 @@ export default function NewsFeed(props) {
         }
     }, [props.feedData, searchResults, isSearching, searchQuery]);
 
-    const handleSearch = async (query) => {
-        setSearchQuery(query);
-        if (query.trim()) {
-            setIsSearching(true);
-            const results = await searchNewsArticles(
-                props.state,
-                query,
-                PAGE_SIZE,
-                0
-            );
-            setSearchResults(results);
-        } else {
-            setIsSearching(false);
-            setSearchResults([]);
-        }
-    };
+    const handleSearch = useCallback(
+        async (query) => {
+            setSearchQuery(query);
+
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+
+            if (query.trim()) {
+                setIsSearching(true);
+
+                // Debounce the search by 300ms
+                searchTimeoutRef.current = setTimeout(async () => {
+                    try {
+                        abortControllerRef.current = new AbortController();
+                        const results = await searchNewsArticles(
+                            props.state,
+                            query,
+                            PAGE_SIZE,
+                            0,
+                            abortControllerRef.current.signal
+                        );
+                        setSearchResults(results);
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            console.error('Search error:', error);
+                        }
+                    }
+                }, 300);
+            } else {
+                setIsSearching(false);
+                setSearchResults([]);
+            }
+        },
+        [props.state]
+    );
+
+    useEffect(() => {
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+    }, []);
     const feedRef = useRef();
     return (
         <>

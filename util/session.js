@@ -621,9 +621,10 @@ export class UserSession {
      * @param {string} query - The search query.
      * @param {number} limit - The maximum number of articles to return.
      * @param {number} offset - The offset for pagination.
+     * @param {AbortSignal} signal - Abort signal for cancelling the request.
      * @returns {Array<Object>} An array of matching articles.
      */
-    async searchNewsArticles(query, limit = 100, offset = 0) {
+    async searchNewsArticles(query, limit = 100, offset = 0, signal) {
         if (!this.newsSubscriptions) await this.getSubscriptions();
         if (this.newsSubscriptions.length === 0) return [];
         const subscription_queries = this.newsSubscriptions.map((source) =>
@@ -649,6 +650,10 @@ export class UserSession {
             );
         }
         try {
+            if (signal && signal.aborted) {
+                throw new Error('Request aborted');
+            }
+
             const articles = await this.database.listDocuments(
                 APPWRITE_CONFIG.FEEDS_DB,
                 APPWRITE_CONFIG.NEWS_ARTICLES,
@@ -656,6 +661,12 @@ export class UserSession {
             );
             return articles.documents;
         } catch (err) {
+            if (
+                err.name === 'AbortError' ||
+                err.message === 'Request aborted'
+            ) {
+                throw err;
+            }
             console.error(err);
             return [];
         }
