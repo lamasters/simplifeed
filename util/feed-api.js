@@ -284,7 +284,12 @@ export async function searchNewsFeeds(state, query) {
 
 export async function searchNewsArticles(state, query, limit, offset, signal) {
     state.setLoading(true);
-    let articles = await state.session.searchNewsArticles(query, limit, offset, signal);
+    let articles = await state.session.searchNewsArticles(
+        query,
+        limit,
+        offset,
+        signal
+    );
     state.setLoading(false);
     return articles;
 }
