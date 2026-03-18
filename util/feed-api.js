@@ -282,6 +282,13 @@ export async function searchNewsFeeds(state, query) {
     return await state.session.searchNewsFeeds(query);
 }
 
+export async function searchNewsArticles(state, query, limit, offset) {
+    state.setLoading(true);
+    let articles = await state.session.searchNewsArticles(query, limit, offset);
+    state.setLoading(false);
+    return articles;
+}
+
 export async function searchPodcastFeeds(state, query) {
     return await state.session.searchPodcastFeeds(query);
 }

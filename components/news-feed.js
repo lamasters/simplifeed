@@ -1,7 +1,7 @@
+import { loadMoreNewsData, searchNewsArticles } from '../util/feed-api';
 import { useEffect, useRef, useState } from 'react';
 
 import ArticleCard from './article-card';
-import { loadMoreNewsData } from '../util/feed-api';
 import styles from '../styles/feed.module.css';
 
 const PAGE_SIZE = 100;
@@ -46,14 +46,38 @@ function createArticleList(feedData, setArticleList) {
 export default function NewsFeed(props) {
     const [articleList, setArticleList] = useState([]);
     const [seenTutorial, setSeenTutorial] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
     useEffect(() => {
         if (localStorage.getItem('seenTutorial') !== null) {
             setSeenTutorial(true);
         } else {
             localStorage.setItem('seenTutorial', true);
         }
-        createArticleList(props.feedData, setArticleList);
-    }, [props.feedData]);
+        if (isSearching && searchQuery.trim()) {
+            setArticleList(searchResults);
+        } else {
+            createArticleList(props.feedData, setArticleList);
+        }
+    }, [props.feedData, searchResults, isSearching, searchQuery]);
+
+    const handleSearch = async (query) => {
+        setSearchQuery(query);
+        if (query.trim()) {
+            setIsSearching(true);
+            const results = await searchNewsArticles(
+                props.state,
+                query,
+                PAGE_SIZE,
+                0
+            );
+            setSearchResults(results);
+        } else {
+            setIsSearching(false);
+            setSearchResults([]);
+        }
+    };
     const feedRef = useRef();
     return (
         <>
@@ -68,6 +92,24 @@ export default function NewsFeed(props) {
             </div>
             <div ref={feedRef} id={styles.feed_container}>
                 <div id={styles.feed_content}>
+                    <input
+                        type="text"
+                        placeholder="Search articles..."
+                        value={searchQuery}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        style={{
+                            margin: 'auto',
+                            marginBottom: '10px',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            border: '1px solid var(--accent-secondary)',
+                            backgroundColor: 'var(--background-primary)',
+                            color: 'var(--text-secondary)',
+                            fontSize: '16px',
+                            width: '90%',
+                            maxWidth: '100%',
+                        }}
+                    />
                     {props.showTutorial &&
                         (seenTutorial ? (
                             <div id={styles.tutorial}>
@@ -83,7 +125,8 @@ export default function NewsFeed(props) {
                         ))}
                     {!feedsEqual(props.feedData, props.loadedData) &&
                         !props.filter &&
-                        !props.articleOpen && (
+                        !props.articleOpen &&
+                        !isSearching && (
                             <div
                                 className={`${styles.update} ${styles.slide_bottom}`}
                                 onClick={() => {
@@ -111,7 +154,7 @@ export default function NewsFeed(props) {
                                 ></div>
                             </>
                         ))}
-                        {props.feedData.length > 0 && (
+                        {props.feedData.length > 0 && !isSearching && (
                             <li
                                 id={styles.load_more_card}
                                 onClick={async () => {
@@ -128,6 +171,26 @@ export default function NewsFeed(props) {
                                 }}
                             >
                                 Load More
+                            </li>
+                        )}
+                        {isSearching && searchResults.length >= PAGE_SIZE && (
+                            <li
+                                id={styles.load_more_card}
+                                onClick={async () => {
+                                    const moreResults =
+                                        await searchNewsArticles(
+                                            props.state,
+                                            searchQuery,
+                                            PAGE_SIZE,
+                                            searchResults.length
+                                        );
+                                    setSearchResults([
+                                        ...searchResults,
+                                        ...moreResults,
+                                    ]);
+                                }}
+                            >
+                                Load More Search Results
                             </li>
                         )}
                     </ul>

@@ -617,6 +617,51 @@ export class UserSession {
     }
 
     /**
+     * Searches for news articles whose title or description contains the search query.
+     * @param {string} query - The search query.
+     * @param {number} limit - The maximum number of articles to return.
+     * @param {number} offset - The offset for pagination.
+     * @returns {Array<Object>} An array of matching articles.
+     */
+    async searchNewsArticles(query, limit = 100, offset = 0) {
+        if (!this.newsSubscriptions) await this.getSubscriptions();
+        if (this.newsSubscriptions.length === 0) return [];
+        const subscription_queries = this.newsSubscriptions.map((source) =>
+            Query.equal('news_feed', source.$id)
+        );
+        const queries = [
+            Query.limit(limit),
+            Query.offset(offset),
+            Query.orderDesc('pub_date'),
+        ];
+        if (subscription_queries.length === 1) {
+            queries.push(subscription_queries[0]);
+        } else if (subscription_queries.length > 1) {
+            queries.push(Query.or(subscription_queries));
+        }
+        // Add search query
+        if (query && query.trim()) {
+            queries.push(
+                Query.or([
+                    Query.contains('title', query.trim()),
+                    Query.contains('description', query.trim()),
+                ])
+            );
+        }
+        try {
+            const articles = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.NEWS_ARTICLES,
+                queries
+            );
+            return articles.documents;
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    }
+
+    /**
      * Retrieves the user's podcasts.
      * @returns {Array<Object>|null} The user's podcast episodes, or null if an error occurs.
      */

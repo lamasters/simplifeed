@@ -48,10 +48,6 @@
     border-radius: 5px;
 }
 
-.item:hover {
-    overflow: hidden;
-}
-
 .itemHeader {
     display: flex;
     flex-direction: row;
