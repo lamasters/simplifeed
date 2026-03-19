@@ -32,31 +32,6 @@ class ServerRequest(BaseModel):
     user_id: Optional[str] = Field(None)
 
 
-def get_article_summaries(context, databases, article_ids):
-    """Fetch summaries for articles, retrieving from cache if available."""
-    summaries_storage = Storage(
-        Client()
-        .set_key(os.getenv("APPWRITE_API_KEY"))
-        .set_endpoint("https://appwrite.liammasters.space/v1")
-        .set_project(PROJECT_ID)
-    )
-
-    article_summaries = {}
-    for article_id in article_ids:
-        try:
-            # Try to get from cache
-            cached = summaries_storage.get_file_download(SUMMARY_BUCKET_ID, article_id)
-            if cached:
-                article_summaries[article_id] = json.loads(
-                    cached.decode() if isinstance(cached, bytes) else cached
-                )
-        except Exception as e:
-            context.log(f"Could not fetch cached summary for {article_id}: {e}")
-            article_summaries[article_id] = None
-
-    return article_summaries
-
-
 def extract_topics_from_articles(context, articles, summaries):
     """Use Gemini LLM to extract 3-7 key topics from articles."""
     try:

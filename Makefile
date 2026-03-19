@@ -150,8 +150,27 @@ create_scheduler:
 	--timeout=900 \
 	--enabled=true
 
-deploy_all: deploy_ai deploy_record_listen_time deploy_index_news_feed deploy_index_podcast_feed deploy_create_news_feed deploy_create_podcast_feed deploy_get_article deploy_scheduler
+deploy_daily_digest:
+	appwrite functions create-deployment \
+	--function-id=create_daily_digest \
+	--entrypoint='create_daily_digest.py' \
+	--commands='pip install -r requirements.txt' \
+	--code="./functions/create_daily_digest" \
+	--activate=true
+
+create_daily_digest:
+	appwrite functions create \
+	--function-id=create_daily_digest \
+	--name="create_daily_digest" \
+	--runtime=python-3.9 \
+	--commands='pip install -r requirements.txt' \
+	--provider-root-directory="./functions/create_daily_digest" \
+	--entrypoint='create_daily_digest.py' \
+	--timeout=900 \
+	--enabled=true
+
+deploy_all: deploy_ai deploy_record_listen_time deploy_index_news_feed deploy_index_podcast_feed deploy_create_news_feed deploy_create_podcast_feed deploy_get_article deploy_scheduler deploy_daily_digest
 	echo "All functions deployed."
 
-create_all: create_ai create_record_listen_time create_index_news_feed create_index_podcast_feed create_create_news_feed create_create_podcast_feed create_get_article create_scheduler
+create_all: create_ai create_record_listen_time create_index_news_feed create_index_podcast_feed create_create_news_feed create_create_podcast_feed create_get_article create_scheduler create_daily_digest
 	echo "All functions created."
