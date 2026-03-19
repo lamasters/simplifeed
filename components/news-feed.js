@@ -129,24 +129,57 @@ export default function NewsFeed(props) {
             </div>
             <div ref={feedRef} id={styles.feed_container}>
                 <div id={styles.feed_content}>
-                    <input
-                        type="text"
-                        placeholder="Search articles..."
-                        value={searchQuery}
-                        onChange={(e) => handleSearch(e.target.value)}
+                    <div
                         style={{
+                            display: 'flex',
+                            alignItems: 'center',
                             margin: 'auto',
                             marginBottom: '10px',
-                            padding: '10px',
-                            borderRadius: '10px',
+                            width: '90%',
+                            padding: '0px',
+                            borderRadius: '25px',
                             border: '1px solid var(--accent-secondary)',
                             backgroundColor: 'var(--background-primary)',
-                            color: 'var(--text-secondary)',
-                            fontSize: '16px',
-                            width: '90%',
-                            maxWidth: '100%',
                         }}
-                    />
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="var(--accent-secondary)"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            style={{
+                                color: 'var(--text-secondary)',
+                                marginLeft: '10px',
+                                flexShrink: 0,
+                            }}
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input
+                            type="text"
+                            placeholder="Search articles..."
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            style={{
+                                flex: 1,
+                                padding: '10px',
+                                marginTop: '0px',
+                                marginBottom: '0px',
+                                marginLeft: '8px',
+                                border: 'none',
+                                backgroundColor: 'transparent',
+                                color: 'var(--text-secondary)',
+                                fontSize: '16px',
+                                outline: 'none',
+                                maxWidth: '100%',
+                            }}
+                        />
+                    </div>
                     {props.showTutorial &&
                         (seenTutorial ? (
                             <div id={styles.tutorial}>
