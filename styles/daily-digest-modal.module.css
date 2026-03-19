@@ -1,0 +1,333 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal {
+    background-color: var(--background);
+    border-radius: 12px;
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    flex-shrink: 0;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--foreground);
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--foreground);
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.closeButton:hover {
+    opacity: 1;
+}
+
+.dateSelector {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.dateSelector label {
+    color: var(--foreground);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.dateSelect {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.2));
+    border-radius: 6px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.dateSelect:focus {
+    outline: none;
+    border-color: var(--accent, #1f2937);
+    box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.1);
+}
+
+.content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.loading p {
+    margin: 0;
+}
+
+.error {
+    padding: 20px;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #dc2626;
+    margin-bottom: 20px;
+}
+
+.error p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+}
+
+.noDigestInfo {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.digestMeta {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+}
+
+.digestMeta p {
+    margin: 0;
+}
+
+.topics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.topicCard {
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--card-background, var(--background));
+}
+
+.topicHeader {
+    width: 100%;
+    padding: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s;
+}
+
+.topicHeader:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.topicTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--foreground);
+    text-align: left;
+    flex: 1;
+}
+
+.expandIcon {
+    color: var(--text-muted);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.expandIcon.expanded {
+    transform: rotate(180deg);
+}
+
+.topicSummary {
+    padding: 0 15px 15px 15px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+}
+
+.topicSummary p {
+    margin: 0;
+}
+
+.citations {
+    padding: 15px;
+    border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.citations h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.95rem;
+    color: var(--foreground);
+}
+
+.citations ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.citations li {
+    margin: 0;
+}
+
+.citationLink {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: var(--background);
+    text-decoration: none;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    transition: all 0.2s;
+}
+
+.citationLink:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: var(--accent, #1f2937);
+}
+
+.citationTitle {
+    font-weight: 500;
+    color: var(--link-color, #2563eb);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.citationFeed {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.noCitations {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.noTopics {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .overlay {
+        padding: 10px;
+    }
+
+    .modal {
+        max-height: 90vh;
+        border-radius: 8px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+
+    .header h2 {
+        font-size: 1.3rem;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .dateSelector {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 15px;
+    }
+
+    .dateSelector label {
+        width: 100%;
+    }
+
+    .dateSelect {
+        width: 100%;
+    }
+
+    .topicHeader {
+        padding: 12px;
+    }
+
+    .topicTitle {
+        font-size: 1rem;
+    }
+
+    .topicSummary {
+        padding: 0 12px 12px 12px;
+    }
+
+    .citations {
+        padding: 12px;
+    }
+
+    .citationLink {
+        padding: 6px 10px;
+    }
+
+    .citationTitle {
+        font-size: 0.9rem;
+    }
+
+    .citationFeed {
+        font-size: 0.75rem;
+    }
+}

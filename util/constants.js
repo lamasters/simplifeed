@@ -14,6 +14,8 @@ export const APPWRITE_CONFIG = {
     SUMMARIZE_ARTICLE_FN: '65bed72070bb85067dd9',
     RECORD_PODCAST_LISTEN_TIME_FN: '674661f2001479869775',
     SUMMARY_BUCKET_ID: '664bcddf002e5c7eba87',
+    DAILY_DIGESTS: 'daily_digests',
+    DAILY_DIGESTS_BUCKET_ID: '69bc5ac9002befcdfd9a',
 };
 
 export const FETCH_INTERVAL = 1000 * 60 * 1; // 1 minute

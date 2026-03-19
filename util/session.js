@@ -886,4 +886,75 @@ export class UserSession {
             return [];
         }
     }
+
+    /**
+     * Fetches available digest dates for a user.
+     * @param {string} userId - The user ID.
+     * @returns {Promise<Array>} Array of dates in YYYY-MM-DD format, sorted most recent first.
+     */
+    async getAvailableDigestDates() {
+        try {
+            const res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.DAILY_DIGESTS,
+                [Query.limit(14), Query.orderDesc('$createdAt')]
+            );
+            console.log('Fetched available digest dates:', res.documents);
+            return res.documents.map((doc) => doc.$createdAt);
+        } catch (err) {
+            console.error('Error fetching available digest dates:', err);
+            return [];
+        }
+    }
+
+    /**
+     * Fetches a specific daily digest for a user.
+     * @param {string} date - The date in YYYY-MM-DD format.
+     * @returns {Promise<Object|null>} The digest object or null if not found.
+     */
+    async getDailyDigest(date) {
+        if (
+            !APPWRITE_CONFIG.DAILY_DIGESTS ||
+            !APPWRITE_CONFIG.DAILY_DIGESTS_BUCKET_ID
+        ) {
+            console.error('Daily digests configuration not set');
+            return null;
+        }
+
+        try {
+            // First, get the digest record from the database to get the file ID
+            const res = await this.database.listDocuments(
+                APPWRITE_CONFIG.FEEDS_DB,
+                APPWRITE_CONFIG.DAILY_DIGESTS,
+                [Query.equal('$createdAt', date)]
+            );
+
+            if (res.documents.length === 0) {
+                console.log(`No digest found for ${date}`);
+                return null;
+            }
+
+            const digestRecord = res.documents[0];
+            const fileId = digestRecord.digest_id;
+
+            // Download the digest file from storage
+            const fileContent = await this.storage.getFileView(
+                APPWRITE_CONFIG.DAILY_DIGESTS_BUCKET_ID,
+                fileId
+            );
+
+            console.log(fileContent);
+
+            const jwt = await this.account.createJWT();
+            const digestFile = await fetch(fileContent.href, {
+                headers: { 'x-appwrite-jwt': jwt.jwt },
+            });
+            const digestBuffer = await digestFile.body.getReader().read();
+            const digestText = new TextDecoder().decode(digestBuffer.value);
+            return JSON.parse(digestText);
+        } catch (err) {
+            console.error(`Error fetching digest for ${date}:`, err);
+            return null;
+        }
+    }
 }

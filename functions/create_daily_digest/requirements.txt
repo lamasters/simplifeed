@@ -1,0 +1,4 @@
+appwrite==7.1.0
+google-genai==1.47.0
+pydantic>=2.9
+requests==2.32.4

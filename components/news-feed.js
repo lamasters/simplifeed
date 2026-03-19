@@ -2,6 +2,7 @@ import { loadMoreNewsData, searchNewsArticles } from '../util/feed-api';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import ArticleCard from './article-card';
+import DailyDigestModal from './daily-digest-modal';
 import styles from '../styles/feed.module.css';
 
 const PAGE_SIZE = 100;
@@ -48,6 +49,7 @@ export default function NewsFeed(props) {
     const [seenTutorial, setSeenTutorial] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [isDigestModalOpen, setIsDigestModalOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(null);
@@ -129,6 +131,58 @@ export default function NewsFeed(props) {
             </div>
             <div ref={feedRef} id={styles.feed_container}>
                 <div id={styles.feed_content}>
+                    <button
+                        onClick={() => setIsDigestModalOpen(true)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            margin: 'auto',
+                            marginBottom: '15px',
+                            marginTop: '5px',
+                            padding: '14px 18px',
+                            borderRadius: '25px',
+                            backgroundColor: 'var(--background-hover)',
+                            color: 'var(--text-primary)',
+                            fontSize: '18px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                                'var(--accent-primary-hover)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor =
+                                'var(--background-hover)';
+                        }}
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <rect
+                                x="3"
+                                y="4"
+                                width="18"
+                                height="18"
+                                rx="2"
+                                ry="2"
+                            ></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Daily Digest
+                    </button>
                     <div
                         style={{
                             display: 'flex',
@@ -266,6 +320,12 @@ export default function NewsFeed(props) {
                     </ul>
                 </div>
             </div>
+            <DailyDigestModal
+                isOpen={isDigestModalOpen}
+                onClose={() => setIsDigestModalOpen(false)}
+                state={props.state}
+                userId={props.state.uid}
+            />
         </>
     );
 }

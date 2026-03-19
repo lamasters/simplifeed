@@ -297,3 +297,22 @@ export async function searchNewsArticles(state, query, limit, offset, signal) {
 export async function searchPodcastFeeds(state, query) {
     return await state.session.searchPodcastFeeds(query);
 }
+
+/**
+ * Fetches the daily digest for a specific date.
+ * @param {Object} state - Hooks to set application state.
+ * @param {string} date - The date in YYYY-MM-DD format.
+ * @returns {Promise<Object>} The digest data.
+ */
+export async function getDailyDigest(state, date) {
+    return await state.session.getDailyDigest(date);
+}
+
+/**
+ * Fetches a list of available digest dates for a user.
+ * @param {Object} state - Hooks to set application state.
+ * @returns {Promise<Array>} Array of dates in YYYY-MM-DD format.
+ */
+export async function getAvailableDigestDates(state) {
+    return await state.session.getAvailableDigestDates();
+}
