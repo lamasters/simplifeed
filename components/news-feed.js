@@ -251,10 +251,6 @@ export default function NewsFeed(props) {
                                     article={article}
                                     state={props.state}
                                 />
-                                <div
-                                    className={styles.divider}
-                                    key={article.title + '_divider'}
-                                ></div>
                             </>
                         ))}
                         {props.feedData.length > 0 && !isSearching && (
