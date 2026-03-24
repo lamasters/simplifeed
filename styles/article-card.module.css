@@ -37,15 +37,15 @@
     flex-direction: column;
     justify-content: left;
     align-items: left;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 5px;
+    padding: 12px;
     overflow: hidden;
     min-height: 100px;
-    /* removed fixed max-height so content can determine size */
-    /* max-height: 200px; */
-    border-radius: 5px;
+    background: var(--background);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 24px rgba(15, 24, 60, 0.12);
+    backdrop-filter: blur(11px);
+    -webkit-backdrop-filter: blur(11px);
 }
 
 .itemHeader {

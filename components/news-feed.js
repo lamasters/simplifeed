@@ -191,29 +191,8 @@ export default function NewsFeed(props) {
                             marginBottom: '10px',
                             width: '90%',
                             padding: '0px',
-                            borderRadius: '25px',
-                            border: '1px solid var(--accent-secondary)',
-                            backgroundColor: 'var(--background-primary)',
                         }}
                     >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="var(--accent-secondary)"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            style={{
-                                color: 'var(--text-secondary)',
-                                marginLeft: '10px',
-                                flexShrink: 0,
-                            }}
-                        >
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
                         <input
                             type="text"
                             placeholder="Search articles..."
