@@ -105,7 +105,7 @@ button {
   padding: 0.7rem 1.2rem;
   font-weight: 700;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(223, 238, 255, 0.25));
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: none;
   border-radius: 14px;
   color: var(--text-primary);
   margin: 6px;

@@ -6,7 +6,6 @@
     padding-bottom: 20px;
     background: var(--background);
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
     overflow-x: hidden;
 }
