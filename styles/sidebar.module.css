@@ -41,20 +41,18 @@
     width: 25vw;
     max-width: 400px;
     min-width: 300px;
-    height: 100vh;
+    margin-left: 5px;
+    margin-top: 10px;
+    height: calc(100vh - 20px);
     padding: 18px;
     display: flex;
     flex-direction: column;
     justify-content: left;
     align-items: center;
-    border-right-style: solid;
-    border-right-width: 1px;
-    border-right-color: rgba(170, 190, 255, 0.35);
     overflow-y: scroll;
     background: var(--background);
-    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 22px;
-    box-shadow: 0 12px 36px rgba(15, 24, 60, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
 }
