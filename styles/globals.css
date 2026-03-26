@@ -49,7 +49,7 @@ body {
   margin: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
     Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background: var(--background);
+  background: var(--background-solid);
   color: var(--text-paragraph);
   min-height: 100vh;
   backdrop-filter: blur(8px);
@@ -145,7 +145,6 @@ input:focus {
 input::placeholder {
   color: var(--text-muted);
 }
-
 
 /* width */
 ::-webkit-scrollbar {

@@ -3,4 +3,5 @@
     flex-direction: row;
     justify-content: left;
     overflow: hidden;
+    height: 100vh;
 }
