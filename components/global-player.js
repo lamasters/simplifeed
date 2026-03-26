@@ -58,13 +58,16 @@ export default function GlobalPlayer() {
                 className={styles.episode_info}
                 style={{
                     position: 'fixed',
-                    bottom: '0px',
-                    left: '0px',
+                    width: '90%',
+                    bottom: '65px',
+                    left: '5%',
                     zIndex: 1000,
                     background: 'var(--background)',
+                    backdropFilter: 'blur(4px)',
                     padding: '10px',
-                    borderRadius: '5px',
+                    borderRadius: '22px',
                     display: isMinimized ? 'none' : 'flex',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                 }}
             >
                 <h2
@@ -146,11 +149,13 @@ export default function GlobalPlayer() {
                 src={podcast.audio_url}
                 style={{
                     position: 'fixed',
-                    width: '100%',
-                    bottom: '0px',
+                    width: '90%',
+                    left: '5%',
+                    bottom: '65px',
                     zIndex: 1000,
-                    background: 'var(--background)',
+                    background: 'none',
                     display: isMinimized ? 'none' : 'block',
+                    borderRadius: '22px',
                 }}
                 onEnded={onPodcastEnd}
                 onLoadStart={() => setLoading(true)}
