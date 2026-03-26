@@ -81,7 +81,6 @@ function getFeedIcon(source, editing, props) {
     }
 }
 
-
 export default function NewsSidebar(props) {
     const [url, setURL] = useState('');
     const [editing, setEditing] = useState(false);
@@ -97,9 +96,7 @@ export default function NewsSidebar(props) {
 
     return (
         <div id={styles.sidebar}>
-            <div id={styles.navbar}>
-                <h1 className={styles.nav}>SimpliFeed</h1>
-            </div>
+            <h1 className={styles.nav}>SimpliFeed</h1>
             <h2>News</h2>
             <ul id={styles.feedlist}>
                 <div className={styles.source_row}>
