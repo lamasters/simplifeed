@@ -3,6 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import EpisodeDetails from '../../components/episode-details';
 import Head from 'next/head';
 import PodcastFeed from '../../components/podcast-feed';
 import PodcastSidebar from '../../components/podcast-sidebar';
@@ -13,10 +14,11 @@ import { fetchPodcastData } from '../../util/feed-api';
 import styles from '../../styles/podcasts.module.css';
 import { usePlayer } from '../../components/player-context';
 import { useRouter } from 'next/router';
-import EpisodeDetails from '../../components/episode-details';
 
 export default function Podcasts() {
     const [collapse, setCollapse] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [activePanel, setActivePanel] = useState('feed');
     const [podcastData, setPodcastData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
     const [filter, setFilter] = useState(null);
@@ -65,7 +67,6 @@ export default function Podcasts() {
         });
     const router = useRouter();
 
-
     const session = useMemo(() => new UserSession(), []);
 
     const state = useMemo(() => {
@@ -89,11 +90,24 @@ export default function Podcasts() {
     }, [router, setLoading, setPlaying, setPodcast, setListenTime, session]);
 
     useEffect(() => {
-        if (window.innerHeight > window.innerWidth) {
-            setCollapse(true);
-        }
+        const updateIsMobile = () => {
+            const mobile =
+                window.innerWidth <= 768 ||
+                window.innerHeight > window.innerWidth;
+            setIsMobile(mobile);
+            setActivePanel('feed');
+            setCollapse(mobile);
+        };
+
+        updateIsMobile();
+        window.addEventListener('resize', updateIsMobile);
+
         fetchPodcastData(state, limit, offset, filter);
-    }, []);
+
+        return () => {
+            window.removeEventListener('resize', updateIsMobile);
+        };
+    }, [state, limit, offset, filter]);
     return (
         <main>
             <Head>
@@ -107,31 +121,60 @@ export default function Podcasts() {
                 <link rel="manifest" href="/manifest.json" />
             </Head>
             <div className={base_styles.main_container}>
-                {!collapse && (
-                    <PodcastSidebar
-                        state={state}
-                        podcastData={podcastData}
-                        loadedData={loadedData}
-                        filter={filter}
-                        addPodcastFail={errorToast}
-                        addPodcastToast={addPodcastToast}
-                    />
+                {isMobile ? (
+                    activePanel === 'sidebar' ? (
+                        <PodcastSidebar
+                            state={state}
+                            podcastData={podcastData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            addPodcastFail={errorToast}
+                            addPodcastToast={addPodcastToast}
+                        />
+                    ) : (
+                        <PodcastFeed
+                            state={state}
+                            podcastData={podcastData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            showTutorial={showTutorial}
+                            listenTimes={listenTimes}
+                            collapse={collapse}
+                            limit={limit}
+                            offset={offset}
+                            queue={queue}
+                            setQueue={setQueue}
+                            podcast={podcast}
+                            onEpisodeClick={setSelectedEpisode}
+                        />
+                    )
+                ) : (
+                    <>
+                        <PodcastSidebar
+                            state={state}
+                            podcastData={podcastData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            addPodcastFail={errorToast}
+                            addPodcastToast={addPodcastToast}
+                        />
+                        <PodcastFeed
+                            state={state}
+                            podcastData={podcastData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            showTutorial={showTutorial}
+                            listenTimes={listenTimes}
+                            collapse={collapse}
+                            limit={limit}
+                            offset={offset}
+                            queue={queue}
+                            setQueue={setQueue}
+                            podcast={podcast}
+                            onEpisodeClick={setSelectedEpisode}
+                        />
+                    </>
                 )}
-                <PodcastFeed
-                    state={state}
-                    podcastData={podcastData}
-                    loadedData={loadedData}
-                    filter={filter}
-                    showTutorial={showTutorial}
-                    listenTimes={listenTimes}
-                    collapse={collapse}
-                    limit={limit}
-                    offset={offset}
-                    queue={queue}
-                    setQueue={setQueue}
-                    podcast={podcast}
-                    onEpisodeClick={setSelectedEpisode}
-                />
             </div>
             {router.asPath.includes('episode') && selectedEpisode && (
                 <EpisodeDetails
@@ -143,6 +186,30 @@ export default function Podcasts() {
                 />
             )}
             {loading && <TopLoader />}
+
+            {isMobile && (
+                <div className={base_styles.mobile_tabbar}>
+                    <button
+                        className={`${base_styles.tab_button} ${
+                            activePanel === 'sidebar'
+                                ? base_styles.active_tab
+                                : ''
+                        }`}
+                        onClick={() => setActivePanel('sidebar')}
+                    >
+                        Sources
+                    </button>
+                    <button
+                        className={`${base_styles.tab_button} ${
+                            activePanel === 'feed' ? base_styles.active_tab : ''
+                        }`}
+                        onClick={() => setActivePanel('feed')}
+                    >
+                        Feed
+                    </button>
+                </div>
+            )}
+
             <ToastContainer />
         </main>
     );

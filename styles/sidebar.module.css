@@ -58,6 +58,18 @@
     box-shadow: 2px 2px 6px 2px rgba(15, 24, 60, 0.2);
 }
 
+@media (max-width: 768px) {
+    #sidebar {
+        width: calc(100vw - 10px);
+        min-width: unset;
+        max-width: unset;
+        margin: 5px auto;
+        height: calc(100vh - 65px);
+        border-radius: 18px;
+    }
+}
+
+
 #trash {
     padding: 3px;
     border: 2px solid #000;

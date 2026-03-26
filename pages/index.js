@@ -29,6 +29,8 @@ export default function Home() {
     const [pubDate, setPubDate] = useState(null);
     const [showTutorial, setShowTutorial] = useState(true);
     const [collapse, setCollapse] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [activePanel, setActivePanel] = useState('feed'); // 'feed', 'sidebar'
     const [loading, setLoading] = useState(false);
     const [rawText, setRawText] = useState('');
     const [summary, setSummary] = useState('');
@@ -103,20 +105,35 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
+        const updateIsMobile = () => {
+            const mobile =
+                window.innerWidth <= 768 ||
+                window.innerHeight > window.innerWidth;
+            setIsMobile(mobile);
+            setActivePanel(mobile ? 'feed' : 'feed');
+            setCollapse(mobile);
+        };
+
+        updateIsMobile();
+        window.addEventListener('resize', updateIsMobile);
+
         const lastSection = localStorage.getItem('lastSection');
         if (lastSection === 'podcasts') {
             router.replace('/podcasts');
         }
+
         clearInterval(fetchProcess.current);
-        if (window.innerHeight > window.innerWidth) {
-            setCollapse(true);
-        }
         fetchNewsData(state, limit, offset, filter);
         fetchProcess.current = setInterval(
             () => backgroundFetch(state, filter),
             FETCH_INTERVAL
         );
-    }, []);
+
+        return () => {
+            clearInterval(fetchProcess.current);
+            window.removeEventListener('resize', updateIsMobile);
+        };
+    }, [state, limit, offset, filter, router]);
 
     return (
         <main>
@@ -132,30 +149,77 @@ export default function Home() {
                 <link href="https://techhub.social/@masters" rel="me" />
             </Head>
             <div className={styles.main_container}>
-                {!collapse && (
-                    <NewsSidebar
-                        feedData={feedData}
-                        loadedData={loadedData}
-                        state={state}
-                        filter={filter}
-                        addFeedFail={addFeedFail}
-                        logoutFail={logoutFail}
-                        infoToast={infoToast}
-                    />
+                {isMobile ? (
+                    activePanel === 'sidebar' ? (
+                        <NewsSidebar
+                            feedData={feedData}
+                            loadedData={loadedData}
+                            state={state}
+                            filter={filter}
+                            addFeedFail={addFeedFail}
+                            logoutFail={logoutFail}
+                            infoToast={infoToast}
+                        />
+                    ) : (
+                        <NewsFeed
+                            articleOpen={articleOpen}
+                            feedData={feedData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            showTutorial={showTutorial}
+                            state={state}
+                            collapse={collapse}
+                            limit={limit}
+                            offset={offset}
+                        />
+                    )
+                ) : (
+                    <>
+                        <NewsSidebar
+                            feedData={feedData}
+                            loadedData={loadedData}
+                            state={state}
+                            filter={filter}
+                            addFeedFail={addFeedFail}
+                            logoutFail={logoutFail}
+                            infoToast={infoToast}
+                        />
+                        <NewsFeed
+                            articleOpen={articleOpen}
+                            feedData={feedData}
+                            loadedData={loadedData}
+                            filter={filter}
+                            showTutorial={showTutorial}
+                            state={state}
+                            collapse={collapse}
+                            limit={limit}
+                            offset={offset}
+                        />
+                    </>
                 )}
-                <NewsFeed
-                    articleOpen={articleOpen}
-                    feedData={feedData}
-                    loadedData={loadedData}
-                    filter={filter}
-                    showTutorial={showTutorial}
-                    state={state}
-                    collapse={collapse}
-                    limit={limit}
-                    offset={offset}
-                />
             </div>
             {loading && <TopLoader />}
+
+            {isMobile && (
+                <div className={styles.mobile_tabbar}>
+                    <button
+                        className={`${styles.tab_button} ${
+                            activePanel === 'sidebar' ? styles.active_tab : ''
+                        }`}
+                        onClick={() => setActivePanel('sidebar')}
+                    >
+                        Sources
+                    </button>
+                    <button
+                        className={`${styles.tab_button} ${
+                            activePanel === 'feed' ? styles.active_tab : ''
+                        }`}
+                        onClick={() => setActivePanel('feed')}
+                    >
+                        Feed
+                    </button>
+                </div>
+            )}
 
             {router.asPath.includes('summary') && (
                 <ArticleSummary

@@ -1,7 +1,5 @@
 #feed_container {
-    margin-left: 2px;
-    margin-right: 5px;
-    margin-top: 10px;
+    margin: 5px;
     height: calc(100vh - 20px);
     flex-grow: 1;
     padding-top: 20px;
@@ -18,7 +16,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: center;
     align-items: center;
     overflow-y: scroll;
     padding-left: 8px;
@@ -118,4 +116,14 @@
 #load_more_card:hover {
     cursor: pointer;
     background-color: var(--background-hover);
+}
+
+@media (max-width: 768px) {
+    #collapse_container {
+        display: none;
+    }
+
+    #feed_container {
+        height: calc(100% - 65px);
+    }
 }
