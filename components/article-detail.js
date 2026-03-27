@@ -1,6 +1,6 @@
 import { openArticleSource, returnToFeed } from '../util/feed-api';
 
-import styles from '../styles/modal.module.css';
+import styles from '../styles/article-detail.module.css';
 
 /**
  * Renders the reader view - the clean, parsed text version of the full article.

@@ -4,6 +4,7 @@
     height: 100vh;
     top: 0;
     left: 0;
+    z-index: 2000;
     background: var(--background);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
