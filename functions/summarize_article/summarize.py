@@ -62,7 +62,8 @@ def main(context):
             contents="Summarize the following article, highlighting the main points "
             "and providing key takeaways. Keep the summary to one paragraph to make it "
             "digestible for readers, breaking it up into bullet points. Avoid any prose "
-            f"that isn't directly summarizing the article.\n\n {req_data.article_url}",
+            "that isn't directly summarizing the article. Return the summary formatted "
+            f"as markdown\n\n {req_data.article_url}",
             config=config,
         )
 
