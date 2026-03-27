@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import EpisodeCard from './episode-card';
 import { loadMorePodcastData } from '../util/feed-api';
@@ -30,6 +30,7 @@ export default function PodcastFeed(props) {
     const state = props.state;
 
     const [episodes, setEpisodes] = useState([]);
+    const feedRef = useRef();
 
     useEffect(() => {
         if (props.podcastData.length > 0) {
@@ -49,8 +50,14 @@ export default function PodcastFeed(props) {
             }
         }
     }, [props.podcastData, props.filter, props.queue]);
+
+    useEffect(() => {
+        feedRef.current?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, [props.filter]);
+
     return (
-        <div id={styles.feed_container} style={{ paddingBottom: '110px' }}>
+        <div ref={feedRef} id={styles.feed_container} style={{ paddingBottom: '110px' }}>
             <div id={styles.feed_content}>
                 {props.showTutorial && (
                     <div id={styles.tutorial}>
@@ -79,12 +86,18 @@ export default function PodcastFeed(props) {
                         <li
                             id={styles.load_more_card}
                             onClick={async () => {
+                                const serverFilter =
+                                    props.filter === 'continue' ||
+                                    props.filter === 'unlistened' ||
+                                    props.filter === 'queue'
+                                        ? null
+                                        : props.filter;
                                 await loadMorePodcastData(
                                     props.state,
                                     props.podcastData,
                                     props.limit,
                                     props.offset + PAGE_SIZE,
-                                    props.filter
+                                    serverFilter
                                 );
                                 props.state.setOffset(props.offset + PAGE_SIZE);
                             }}

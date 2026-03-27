@@ -123,7 +123,8 @@ export default function Home() {
         }
 
         clearInterval(fetchProcess.current);
-        fetchNewsData(state, limit, offset, filter);
+        setOffset(0);
+        fetchNewsData(state, limit, 0, filter);
         fetchProcess.current = setInterval(
             () => backgroundFetch(state, filter),
             FETCH_INTERVAL
@@ -133,7 +134,7 @@ export default function Home() {
             clearInterval(fetchProcess.current);
             window.removeEventListener('resize', updateIsMobile);
         };
-    }, [state, limit, offset, filter, router]);
+    }, [state, limit, filter, router]);
 
     return (
         <main>

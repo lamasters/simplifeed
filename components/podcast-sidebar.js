@@ -1,5 +1,4 @@
 import {
-    fetchPodcastData,
     searchPodcastFeeds,
     subscribeToPodcastFeed,
 } from '../util/feed-api';
@@ -9,12 +8,8 @@ import { Typeahead } from 'react-typeahead';
 import styles from '../styles/sidebar.module.css';
 
 function selectPodcastFeed(filter, state) {
+    state.setOffset(0);
     state.setFilter(filter);
-    if (filter == 'continue' || filter == 'unlistened' || filter == 'queue') {
-        fetchPodcastData(state, 100, 0, null);
-    } else {
-        fetchPodcastData(state, 100, 0, filter);
-    }
 }
 
 async function deletePodcast(source, props) {

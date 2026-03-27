@@ -53,6 +53,7 @@ export default function NewsFeed(props) {
     const [searchResults, setSearchResults] = useState([]);
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(null);
+    const feedRef = useRef();
     useEffect(() => {
         if (localStorage.getItem('seenTutorial') !== null) {
             setSeenTutorial(true);
@@ -117,7 +118,12 @@ export default function NewsFeed(props) {
             }
         };
     }, []);
-    const feedRef = useRef();
+
+    useEffect(() => {
+        feedRef.current?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, [props.filter]);
+
     return (
         <>
             <div ref={feedRef} id={styles.feed_container}>

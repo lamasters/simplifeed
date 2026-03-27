@@ -1,8 +1,4 @@
-import {
-    fetchNewsData,
-    searchNewsFeeds,
-    subscribeToNewsFeed,
-} from '../util/feed-api';
+import { searchNewsFeeds, subscribeToNewsFeed } from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
 import { Typeahead } from 'react-typeahead';
@@ -25,8 +21,8 @@ function sortedFeeds(feedData) {
 }
 
 function selectFeed(filter, state) {
+    state.setOffset(0);
     state.setFilter(filter);
-    fetchNewsData(state, 100, 0, filter);
 }
 
 async function deleteFeed(source, props) {

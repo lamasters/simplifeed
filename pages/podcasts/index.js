@@ -102,12 +102,17 @@ export default function Podcasts() {
         updateIsMobile();
         window.addEventListener('resize', updateIsMobile);
 
-        fetchPodcastData(state, limit, offset, filter);
+        const serverFilter =
+            filter === 'continue' || filter === 'unlistened' || filter === 'queue'
+                ? null
+                : filter;
+        setOffset(0);
+        fetchPodcastData(state, limit, 0, serverFilter);
 
         return () => {
             window.removeEventListener('resize', updateIsMobile);
         };
-    }, [state, limit, offset, filter]);
+    }, [state, limit, filter]);
     return (
         <main>
             <Head>
