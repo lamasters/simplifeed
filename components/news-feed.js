@@ -120,15 +120,6 @@ export default function NewsFeed(props) {
     const feedRef = useRef();
     return (
         <>
-            <div id={styles.collapse_container}>
-                <img
-                    id={styles.collapse}
-                    onClick={() => props.state.setCollapse(!props.collapse)}
-                    src="/sidebar.svg"
-                    width="30px"
-                    height="30px"
-                />
-            </div>
             <div ref={feedRef} id={styles.feed_container}>
                 <div id={styles.feed_content}>
                     <button
@@ -246,12 +237,10 @@ export default function NewsFeed(props) {
                         )}
                     <ul style={{ width: '100%' }}>
                         {articleList.map((article) => (
-                            <>
-                                <ArticleCard
-                                    article={article}
-                                    state={props.state}
-                                />
-                            </>
+                            <ArticleCard
+                                article={article}
+                                state={props.state}
+                            />
                         ))}
                         {props.feedData.length > 0 && !isSearching && (
                             <li

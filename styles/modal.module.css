@@ -4,7 +4,9 @@
     height: 100vh;
     top: 0;
     left: 0;
-    background: var(--background-solid);
+    background: var(--background);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     overflow-x: hidden;
     overflow-y: scroll;
 }

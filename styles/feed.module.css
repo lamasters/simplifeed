@@ -1,6 +1,6 @@
 #feed_container {
     margin: 5px;
-    height: calc(100vh - 20px);
+    height: calc(100vh - 10px);
     flex-grow: 1;
     padding-top: 20px;
     padding-bottom: 20px;
