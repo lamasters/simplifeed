@@ -103,7 +103,9 @@ export default function Podcasts() {
         window.addEventListener('resize', updateIsMobile);
 
         const serverFilter =
-            filter === 'continue' || filter === 'unlistened' || filter === 'queue'
+            filter === 'continue' ||
+            filter === 'unlistened' ||
+            filter === 'queue'
                 ? null
                 : filter;
         setOffset(0);

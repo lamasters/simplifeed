@@ -57,7 +57,11 @@ export default function PodcastFeed(props) {
     }, [props.filter]);
 
     return (
-        <div ref={feedRef} id={styles.feed_container} style={{ paddingBottom: '110px' }}>
+        <div
+            ref={feedRef}
+            id={styles.feed_container}
+            style={{ paddingBottom: '110px' }}
+        >
             <div id={styles.feed_content}>
                 {props.showTutorial && (
                     <div id={styles.tutorial}>

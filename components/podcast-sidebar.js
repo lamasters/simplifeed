@@ -1,7 +1,4 @@
-import {
-    searchPodcastFeeds,
-    subscribeToPodcastFeed,
-} from '../util/feed-api';
+import { searchPodcastFeeds, subscribeToPodcastFeed } from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
 import { Typeahead } from 'react-typeahead';
