@@ -86,29 +86,32 @@ export default function PodcastFeed(props) {
                             ></div>
                         </>
                     ))}
-                    {props.podcastData.length > 0 && (
-                        <li
-                            id={styles.load_more_card}
-                            onClick={async () => {
-                                const serverFilter =
-                                    props.filter === 'continue' ||
-                                    props.filter === 'unlistened' ||
-                                    props.filter === 'queue'
-                                        ? null
-                                        : props.filter;
-                                await loadMorePodcastData(
-                                    props.state,
-                                    props.podcastData,
-                                    props.limit,
-                                    props.offset + PAGE_SIZE,
-                                    serverFilter
-                                );
-                                props.state.setOffset(props.offset + PAGE_SIZE);
-                            }}
-                        >
-                            Load More
-                        </li>
-                    )}
+                    {props.podcastData.length > 0 &&
+                        props.filter !== 'queue' && (
+                            <li
+                                id={styles.load_more_card}
+                                onClick={async () => {
+                                    const serverFilter =
+                                        props.filter === 'continue' ||
+                                        props.filter === 'unlistened' ||
+                                        props.filter === 'queue'
+                                            ? null
+                                            : props.filter;
+                                    await loadMorePodcastData(
+                                        props.state,
+                                        props.podcastData,
+                                        props.limit,
+                                        props.offset + PAGE_SIZE,
+                                        serverFilter
+                                    );
+                                    props.state.setOffset(
+                                        props.offset + PAGE_SIZE
+                                    );
+                                }}
+                            >
+                                Load More
+                            </li>
+                        )}
                 </ul>
             </div>
         </div>

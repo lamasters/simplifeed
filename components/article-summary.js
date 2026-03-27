@@ -5,6 +5,8 @@ import {
 } from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import styles from '../styles/article-summary.module.css';
 
 /**
@@ -72,13 +74,6 @@ function LoadingPhrases() {
  * @returns {JSX.Element} The rendered summary page component.
  */
 export default function ArticleSummary(props) {
-    const summaryPoints = props.summary
-        ? props.summary
-              .split('\n')
-              .filter((line) => line.trim() !== '')
-              .map((line) => line.replace(/^[-•*]\s*/, '').trim())
-        : [];
-
     return (
         <div className={styles.summaryModal}>
             <div className={styles.summaryContainer}>
@@ -113,15 +108,24 @@ export default function ArticleSummary(props) {
                             <h2 className={styles.summaryHeading}>
                                 ✨ AI Summary
                             </h2>
-                            <div className={styles.summaryList}>
-                                {summaryPoints.map((point, index) => (
-                                    <p
-                                        key={index}
-                                        className={styles.summaryPoint}
-                                    >
-                                        {point}
-                                    </p>
-                                ))}
+                            <div className={styles.markdownContent}>
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                        a: ({ href, children, ...rest }) => (
+                                            <a
+                                                {...rest}
+                                                href={href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {children}
+                                            </a>
+                                        ),
+                                    }}
+                                >
+                                    {props.summary}
+                                </ReactMarkdown>
                             </div>
                         </>
                     ) : (
