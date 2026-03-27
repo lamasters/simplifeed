@@ -36,8 +36,8 @@ def main(context):
         "6466af38420c3ca601c1",
         "674637b9001d90563572",
         queries=[
-            Query().equal("user_id", req_data.user_id),
-            Query().equal("title", req_data.title),
+            Query.equal("user_id", req_data.user_id),
+            Query.equal("title", req_data.title),
         ],
     )
     if not existing_records.get("total"):
