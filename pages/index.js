@@ -145,7 +145,16 @@ export default function Home() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <meta name="theme-color" content="#12151d" />
+                <meta
+                    name="theme-color"
+                    media="(prefers-color-scheme: light)"
+                    content="#ffffff"
+                />
+                <meta
+                    name="theme-color"
+                    media="(prefers-color-scheme: dark)"
+                    content="#090c16"
+                />
                 <link rel="manifest" href="/manifest.json" />
                 <link href="https://techhub.social/@masters" rel="me" />
             </Head>

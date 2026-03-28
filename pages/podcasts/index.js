@@ -124,7 +124,16 @@ export default function Podcasts() {
                     name="viewport"
                     content="width=device-width, initial-scale=1"
                 />
-                <meta name="theme-color" content="#12151d" />
+                <meta
+                    name="theme-color"
+                    media="(prefers-color-scheme: light)"
+                    content="#ffffff"
+                />
+                <meta
+                    name="theme-color"
+                    media="(prefers-color-scheme: dark)"
+                    content="#090c16"
+                />
                 <link rel="manifest" href="/manifest.json" />
             </Head>
             <div className={base_styles.main_container}>
