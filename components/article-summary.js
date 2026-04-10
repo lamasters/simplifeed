@@ -1,6 +1,8 @@
 import {
+    SUMMARY_FETCH_FAILED_MESSAGE,
     openArticleSource,
     openReaderView,
+    retryArticleSummary,
     returnToFeed,
 } from '../util/feed-api';
 import { useEffect, useState } from 'react';
@@ -67,6 +69,7 @@ function LoadingPhrases() {
  * @param {string} props.articleTitle - The title of the article.
  * @param {string} props.articleSource - The source/feed name of the article.
  * @param {string} props.articleUrl - The original URL of the article.
+ * @param {string} props.articleId - The article document ID.
  * @param {string} props.summary - The AI-generated summary of the article.
  * @param {Object} props.state - Hooks to set application state.
  * @param {string} props.articleAuthor - The article author.
@@ -74,6 +77,8 @@ function LoadingPhrases() {
  * @returns {JSX.Element} The rendered summary page component.
  */
 export default function ArticleSummary(props) {
+    const summaryFetchFailed = props.summary === SUMMARY_FETCH_FAILED_MESSAGE;
+
     return (
         <div className={styles.summaryModal}>
             <div className={styles.summaryContainer}>
@@ -103,7 +108,25 @@ export default function ArticleSummary(props) {
 
                 {/* Body */}
                 <div className={styles.body}>
-                    {props.summary ? (
+                    {summaryFetchFailed ? (
+                        <div className={styles.errorState}>
+                            <p className={styles.errorMessage}>
+                                We could not load the summary right now.
+                            </p>
+                            <button
+                                className={styles.retryBtn}
+                                onClick={() =>
+                                    retryArticleSummary(
+                                        props.state,
+                                        props.articleUrl,
+                                        props.articleId
+                                    )
+                                }
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    ) : props.summary ? (
                         <>
                             <h2 className={styles.summaryHeading}>
                                 ✨ AI Summary

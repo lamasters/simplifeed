@@ -1,5 +1,23 @@
 import { FETCH_INTERVAL } from './constants';
 
+export const SUMMARY_FETCH_FAILED_MESSAGE = 'Failed to fetch summary.';
+
+async function fetchAndSetArticleSummary(state, articleUrl, articleId) {
+    if (!articleUrl || !articleId) {
+        state.setSummary(SUMMARY_FETCH_FAILED_MESSAGE);
+        return false;
+    }
+
+    const summary = await state.session.getSummary(articleUrl, articleId);
+    if (summary) {
+        state.setSummary(summary);
+        return true;
+    }
+
+    state.setSummary(SUMMARY_FETCH_FAILED_MESSAGE);
+    return false;
+}
+
 /**
  * Fetches feed data and updates the state.
  * @param {Object} state - Hooks to set application state.
@@ -156,16 +174,15 @@ export async function openArticleSummary(article, state) {
 
     state.router.push('#summary');
 
-    const summary = await state.session.getSummary(
-        article.article_url,
-        article.$id
-    );
-    if (summary) {
-        state.setSummary(summary);
-    } else if (summary === null) {
-        state.setSummary('Failed to fetch summary.');
-    }
+    await fetchAndSetArticleSummary(state, article.article_url, article.$id);
 
+    state.setLoading(false);
+}
+
+export async function retryArticleSummary(state, articleUrl, articleId) {
+    state.setLoading(true);
+    state.setSummary('');
+    await fetchAndSetArticleSummary(state, articleUrl, articleId);
     state.setLoading(false);
 }
 

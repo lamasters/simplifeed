@@ -218,6 +218,38 @@
     transition: opacity 0.3s ease-in-out;
 }
 
+.errorState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 140px;
+    text-align: center;
+}
+
+.errorMessage {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+.retryBtn {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    background-color: var(--accent-primary-hover);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.retryBtn:hover {
+    opacity: 0.9;
+}
+
 .visible {
     opacity: 1;
 }

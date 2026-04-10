@@ -236,6 +236,7 @@ export default function Home() {
                     articleTitle={articleTitle}
                     articleSource={articleSource}
                     articleUrl={articleUrl}
+                    articleId={articleId}
                     summary={summary}
                     state={state}
                     articleAuthor={articleAuthor}
