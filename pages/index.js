@@ -134,7 +134,7 @@ export default function Home() {
             clearInterval(fetchProcess.current);
             window.removeEventListener('resize', updateIsMobile);
         };
-    }, [state, limit, filter, router]);
+    }, [state, limit, filter]);
 
     return (
         <main>
