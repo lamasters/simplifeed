@@ -10,8 +10,8 @@
     flex-direction: column;
     z-index: 2000;
     overflow: hidden;
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     box-shadow: var(--glass-shadow);
 }
 

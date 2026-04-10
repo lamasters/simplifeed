@@ -6,8 +6,8 @@
     left: 0;
     z-index: 2000;
     background: var(--background);
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     overflow-x: hidden;
     overflow-y: scroll;
 }
