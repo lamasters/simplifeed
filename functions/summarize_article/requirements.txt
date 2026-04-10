@@ -1,7 +1,7 @@
 appwrite==7.1.0
 google-genai==1.47.0
 pydantic>=2.9
-requests==2.33.0
+requests==2.32.5
 fastapi==0.111.0
 html-reader-mode==0.1.1
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
