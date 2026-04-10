@@ -43,7 +43,7 @@ function LoadingPhrases() {
                     Math.floor(Math.random() * phrases.length)
                 );
                 setIsVisible(true);
-            }, 500);
+            }, 750);
         }, 2000);
 
         return () => clearInterval(interval);
