@@ -114,6 +114,7 @@ def build_digest_document(context, topics, articles, feeds_map):
                 citation = {
                     "title": article.get("title", ""),
                     "feed_name": feed_name,
+                    "article_id": article.get("$id", ""),
                     "url": article.get("article_url", ""),
                 }
                 topic_item["citations"].append(citation)

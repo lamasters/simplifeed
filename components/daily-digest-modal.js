@@ -1,6 +1,12 @@
-import { getAvailableDigestDates, getDailyDigest } from '../util/feed-api';
+import {
+    SUMMARY_FETCH_FAILED_MESSAGE,
+    getAvailableDigestDates,
+    getDailyDigest,
+    openArticleSource,
+} from '../util/feed-api';
 import { useEffect, useState } from 'react';
 
+import articleCardStyles from '../styles/article-card.module.css';
 import styles from '../styles/daily-digest-modal.module.css';
 
 export default function DailyDigestModal({ isOpen, onClose, state, userId }) {
@@ -62,6 +68,38 @@ export default function DailyDigestModal({ isOpen, onClose, state, userId }) {
             newExpanded.add(index);
         }
         setExpandedTopics(newExpanded);
+    };
+
+    const openCitationSummary = async (citation) => {
+        try {
+            setLoading(true);
+            state.setArticleOpen(true);
+            state.setViewMode('summary');
+            state.setArticleUrl(citation.url);
+            state.setArticleId(citation.article_id || null);
+            state.setArticleTitle(citation.title);
+            state.setArticleSource(citation.feed_name);
+            state.setArticleContent(null);
+            state.setSummary('');
+            state.setRawText('');
+            state.router.push('#summary');
+
+            const summary = await state.session.getSummary(
+                citation.url,
+                citation.article_id
+            );
+
+            state.setSummary(summary || SUMMARY_FETCH_FAILED_MESSAGE);
+        } catch (err) {
+            console.error('Failed to open citation summary:', err);
+            state.setSummary(SUMMARY_FETCH_FAILED_MESSAGE);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openCitationSource = (citation) => {
+        openArticleSource({ article_url: citation.url });
     };
 
     if (!isOpen) return null;
@@ -169,35 +207,72 @@ export default function DailyDigestModal({ isOpen, onClose, state, userId }) {
                                                                         citIndex
                                                                     }
                                                                 >
-                                                                    <a
-                                                                        href={
-                                                                            citation.url
-                                                                        }
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
+                                                                    <div
                                                                         className={
-                                                                            styles.citationLink
+                                                                            styles.citationCard
                                                                         }
                                                                     >
-                                                                        <span
+                                                                        <div
                                                                             className={
-                                                                                styles.citationTitle
+                                                                                styles.citationBody
                                                                             }
                                                                         >
-                                                                            {
-                                                                                citation.title
-                                                                            }
-                                                                        </span>
-                                                                        <span
+                                                                            <span
+                                                                                className={
+                                                                                    styles.citationTitle
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    citation.title
+                                                                                }
+                                                                            </span>
+                                                                            <span
+                                                                                className={
+                                                                                    styles.citationFeed
+                                                                                }
+                                                                            >
+                                                                                {
+                                                                                    citation.feed_name
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                        <div
                                                                             className={
-                                                                                styles.citationFeed
+                                                                                articleCardStyles.actionBar
                                                                             }
                                                                         >
-                                                                            {
-                                                                                citation.feed_name
-                                                                            }
-                                                                        </span>
-                                                                    </a>
+                                                                            <button
+                                                                                type="button"
+                                                                                className={
+                                                                                    articleCardStyles.actionBtn
+                                                                                }
+                                                                                onClick={() =>
+                                                                                    openCitationSummary(
+                                                                                        citation
+                                                                                    )
+                                                                                }
+                                                                                title="Open summary"
+                                                                            >
+                                                                                ✨
+                                                                                Summary
+                                                                            </button>
+                                                                            <button
+                                                                                type="button"
+                                                                                className={
+                                                                                    articleCardStyles.actionBtn
+                                                                                }
+                                                                                onClick={() =>
+                                                                                    openCitationSource(
+                                                                                        citation
+                                                                                    )
+                                                                                }
+                                                                                title="Open original article"
+                                                                            >
+                                                                                🌐
+                                                                                Source
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
                                                                 </li>
                                                             )
                                                         )}

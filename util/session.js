@@ -566,8 +566,10 @@ export class UserSession {
      * @param {string} article_url- The article url to retrieve the summary for.
      */
     async getSummary(article_url, articleId) {
-        const download = await this.downloadSummary(articleId);
-        if (download) return download;
+        if (articleId) {
+            const download = await this.downloadSummary(articleId);
+            if (download) return download;
+        }
         try {
             let res = await this.functions.createExecution(
                 APPWRITE_CONFIG.SUMMARIZE_ARTICLE_FN,
@@ -899,7 +901,6 @@ export class UserSession {
                 APPWRITE_CONFIG.DAILY_DIGESTS,
                 [Query.limit(14), Query.orderDesc('$createdAt')]
             );
-            console.log('Fetched available digest dates:', res.documents);
             return res.documents.map((doc) => doc.$createdAt);
         } catch (err) {
             console.error('Error fetching available digest dates:', err);
@@ -930,7 +931,7 @@ export class UserSession {
             );
 
             if (res.documents.length === 0) {
-                console.log(`No digest found for ${date}`);
+                console.error(`No digest found for ${date}`);
                 return null;
             }
 
@@ -942,8 +943,6 @@ export class UserSession {
                 APPWRITE_CONFIG.DAILY_DIGESTS_BUCKET_ID,
                 fileId
             );
-
-            console.log(fileContent);
 
             const jwt = await this.account.createJWT();
             const digestFile = await fetch(fileContent.href, {

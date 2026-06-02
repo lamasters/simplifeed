@@ -216,21 +216,20 @@
     margin: 0;
 }
 
-.citationLink {
+.citationCard {
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    background-color: var(--background);
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+    overflow: hidden;
+}
+
+.citationBody {
     display: flex;
     flex-direction: column;
     gap: 4px;
     padding: 8px 12px;
-    border-radius: 6px;
-    background-color: var(--background);
-    text-decoration: none;
-    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
-    transition: all 0.2s;
-}
-
-.citationLink:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-    border-color: var(--accent, #1f2937);
 }
 
 .citationTitle {
@@ -243,6 +242,36 @@
 .citationFeed {
     font-size: 0.8rem;
     color: var(--text-muted);
+}
+
+.citationActions {
+    display: flex;
+    border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+}
+
+.citationActionBtn {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 0.8rem;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.citationActionBtn + .citationActionBtn {
+    border-left: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+}
+
+.citationActionBtn:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.citationActionBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .noCitations {
@@ -316,5 +345,9 @@
 
     .citationFeed {
         font-size: 0.75rem;
+    }
+
+    .citationActionBtn {
+        padding: 9px 10px;
     }
 }

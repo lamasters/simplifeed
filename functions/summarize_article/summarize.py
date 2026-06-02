@@ -96,16 +96,34 @@ def main(context):
 
     if req_data.article_id:
         context.log("Updating article with summary")
+        update_id = req_data.article_id
+    else:
+        update_article = database.list_documents(
+            FEEDS_DATABASE_ID,
+            NEWS_ARTICLES_COLLECTION_ID,
+            queries=[
+                {
+                    "field": "article_url",
+                    "operator": "equal",
+                    "value": req_data.article_url,
+                }
+            ],
+        )
+        update_id = update_article.documents[0].id if update_article.documents else None
+    
+    if update_id:
         try:
             database.update_document(
                 FEEDS_DATABASE_ID,
                 NEWS_ARTICLES_COLLECTION_ID,
-                req_data.article_id,
+                update_id,
                 {"summary_id": url_hash},
             )
             context.log("Article updated with summary")
         except Exception as e:
             context.log(f"Failed to update article with summary: {e}")
+    else:
+        context.log("No article found to update with summary")
 
     context.log("Returning summary")
     return context.res.json(summary)

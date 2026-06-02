@@ -3,7 +3,7 @@ import { FETCH_INTERVAL } from './constants';
 export const SUMMARY_FETCH_FAILED_MESSAGE = 'Failed to fetch summary.';
 
 async function fetchAndSetArticleSummary(state, articleUrl, articleId) {
-    if (!articleUrl || !articleId) {
+    if (!articleUrl) {
         state.setSummary(SUMMARY_FETCH_FAILED_MESSAGE);
         return false;
     }
@@ -201,7 +201,7 @@ export function openArticleSource(article) {
 export function returnToFeed(state) {
     state.setArticleOpen(false);
     state.setViewMode('feed');
-    state.router.push('/');
+    state.router.back();
 }
 
 /**

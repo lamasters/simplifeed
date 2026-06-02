@@ -1,9 +1,10 @@
 import { loadMoreNewsData, searchNewsArticles } from '../util/feed-api';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ArticleCard from './article-card';
 import DailyDigestModal from './daily-digest-modal';
 import styles from '../styles/feed.module.css';
+import { useRouter } from 'next/router';
 
 const PAGE_SIZE = 100;
 
@@ -45,11 +46,11 @@ function createArticleList(feedData, setArticleList) {
  * @returns {JSX.Element} The rendered feed component.
  */
 export default function NewsFeed(props) {
+    const router = useRouter();
     const [articleList, setArticleList] = useState([]);
     const [seenTutorial, setSeenTutorial] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
-    const [isDigestModalOpen, setIsDigestModalOpen] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
     const searchTimeoutRef = useRef(null);
     const abortControllerRef = useRef(null);
@@ -124,12 +125,36 @@ export default function NewsFeed(props) {
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }, [props.filter]);
 
+    const fullPath = useMemo(() => {
+        if (typeof window === 'undefined') {
+            return router.asPath || '';
+        }
+
+        return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    }, [router.asPath]);
+
+    const isDigestModalOpen = useMemo(
+        () => fullPath.includes('#dailydigest'),
+        [fullPath]
+    );
+
+    const openDigestModal = () => {
+        router.push('/#dailydigest', undefined, {
+            shallow: true,
+            scroll: false,
+        });
+    };
+
+    const closeDigestModal = () => {
+        router.back();
+    };
+
     return (
         <>
             <div ref={feedRef} id={styles.feed_container}>
                 <div id={styles.feed_content}>
                     <button
-                        onClick={() => setIsDigestModalOpen(true)}
+                        onClick={openDigestModal}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -292,7 +317,7 @@ export default function NewsFeed(props) {
             </div>
             <DailyDigestModal
                 isOpen={isDigestModalOpen}
-                onClose={() => setIsDigestModalOpen(false)}
+                onClose={closeDigestModal}
                 state={props.state}
                 userId={props.state.uid}
             />
