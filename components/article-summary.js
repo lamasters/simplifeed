@@ -128,9 +128,6 @@ export default function ArticleSummary(props) {
                         </div>
                     ) : props.summary ? (
                         <>
-                            <h2 className={styles.summaryHeading}>
-                                ✨ AI Summary
-                            </h2>
                             <div className={styles.markdownContent}>
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
