@@ -208,6 +208,8 @@
     align-items: center;
     padding: 40px 20px;
     min-height: 100px;
+    position: relative;
+    isolation: isolate;
 }
 
 .loadingText {
@@ -215,7 +217,16 @@
     font-size: 16px;
     font-weight: 500;
     text-align: center;
-    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity 0.3s ease-in-out,
+        visibility 0.2s linear;
+    will-change: opacity;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .errorState {
@@ -252,10 +263,12 @@
 
 .visible {
     opacity: 1;
+    visibility: visible;
 }
 
 .hidden {
     opacity: 0;
+    visibility: hidden;
 }
 
 .footer {
