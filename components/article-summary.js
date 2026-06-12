@@ -5,7 +5,7 @@ import {
     retryArticleSummary,
     returnToFeed,
 } from '../util/feed-api';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -35,26 +35,56 @@ function LoadingPhrases() {
         Math.floor(Math.random() * phrases.length)
     );
     const [isVisible, setIsVisible] = useState(true);
+    const [pendingPhraseIndex, setPendingPhraseIndex] = useState(null);
+    const visibilityRef = useRef(isVisible);
+    const currentPhraseIndexRef = useRef(currentPhraseIndex);
+
+    useEffect(() => {
+        visibilityRef.current = isVisible;
+    }, [isVisible]);
+
+    useEffect(() => {
+        currentPhraseIndexRef.current = currentPhraseIndex;
+    }, [currentPhraseIndex]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setIsVisible(false);
+            if (!visibilityRef.current) {
+                return;
+            }
 
-            setTimeout(() => {
-                setCurrentPhraseIndex(
-                    Math.floor(Math.random() * phrases.length)
-                );
-                setIsVisible(true);
-            }, 750);
+            let nextPhraseIndex = Math.floor(Math.random() * phrases.length);
+
+            if (nextPhraseIndex === currentPhraseIndexRef.current) {
+                nextPhraseIndex = (nextPhraseIndex + 1) % phrases.length;
+            }
+
+            setPendingPhraseIndex(nextPhraseIndex);
+            setIsVisible(false);
         }, 2000);
 
         return () => clearInterval(interval);
     }, [phrases.length]);
 
+    const handleTransitionEnd = (event) => {
+        if (event.propertyName !== 'opacity') {
+            return;
+        }
+
+        if (!visibilityRef.current && pendingPhraseIndex !== null) {
+            setCurrentPhraseIndex(pendingPhraseIndex);
+            setPendingPhraseIndex(null);
+            requestAnimationFrame(() => {
+                setIsVisible(true);
+            });
+        }
+    };
+
     return (
         <div className={styles.loadingContainer}>
             <div
                 className={`${styles.loadingText} ${isVisible ? styles.visible : styles.hidden}`}
+                onTransitionEnd={handleTransitionEnd}
             >
                 {phrases[currentPhraseIndex]}
             </div>
